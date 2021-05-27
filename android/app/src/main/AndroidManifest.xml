@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.zhoujie.ye.recorder.blood_sugar_recorder">
    <application
-        android:label="blood_sugar_recorder"
-        android:icon="@mipmap/ic_launcher">
+        android:label="血糖记录器"
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
