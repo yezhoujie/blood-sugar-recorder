@@ -2,6 +2,7 @@ import 'package:blood_sugar_recorder/global.dart';
 import 'package:blood_sugar_recorder/route/route.gr.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() {
   /// 确保 AppRoute() 始终只执行一次.
@@ -20,22 +21,27 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     /// 注册提示框. 不要改变这行的位置.
     final botToastBuilder = BotToastInit();
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      title: 'hello world',
-      builder: (context, child) {
-        //child = myBuilder(context,child);  //do something
-        ///初始化 botToast 提示栏.
-        child = botToastBuilder(context, child);
-        return child;
+    return ScreenUtilInit(
+      designSize: Size(375, 812.0 - 44 - 34),
+      builder: () {
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          title: 'hello world',
+          builder: (context, child) {
+            //child = myBuilder(context,child);  //do something
+            ///初始化 botToast 提示栏.
+            child = botToastBuilder(context, child);
+            return child;
+          },
+          routeInformationParser: _appRoute.defaultRouteParser(),
+          routerDelegate: _appRoute.delegate(
+            // initialRoutes: [MyHomeRoute(title: "title")],
+            navigatorObservers: () => [
+              BotToastNavigatorObserver() /** 为提示框注册路由观察者**/
+            ],
+          ),
+        );
       },
-      routeInformationParser: _appRoute.defaultRouteParser(),
-      routerDelegate: _appRoute.delegate(
-        initialRoutes: [MyHomeRoute(title: "title")],
-        navigatorObservers: () => [
-          BotToastNavigatorObserver() /** 为提示框注册路由观察者**/
-        ],
-      ),
     );
   }
 }

@@ -5,7 +5,9 @@
 // **************************************************************************
 
 import 'package:auto_route/auto_route.dart' as _i1;
-import 'package:blood_sugar_recorder/main.dart' as _i3;
+import 'package:blood_sugar_recorder/main.dart' as _i5;
+import 'package:blood_sugar_recorder/pages/index/index.dart' as _i3;
+import 'package:blood_sugar_recorder/pages/welcome/welcome.dart' as _i4;
 import 'package:flutter/material.dart' as _i2;
 
 class AppRoute extends _i1.RootStackRouter {
@@ -14,22 +16,49 @@ class AppRoute extends _i1.RootStackRouter {
 
   @override
   final Map<String, _i1.PageFactory> pagesMap = {
+    IndexRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (_) {
+          return _i3.IndexPage();
+        }),
+    WelcomeRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+        routeData: routeData,
+        builder: (_) {
+          return const _i4.WelcomePage();
+        }),
     MyHomeRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (data) {
           final args = data.argsAs<MyHomeRouteArgs>();
-          return _i3.MyHomePage(key: args.key, title: args.title);
+          return _i5.MyHomePage(key: args.key, title: args.title);
         })
   };
 
   @override
-  List<_i1.RouteConfig> get routes =>
-      [_i1.RouteConfig(MyHomeRoute.name, path: '/')];
+  List<_i1.RouteConfig> get routes => [
+        _i1.RouteConfig(IndexRoute.name, path: '/'),
+        _i1.RouteConfig(WelcomeRoute.name, path: '/welcome-page'),
+        _i1.RouteConfig(MyHomeRoute.name, path: '/my-home-page')
+      ];
+}
+
+class IndexRoute extends _i1.PageRouteInfo {
+  const IndexRoute() : super(name, path: '/');
+
+  static const String name = 'IndexRoute';
+}
+
+class WelcomeRoute extends _i1.PageRouteInfo {
+  const WelcomeRoute() : super(name, path: '/welcome-page');
+
+  static const String name = 'WelcomeRoute';
 }
 
 class MyHomeRoute extends _i1.PageRouteInfo<MyHomeRouteArgs> {
   MyHomeRoute({_i2.Key? key, required String title})
-      : super(name, path: '/', args: MyHomeRouteArgs(key: key, title: title));
+      : super(name,
+            path: '/my-home-page',
+            args: MyHomeRouteArgs(key: key, title: title));
 
   static const String name = 'MyHomeRoute';
 }

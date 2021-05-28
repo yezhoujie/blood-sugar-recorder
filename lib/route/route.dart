@@ -1,12 +1,16 @@
 import 'package:auto_route/annotations.dart';
 import 'package:blood_sugar_recorder/main.dart';
+import 'package:blood_sugar_recorder/pages/index/index.dart';
+import 'package:blood_sugar_recorder/pages/welcome/welcome.dart';
 import 'package:flutter/material.dart';
 
 @MaterialAutoRouter(
   preferRelativeImports: false,
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
-    AutoRoute(page: MyHomePage, initial: true),
+    AutoRoute(page: IndexPage, initial: true),
+    AutoRoute(page: WelcomePage),
+    AutoRoute(page: MyHomePage),
   ],
 )
 class $AppRoute {}
