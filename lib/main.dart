@@ -1,28 +1,43 @@
+import 'package:blood_sugar_recorder/global.dart';
+import 'package:blood_sugar_recorder/route/route.gr.dart';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  /// 确保 AppRoute() 始终只执行一次.
+  final _appRouter = AppRoute();
+
+  // Global.init().then((value) => runApp(MyApp()));
+  Global.init().then((value) => runApp(MyApp(_appRouter)));
 }
 
 class MyApp extends StatelessWidget {
+  final AppRoute _appRoute;
+
+  MyApp(this._appRoute);
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+    /// 注册提示框. 不要改变这行的位置.
+    final botToastBuilder = BotToastInit();
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      title: 'hello world',
+      builder: (context, child) {
+        //child = myBuilder(context,child);  //do something
+        ///初始化 botToast 提示栏.
+        child = botToastBuilder(context, child);
+        return child;
+      },
+      routeInformationParser: _appRoute.defaultRouteParser(),
+      routerDelegate: _appRoute.delegate(
+        initialRoutes: [MyHomeRoute(title: "title")],
+        navigatorObservers: () => [
+          BotToastNavigatorObserver() /** 为提示框注册路由观察者**/
+        ],
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }

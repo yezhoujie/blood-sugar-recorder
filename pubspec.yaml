@@ -81,6 +81,8 @@ dependencies:
   adaptive_dialog: ^0.10.0+5
   #本地数据库
   sqflite: ^2.0.0+3
+  #sqLite 依赖的文件路径包
+  path: ^1.8.0
 
 dev_dependencies:
   flutter_test:
@@ -93,7 +95,7 @@ dev_dependencies:
   json_serializable: ^4.1.0
 
 
-# app 图标相关配置.
+# app 图标生成相关配置,参照flutter_launcher_icons文档.
 flutter_icons:
   android: "launcher_icon"
   ios: true
@@ -116,6 +118,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - resource/assets/images/
+    - resource/database/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
