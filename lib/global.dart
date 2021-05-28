@@ -48,8 +48,16 @@ class Global {
       join(await getDatabasesPath(), "blood_sugar_recorder_database.db"),
       version: 1,
       onCreate: (db, version) async {
-        return db
-            .execute(await rootBundle.loadString("resource/database/init.sql"));
+        // return db
+        //     .execute(await rootBundle.loadString("resource/database/init.sql"));
+        String sql = await rootBundle.loadString("resource/database/init.sql");
+        List<String> scripts = sql.split(";");
+        scripts.forEach((v) {
+          if (v.isNotEmpty) {
+            print(v.trim());
+            db.execute(v.trim());
+          }
+        });
       },
     );
 

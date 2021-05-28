@@ -2,13 +2,11 @@ import 'package:blood_sugar_recorder/global.dart';
 import 'package:blood_sugar_recorder/route/route.gr.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 void main() {
   /// 确保 AppRoute() 始终只执行一次.
   final _appRouter = AppRoute();
 
-  // Global.init().then((value) => runApp(MyApp()));
   Global.init().then((value) => runApp(MyApp(_appRouter)));
 }
 
