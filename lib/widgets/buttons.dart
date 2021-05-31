@@ -54,7 +54,7 @@ Widget seBorderOnlyFlatButton({
         borderRadius: RadiusConstant.k6pxRadius,
         side: Borders.primaryBorder,
       ))),
-      child: Image.asset("resource/assets/images/icon_${iconName}.png"),
+      child: Image.asset("resource/assets/images/icon_$iconName.png"),
     ),
   );
 }

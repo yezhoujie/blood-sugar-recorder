@@ -15,6 +15,6 @@ void showToast({
       contentColor: bgColor,
       textStyle: TextStyle(
         color: textColor,
-        fontSize: 16.sp,
+        fontSize: 30.sp,
       ));
 }

@@ -1,5 +1,6 @@
 import 'package:blood_sugar_recorder/constant/constant.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class InputField extends StatelessWidget {
@@ -105,6 +106,69 @@ Widget getInputEmailEdit({
       maxLines: 1,
       autocorrect: false,
       obscureText: isPassword,
+    ),
+  );
+}
+
+Widget getInputField({
+  required TextEditingController controller,
+  double width = 250,
+  double height = 70,
+  TextInputType keyboardType = TextInputType.text,
+  String hintText = "input here",
+  List<TextInputFormatter> textInputFormatters = const [],
+
+  ///输入内容校验规则
+  int maxLength = 10,
+
+  ///内容最大长度.
+  MaxLengthEnforcement maxLengthEnforcement = MaxLengthEnforcement.enforced,
+
+  /// 超过长度禁止输入.
+  int maxLines = 1,
+  bool isPassword = false,
+  bool isValid = true,
+}) {
+  return Container(
+    height: height,
+    width: width,
+
+    /// 装饰，颜色和圆角.
+    decoration: BoxDecoration(
+      color: AppColor.secondaryElement,
+      borderRadius: RadiusConstant.k6pxRadius,
+    ),
+    child: TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+          borderRadius: RadiusConstant.k6pxRadius as BorderRadius,
+          borderSide: BorderSide(
+            color: isValid ? AppColor.thirdElementText : Colors.red,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: RadiusConstant.k6pxRadius as BorderRadius,
+          borderSide: BorderSide(
+            color: isValid ? AppColor.thirdElementText : Colors.red,
+          ),
+        ),
+        hintText: hintText,
+        hintStyle: TextStyle(fontSize: 15.sp, height: 2.h),
+      ),
+      style: TextStyle(
+        fontWeight: FontWeight.w400,
+        fontSize: 20.sp,
+      ),
+      cursorColor: AppColor.thirdElementText,
+      inputFormatters: textInputFormatters,
+      maxLength: maxLength,
+      maxLengthEnforcement: maxLengthEnforcement,
+      maxLines: maxLines,
+      autocorrect: false,
+      obscureText: isPassword,
+      autofocus: false,
     ),
   );
 }

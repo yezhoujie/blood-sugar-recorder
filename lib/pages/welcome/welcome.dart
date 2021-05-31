@@ -1,3 +1,5 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:blood_sugar_recorder/route/route.gr.dart';
 import 'package:blood_sugar_recorder/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,6 +14,8 @@ class WelcomePage extends StatefulWidget {
 class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
+    /// 注册路由.
+    AutoRouter.of(context);
     return Scaffold(
       body: Center(
         child: Container(
@@ -102,7 +106,10 @@ class _WelcomePageState extends State<WelcomePage> {
           child: Align(
             alignment: Alignment.bottomCenter,
             child: seFlatButton(
-              onPressed: () {},
+              onPressed: () {
+                /// 跳转到创建用户页面.
+                context.pushRoute(UserSettingRoute());
+              },
               title: "创建用户，开始健康生活",
               width: 300.w,
               height: 70.h,

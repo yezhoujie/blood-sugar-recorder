@@ -1,5 +1,6 @@
 import 'package:auto_route/annotations.dart';
 import 'package:blood_sugar_recorder/main.dart';
+import 'package:blood_sugar_recorder/pages/config/user_setting.dart';
 import 'package:blood_sugar_recorder/pages/index/index.dart';
 import 'package:blood_sugar_recorder/pages/welcome/welcome.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +9,12 @@ import 'package:flutter/material.dart';
   preferRelativeImports: false,
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
+    /// 首页. 没有实质性内容，负责根据app状态进行页面跳转.
     AutoRoute(page: IndexPage, initial: true),
+
+    /// 欢迎介绍页面.
     AutoRoute(page: WelcomePage),
+    CustomRoute(page: UserSettingPage, transitionsBuilder: slideTransition),
     AutoRoute(page: MyHomePage),
   ],
 )
