@@ -85,6 +85,8 @@ dependencies:
   path: ^1.8.0
   #选择弹出框.
   flutter_picker: ^2.0.1
+  #枚举转String.
+  enum_to_string: ^2.0.1
 
 dev_dependencies:
   flutter_test:

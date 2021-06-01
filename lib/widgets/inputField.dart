@@ -142,18 +142,25 @@ Widget getInputField({
       controller: controller,
       keyboardType: keyboardType,
       decoration: InputDecoration(
-        enabledBorder: OutlineInputBorder(
+        contentPadding: EdgeInsets.fromLTRB(20, 10, 0, 9),
+        border: OutlineInputBorder(
           borderRadius: RadiusConstant.k6pxRadius as BorderRadius,
           borderSide: BorderSide(
             color: isValid ? AppColor.thirdElementText : Colors.red,
           ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: RadiusConstant.k6pxRadius as BorderRadius,
-          borderSide: BorderSide(
-            color: isValid ? AppColor.thirdElementText : Colors.red,
-          ),
-        ),
+        // enabledBorder: OutlineInputBorder(
+        //   borderRadius: RadiusConstant.k6pxRadius as BorderRadius,
+        //   borderSide: BorderSide(
+        //     color: isValid ? AppColor.thirdElementText : Colors.red,
+        //   ),
+        // ),
+        // focusedBorder: OutlineInputBorder(
+        //   borderRadius: RadiusConstant.k6pxRadius as BorderRadius,
+        //   borderSide: BorderSide(
+        //     color: isValid ? AppColor.thirdElementText : Colors.red,
+        //   ),
+        // ),
         hintText: hintText,
         hintStyle: TextStyle(fontSize: 15.sp, height: 2.h),
       ),

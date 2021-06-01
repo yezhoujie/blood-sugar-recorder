@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:blood_sugar_recorder/constant/constant.dart';
+import 'package:blood_sugar_recorder/datasource/datasource.dart';
 import 'package:blood_sugar_recorder/utils/utils.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,7 @@ class Global {
   static PackageInfo? packageInfo;
 
   /// 数据库database;
-  static late final database;
+  static late final Database database;
 
   ///初始化全局信息.
   static Future init() async {
@@ -43,7 +44,7 @@ class Global {
     WidgetsFlutterBinding.ensureInitialized();
 
     /// 初始化本地数据库.
-    database = openDatabase(
+    database = await openDatabase(
       join(await getDatabasesPath(), "blood_sugar_recorder_database.db"),
       version: 1,
       onCreate: (db, version) async {
@@ -53,7 +54,7 @@ class Global {
         List<String> scripts = sql.split(";");
         scripts.forEach((v) {
           if (v.isNotEmpty) {
-            print(v.trim());
+            // print(v.trim());
             db.execute(v.trim());
           }
         });
@@ -67,6 +68,12 @@ class Global {
     var _profileJson = StorageUtil().getJSON(CURRENT_USER_ID_KEY);
     if (_profileJson != null) {
       currentUser = User.fromJson(_profileJson);
+    } else {
+      /// 从本地数据库获取默认用户
+      currentUser = await UserDatasource().getFirst();
+      if (null != currentUser) {
+        StorageUtil().setJson(CURRENT_USER_ID_KEY, currentUser);
+      }
     }
 
     // 检测是否用户第一打开APP.

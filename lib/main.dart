@@ -1,5 +1,7 @@
+import 'package:blood_sugar_recorder/constant/error.dart';
 import 'package:blood_sugar_recorder/global.dart';
 import 'package:blood_sugar_recorder/route/route.gr.dart';
+import 'package:blood_sugar_recorder/widgets/notification.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -68,6 +70,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
+    showNotification(type: NotificationType.SUCCESS, message: "操作成功！");
+    // showNotification(type: NotificationType.ERROR, message: "糟糕！数据跑掉了，请刷新后重试");
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below

@@ -108,7 +108,7 @@ class _WelcomePageState extends State<WelcomePage> {
             child: seFlatButton(
               onPressed: () {
                 /// 跳转到创建用户页面.
-                context.pushRoute(UserSettingRoute());
+                context.pushRoute(UserSettingRoute(init: true));
               },
               title: "创建用户，开始健康生活",
               width: 300.w,

@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
-/// 该文件使用iconfont_builder工具自动生成.
-/// 请勿随意修改.
+
 class Iconfont {
-    // iconName: 统计
+    // iconName: 成功
+  static const chenggong = IconData(
+    0xe66d,
+    fontFamily: 'Iconfont',
+    matchTextDirection: true,
+  );
+
+  // iconName: 失 败
+  static const shibai = IconData(
+    0xe61c,
+    fontFamily: 'Iconfont',
+    matchTextDirection: true,
+  );
+
+  // iconName: 统计
   static const tongji = IconData(
     0xe600,
     fontFamily: 'Iconfont',

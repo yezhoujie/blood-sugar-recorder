@@ -4,8 +4,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:blood_sugar_recorder/constant/constant.dart';
 import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:blood_sugar_recorder/global.dart';
+import 'package:blood_sugar_recorder/route/route.gr.dart';
+import 'package:blood_sugar_recorder/service/service.dart';
 import 'package:blood_sugar_recorder/utils/utils.dart';
 import 'package:blood_sugar_recorder/widgets/widgets.dart';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,7 +16,12 @@ import 'package:intl/intl.dart';
 
 /// 用户设置页面，创建或编辑.
 class UserSettingPage extends StatefulWidget {
-  const UserSettingPage({Key? key}) : super(key: key);
+  final bool init;
+
+  UserSettingPage({
+    Key? key,
+    required this.init,
+  }) : super(key: key);
 
   @override
   _UserSettingPageState createState() => _UserSettingPageState();
@@ -72,6 +80,7 @@ class _UserSettingPageState extends State<UserSettingPage> {
     _currentUser = Global.currentUser ??
         User(name: "用户001", gender: Gender.UNKNOWN, birthday: DateTime.now());
     this._nameController..text = this._currentUser!.name;
+    // print(this._currentUser!.id);
   }
 
   /// 头部导航栏.
@@ -124,7 +133,7 @@ class _UserSettingPageState extends State<UserSettingPage> {
   /// 构造生日设置项.
   Widget _buildBirthdayConfig() {
     return Padding(
-      padding: EdgeInsets.only(left: 20.w, bottom: 20.h, right: 10.w),
+      padding: EdgeInsets.only(left: 20.w, bottom: 0.h, right: 10.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -315,8 +324,9 @@ class _UserSettingPageState extends State<UserSettingPage> {
   }
 
   ///////////////////事件处理////////////////////
-  _handleSaveUserProfile() {
+  _handleSaveUserProfile() async {
     String name = this._nameController.value.text;
+
     /// 验证姓名输入.
     if (name.trim().isEmpty) {
       setState(() {
@@ -329,9 +339,17 @@ class _UserSettingPageState extends State<UserSettingPage> {
       });
     }
 
-    /// todo 保存用户到本地数据库.
+    /// 保存用户以及其他默认配置到本地数据库.
+    CancelFunc cancelFunc = showLoading();
+    await ConfigService().saveInitConfig(_currentUser!);
+    cancelFunc();
 
-
-    /// todo 页面跳转到药物设置页面.
+    /// 页面跳转到药物设置页面.
+    if (widget.init) {
+      /// 跳转到药物设置页面.
+      context.pushRoute(MedicineSettingRoute());
+    } else {
+      context.popRoute();
+    }
   }
 }
