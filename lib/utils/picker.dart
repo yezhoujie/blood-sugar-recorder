@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:blood_sugar_recorder/constant/constant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -90,4 +91,136 @@ showPickerDate({
     ),
     onConfirm: onConfirm,
   ).show(scaffoldState);
+}
+
+typedef PickerItem = Widget Function(Color color);
+
+class ColorPicker {
+  static late  PersistentBottomSheetController _controller;
+
+  /// 显示颜色选择器.
+  static showColorPicker({
+    required BuildContext context,
+    Color? selectedColor,
+    Function(Color selectedColor)? onConfirm,
+    Function()? onCancel,
+  }) {
+    Color tempColor = selectedColor ?? Colors.orange;
+
+    _controller = showBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SizedBox(
+                width: double.infinity,
+                // height: 100.h,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          onPressed: null == onCancel
+                              ? () => _controller.close()
+                              : () {
+                                  onCancel();
+                                  _controller.close();
+                                },
+                          child: Text(
+                            "取消",
+                            style: TextStyle(
+                              fontSize: 25.sp,
+                              color: AppColor.thirdElementText,
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: null == onConfirm
+                              ? () {
+                                  _controller.close();
+                                }
+                              : () {
+                                  onConfirm(tempColor);
+                                  _controller.close();
+                                },
+                          child: Text(
+                            "确定",
+                            style: TextStyle(
+                              fontSize: 25.sp,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Divider(
+                      thickness: 2,
+                    ),
+                    BlockPicker(
+                      layoutBuilder: _colorLayoutBuilder,
+                      itemBuilder: _colorItemBuilder,
+                      pickerColor: selectedColor ?? Colors.orange,
+                      onColorChanged: (Color color) => tempColor = color,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        });
+  }
+
+  static Widget _colorItemBuilder(
+      Color color, bool isCurrentColor, void Function() changeColor) {
+    return Container(
+      margin: EdgeInsets.all(5.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(50.0),
+        color: color,
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.8),
+            offset: Offset(1.0, 2.0),
+            blurRadius: 3.0,
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: changeColor,
+          borderRadius: BorderRadius.circular(50.0),
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 210),
+            opacity: isCurrentColor ? 1.0 : 0.0,
+            child: Icon(
+              Icons.done,
+              color: Colors.white,
+              size: 50,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Widget _colorLayoutBuilder(
+      BuildContext context, List<Color> colors, PickerItem child) {
+    Orientation orientation = MediaQuery.of(context).orientation;
+
+    return Container(
+      width: orientation == Orientation.portrait ? 300.0 : 300.0,
+      height: orientation == Orientation.portrait ? 360.0 : 200.0,
+      child: GridView.count(
+        crossAxisCount: orientation == Orientation.portrait ? 5 : 6,
+        crossAxisSpacing: 5.0,
+        mainAxisSpacing: 5.0,
+        children: colors.map((Color color) => child(color)).toList(),
+      ),
+    );
+  }
 }

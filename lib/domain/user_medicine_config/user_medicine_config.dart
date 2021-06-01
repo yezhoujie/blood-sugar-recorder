@@ -43,10 +43,11 @@ class UserMedicineConfig {
   /// 默认药物数据.
   static UserMedicineConfig byDefault(int userId) {
     return UserMedicineConfig(
-        userId: userId,
-        type: MedicineType.INS,
-        name: "门冬胰岛素",
-        color: "FFFF9800");
+      userId: userId,
+      type: MedicineType.INS,
+      name: "门冬胰岛素",
+      color: Colors.orange.value.toRadixString(16),
+    );
   }
 }
 

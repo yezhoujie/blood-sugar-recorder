@@ -150,7 +150,37 @@ class _MedicineSettingPageState extends State<MedicineSettingPage> {
                   ),
                 )),
             ListTile(
-              title: Text('Camel'),
+              title: getMainText(value: "颜色标记"),
+              trailing: SizedBox(
+                width: 120.w,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: 30.w,
+                      height: 30.w,
+                      color: Color(int.parse(_currentConfig.color, radix: 16)),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_forward_ios,
+                        color: AppColor.thirdElementText,
+                      ),
+                      onPressed: () {
+                        ColorPicker.showColorPicker(
+                            context: context,
+                            selectedColor:
+                                Color(int.parse(_currentConfig.color, radix: 16)),
+                            onConfirm: (Color selectedColor) {
+                              setState(() {
+                                _currentConfig.color = selectedColor.value.toRadixString(16);
+                              });
+                            });
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
             ListTile(
               title: Text('Sheep'),

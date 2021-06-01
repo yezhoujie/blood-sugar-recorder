@@ -1,5 +1,6 @@
 import 'package:blood_sugar_recorder/global.dart';
 import 'package:blood_sugar_recorder/main.dart';
+import 'package:blood_sugar_recorder/pages/config/medicine_setting.dart';
 import 'package:blood_sugar_recorder/pages/welcome/welcome.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +20,8 @@ class _IndexPageState extends State<IndexPage> {
     return Scaffold(
       body: Global.isFirstOpen
           ? WelcomePage()
-          : MyHomePage(title: "homepage"),
+          // : MyHomePage(title: "homepage"),
+          : MedicineSettingPage(),
       resizeToAvoidBottomInset: false,
     );
   }
