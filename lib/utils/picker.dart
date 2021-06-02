@@ -96,82 +96,82 @@ showPickerDate({
 typedef PickerItem = Widget Function(Color color);
 
 class ColorPicker {
-  static late  PersistentBottomSheetController _controller;
+  static late PersistentBottomSheetController _controller;
 
   /// 显示颜色选择器.
   static showColorPicker({
-    required BuildContext context,
+    required ScaffoldState scaffoldState,
     Color? selectedColor,
     Function(Color selectedColor)? onConfirm,
     Function()? onCancel,
   }) {
     Color tempColor = selectedColor ?? Colors.orange;
 
-    _controller = showBottomSheet(
-        context: context,
-        backgroundColor: Colors.white,
-        builder: (context) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              SizedBox(
-                width: double.infinity,
-                // height: 100.h,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          onPressed: null == onCancel
-                              ? () => _controller.close()
-                              : () {
-                                  onCancel();
-                                  _controller.close();
-                                },
-                          child: Text(
-                            "取消",
-                            style: TextStyle(
-                              fontSize: 25.sp,
-                              color: AppColor.thirdElementText,
-                            ),
+    _controller = scaffoldState.showBottomSheet(
+      (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            SizedBox(
+              width: double.infinity,
+              // height: 100.h,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        onPressed: null == onCancel
+                            ? () => _controller.close()
+                            : () {
+                                onCancel();
+                                _controller.close();
+                              },
+                        child: Text(
+                          "取消",
+                          style: TextStyle(
+                            fontSize: 25.sp,
+                            color: AppColor.thirdElementText,
                           ),
                         ),
-                        TextButton(
-                          onPressed: null == onConfirm
-                              ? () {
-                                  _controller.close();
-                                }
-                              : () {
-                                  onConfirm(tempColor);
-                                  _controller.close();
-                                },
-                          child: Text(
-                            "确定",
-                            style: TextStyle(
-                              fontSize: 25.sp,
-                              color: Colors.red,
-                            ),
+                      ),
+                      TextButton(
+                        onPressed: null == onConfirm
+                            ? () {
+                                _controller.close();
+                              }
+                            : () {
+                                onConfirm(tempColor);
+                                _controller.close();
+                              },
+                        child: Text(
+                          "确定",
+                          style: TextStyle(
+                            fontSize: 25.sp,
+                            color: Colors.red,
                           ),
                         ),
-                      ],
-                    ),
-                    Divider(
-                      thickness: 2,
-                    ),
-                    BlockPicker(
-                      layoutBuilder: _colorLayoutBuilder,
-                      itemBuilder: _colorItemBuilder,
-                      pickerColor: selectedColor ?? Colors.orange,
-                      onColorChanged: (Color color) => tempColor = color,
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                  Divider(
+                    thickness: 2,
+                  ),
+                  BlockPicker(
+                    layoutBuilder: _colorLayoutBuilder,
+                    itemBuilder: _colorItemBuilder,
+                    pickerColor: selectedColor ?? Colors.orange,
+                    onColorChanged: (Color color) => tempColor = color,
+                  ),
+                ],
               ),
-            ],
-          );
-        });
+            ),
+          ],
+        );
+      },
+      backgroundColor: Colors.white,
+    );
   }
 
   static Widget _colorItemBuilder(

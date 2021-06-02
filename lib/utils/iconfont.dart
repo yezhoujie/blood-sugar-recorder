@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class Iconfont {
-    // iconName: 成功
+    // iconName: 完成
+  static const wancheng = IconData(
+    0xe672,
+    fontFamily: 'Iconfont',
+    matchTextDirection: true,
+  );
+
+  // iconName: 成功
   static const chenggong = IconData(
     0xe66d,
     fontFamily: 'Iconfont',

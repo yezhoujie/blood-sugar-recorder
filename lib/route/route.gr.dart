@@ -5,10 +5,11 @@
 // **************************************************************************
 
 import 'package:auto_route/auto_route.dart' as _i1;
-import 'package:blood_sugar_recorder/main.dart' as _i9;
+import 'package:blood_sugar_recorder/main.dart' as _i10;
 import 'package:blood_sugar_recorder/pages/config/blood_sugar_setting.dart'
     as _i8;
 import 'package:blood_sugar_recorder/pages/config/medicine_setting.dart' as _i7;
+import 'package:blood_sugar_recorder/pages/config/setting_complete.dart' as _i9;
 import 'package:blood_sugar_recorder/pages/config/user_setting.dart' as _i5;
 import 'package:blood_sugar_recorder/pages/index/index.dart' as _i3;
 import 'package:blood_sugar_recorder/pages/welcome/welcome.dart' as _i4;
@@ -59,11 +60,19 @@ class AppRoute extends _i1.RootStackRouter {
         transitionsBuilder: _i6.slideTransition,
         opaque: true,
         barrierDismissible: false),
+    SettingCompleteRoute.name: (routeData) => _i1.CustomPage<dynamic>(
+        routeData: routeData,
+        builder: (_) {
+          return const _i9.SettingCompletePage();
+        },
+        transitionsBuilder: _i6.slideTransition,
+        opaque: true,
+        barrierDismissible: false),
     MyHomeRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (data) {
           final args = data.argsAs<MyHomeRouteArgs>();
-          return _i9.MyHomePage(key: args.key, title: args.title);
+          return _i10.MyHomePage(key: args.key, title: args.title);
         })
   };
 
@@ -76,6 +85,8 @@ class AppRoute extends _i1.RootStackRouter {
             path: '/medicine-setting-page'),
         _i1.RouteConfig(BloodSugarSettingRoute.name,
             path: '/blood-sugar-setting-page'),
+        _i1.RouteConfig(SettingCompleteRoute.name,
+            path: '/setting-complete-page'),
         _i1.RouteConfig(MyHomeRoute.name, path: '/my-home-page')
       ];
 }
@@ -144,6 +155,12 @@ class BloodSugarSettingRouteArgs {
   final _i2.Key? key;
 
   final bool init;
+}
+
+class SettingCompleteRoute extends _i1.PageRouteInfo {
+  const SettingCompleteRoute() : super(name, path: '/setting-complete-page');
+
+  static const String name = 'SettingCompleteRoute';
 }
 
 class MyHomeRoute extends _i1.PageRouteInfo<MyHomeRouteArgs> {

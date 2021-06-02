@@ -36,7 +36,8 @@ CREATE TABLE cycle_record
     id       INTEGER PRIMARY KEY NOT NULL, -- 主键id
     userId   INTEGER             NOT NULL, -- 关联用户id
     datetime TEXT,                         -- 周期所在时间，以周期内最后一次血糖记录时间为准
-    closed   INTEGER             NOT NULL  -- 该周期是否关闭，0:false, 1:true
+    closed   INTEGER             NOT NULL, -- 该周期是否关闭，0:false, 1:true
+    comment  TEXT                          -- 周期备注
 );
 -- 创建周期表用户id索引
 CREATE INDEX cycle_record_user_id_index ON cycle_record (userId);

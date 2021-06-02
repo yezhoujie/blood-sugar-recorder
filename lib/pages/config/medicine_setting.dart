@@ -209,7 +209,7 @@ class _MedicineSettingPageState extends State<MedicineSettingPage> {
               ),
               onPressed: () {
                 ColorPicker.showColorPicker(
-                    context: context,
+                    scaffoldState: _scaffoldKey.currentState!,
                     selectedColor:
                         Color(int.parse(_currentConfig.color, radix: 16)),
                     onConfirm: (Color selectedColor) {

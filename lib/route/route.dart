@@ -2,6 +2,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:blood_sugar_recorder/main.dart';
 import 'package:blood_sugar_recorder/pages/config/blood_sugar_setting.dart';
 import 'package:blood_sugar_recorder/pages/config/medicine_setting.dart';
+import 'package:blood_sugar_recorder/pages/config/setting_complete.dart';
 import 'package:blood_sugar_recorder/pages/config/user_setting.dart';
 import 'package:blood_sugar_recorder/pages/index/index.dart';
 import 'package:blood_sugar_recorder/pages/welcome/welcome.dart';
@@ -20,6 +21,7 @@ import 'package:flutter/material.dart';
     CustomRoute(page: MedicineSettingPage, transitionsBuilder: slideTransition),
     CustomRoute(
         page: BloodSugarSettingPage, transitionsBuilder: slideTransition),
+    CustomRoute(page: SettingCompletePage, transitionsBuilder: slideTransition),
     AutoRoute(page: MyHomePage),
   ],
 )
