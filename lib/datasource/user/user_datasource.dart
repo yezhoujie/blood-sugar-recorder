@@ -48,4 +48,15 @@ class UserDatasource {
   Future<void> deleteById(int id) async {
     await Global.database.delete(_tableName, where: 'id = ?', whereArgs: [id]);
   }
+
+  /// 获取所有用户.
+  Future<List<User>> findAll() async {
+    List<Map<String, dynamic>> userMapList =
+        await Global.database.rawQuery('''select * from users''');
+    if (userMapList.isNotEmpty) {
+      return userMapList.map((e) => User.fromJson(e)).toList();
+    } else {
+      return [];
+    }
+  }
 }

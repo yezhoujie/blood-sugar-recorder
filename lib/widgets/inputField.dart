@@ -128,6 +128,7 @@ Widget getInputField({
   int maxLines = 1,
   bool isPassword = false,
   bool isValid = true,
+  FocusNode? focusNode,
 }) {
   return Container(
     height: height,
@@ -139,28 +140,29 @@ Widget getInputField({
       borderRadius: RadiusConstant.k6pxRadius,
     ),
     child: TextField(
+      focusNode: focusNode,
       controller: controller,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(20, 10, 0, 9),
-        border: OutlineInputBorder(
+        // border: OutlineInputBorder(
+        //   borderRadius: RadiusConstant.k6pxRadius as BorderRadius,
+        //   borderSide: BorderSide(
+        //     color: isValid ? AppColor.thirdElementText : Colors.red,
+        //   ),
+        // ),
+        enabledBorder: OutlineInputBorder(
           borderRadius: RadiusConstant.k6pxRadius as BorderRadius,
           borderSide: BorderSide(
             color: isValid ? AppColor.thirdElementText : Colors.red,
           ),
         ),
-        // enabledBorder: OutlineInputBorder(
-        //   borderRadius: RadiusConstant.k6pxRadius as BorderRadius,
-        //   borderSide: BorderSide(
-        //     color: isValid ? AppColor.thirdElementText : Colors.red,
-        //   ),
-        // ),
-        // focusedBorder: OutlineInputBorder(
-        //   borderRadius: RadiusConstant.k6pxRadius as BorderRadius,
-        //   borderSide: BorderSide(
-        //     color: isValid ? AppColor.thirdElementText : Colors.red,
-        //   ),
-        // ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: RadiusConstant.k6pxRadius as BorderRadius,
+          borderSide: BorderSide(
+            color: isValid ? AppColor.thirdElementText : Colors.red,
+          ),
+        ),
         hintText: hintText,
         hintStyle: TextStyle(fontSize: 15.sp, height: 2.h),
       ),
@@ -177,5 +179,90 @@ Widget getInputField({
       obscureText: isPassword,
       autofocus: false,
     ),
+  );
+}
+
+
+/// 获取带提示的文本输入框.
+Widget getAutoCompleteInputField({
+  required TextEditingController controller,
+  double width = 250,
+  double height = 70,
+  TextInputType keyboardType = TextInputType.text,
+  String hintText = "input here",
+  List<TextInputFormatter> textInputFormatters = const [],
+
+  ///输入内容校验规则
+  int maxLength = 10,
+
+  ///内容最大长度.
+  MaxLengthEnforcement maxLengthEnforcement = MaxLengthEnforcement.enforced,
+
+  /// 超过长度禁止输入.
+  int maxLines = 1,
+  bool isPassword = false,
+  bool isValid = true,
+  required String Function(Object) displayStringForOption,
+  required List<Object> Function(TextEditingValue) optionsBuilder,
+  required Function(dynamic) onSelected,
+}) {
+  return Autocomplete<Object>(
+    displayStringForOption: displayStringForOption,
+    optionsBuilder: optionsBuilder,
+    onSelected: onSelected,
+    optionsViewBuilder: (
+      BuildContext context,
+      AutocompleteOnSelected<Object> onSelected,
+      Iterable<Object> options,
+    ) {
+      return Align(
+        alignment: Alignment.topLeft,
+        child: Material(
+          child: Container(
+            width: width,
+            height: 150.h,
+            color: Color(0xffe8e8e8),
+            child: ListView.builder(
+              padding: EdgeInsets.all(10.0),
+              itemCount: options.length,
+              itemBuilder: (BuildContext context, int index) {
+                final Object option = options.elementAt(index);
+
+                return GestureDetector(
+                  onTap: () {
+                    onSelected(option);
+                  },
+                  child: ListTile(
+                    title: Text(
+                      displayStringForOption(option),
+                      style: TextStyle(fontSize: 20.sp),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+    },
+    fieldViewBuilder: (BuildContext context,
+        TextEditingController fieldTextEditingController,
+        FocusNode fieldFocusNode,
+        VoidCallback onFieldSubmitted) {
+      return getInputField(
+        controller: fieldTextEditingController..text = controller.value.text,
+        width: width,
+        height: height,
+        keyboardType: keyboardType,
+        hintText: hintText,
+        textInputFormatters: textInputFormatters,
+        maxLength: maxLength,
+        maxLengthEnforcement: maxLengthEnforcement,
+        maxLines: maxLines,
+        isPassword: isPassword,
+        isValid: isValid,
+        focusNode: fieldFocusNode,
+      );
+    },
   );
 }

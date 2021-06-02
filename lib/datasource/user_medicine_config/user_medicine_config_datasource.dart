@@ -53,8 +53,11 @@ class UserMedicineConfigDatasource {
 
   /// 新增或修改药物配置信息.
   Future<UserMedicineConfig> saveConfig(UserMedicineConfig config) async {
-    await Global.database.insert(_tableName, config.toJson(),
+    int id = await Global.database.insert(_tableName, config.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace);
+
+    config.id = id;
+
     return config;
   }
 

@@ -5,7 +5,9 @@
 // **************************************************************************
 
 import 'package:auto_route/auto_route.dart' as _i1;
-import 'package:blood_sugar_recorder/main.dart' as _i8;
+import 'package:blood_sugar_recorder/main.dart' as _i9;
+import 'package:blood_sugar_recorder/pages/config/blood_sugar_setting.dart'
+    as _i8;
 import 'package:blood_sugar_recorder/pages/config/medicine_setting.dart' as _i7;
 import 'package:blood_sugar_recorder/pages/config/user_setting.dart' as _i5;
 import 'package:blood_sugar_recorder/pages/index/index.dart' as _i3;
@@ -41,9 +43,18 @@ class AppRoute extends _i1.RootStackRouter {
     MedicineSettingRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (data) {
-          final args = data.argsAs<MedicineSettingRouteArgs>(
-              orElse: () => const MedicineSettingRouteArgs());
-          return _i7.MedicineSettingPage(key: args.key, id: args.id);
+          final args = data.argsAs<MedicineSettingRouteArgs>();
+          return _i7.MedicineSettingPage(
+              key: args.key, id: args.id, init: args.init);
+        },
+        transitionsBuilder: _i6.slideTransition,
+        opaque: true,
+        barrierDismissible: false),
+    BloodSugarSettingRoute.name: (routeData) => _i1.CustomPage<dynamic>(
+        routeData: routeData,
+        builder: (data) {
+          final args = data.argsAs<BloodSugarSettingRouteArgs>();
+          return _i8.BloodSugarSettingPage(key: args.key, init: args.init);
         },
         transitionsBuilder: _i6.slideTransition,
         opaque: true,
@@ -52,7 +63,7 @@ class AppRoute extends _i1.RootStackRouter {
         routeData: routeData,
         builder: (data) {
           final args = data.argsAs<MyHomeRouteArgs>();
-          return _i8.MyHomePage(key: args.key, title: args.title);
+          return _i9.MyHomePage(key: args.key, title: args.title);
         })
   };
 
@@ -63,6 +74,8 @@ class AppRoute extends _i1.RootStackRouter {
         _i1.RouteConfig(UserSettingRoute.name, path: '/user-setting-page'),
         _i1.RouteConfig(MedicineSettingRoute.name,
             path: '/medicine-setting-page'),
+        _i1.RouteConfig(BloodSugarSettingRoute.name,
+            path: '/blood-sugar-setting-page'),
         _i1.RouteConfig(MyHomeRoute.name, path: '/my-home-page')
       ];
 }
@@ -97,20 +110,40 @@ class UserSettingRouteArgs {
 }
 
 class MedicineSettingRoute extends _i1.PageRouteInfo<MedicineSettingRouteArgs> {
-  MedicineSettingRoute({_i2.Key? key, int? id})
+  MedicineSettingRoute({_i2.Key? key, int? id, required bool init})
       : super(name,
             path: '/medicine-setting-page',
-            args: MedicineSettingRouteArgs(key: key, id: id));
+            args: MedicineSettingRouteArgs(key: key, id: id, init: init));
 
   static const String name = 'MedicineSettingRoute';
 }
 
 class MedicineSettingRouteArgs {
-  const MedicineSettingRouteArgs({this.key, this.id});
+  const MedicineSettingRouteArgs({this.key, this.id, required this.init});
 
   final _i2.Key? key;
 
   final int? id;
+
+  final bool init;
+}
+
+class BloodSugarSettingRoute
+    extends _i1.PageRouteInfo<BloodSugarSettingRouteArgs> {
+  BloodSugarSettingRoute({_i2.Key? key, required bool init})
+      : super(name,
+            path: '/blood-sugar-setting-page',
+            args: BloodSugarSettingRouteArgs(key: key, init: init));
+
+  static const String name = 'BloodSugarSettingRoute';
+}
+
+class BloodSugarSettingRouteArgs {
+  const BloodSugarSettingRouteArgs({this.key, required this.init});
+
+  final _i2.Key? key;
+
+  final bool init;
 }
 
 class MyHomeRoute extends _i1.PageRouteInfo<MyHomeRouteArgs> {

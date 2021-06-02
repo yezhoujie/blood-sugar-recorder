@@ -1,5 +1,6 @@
 import 'package:auto_route/annotations.dart';
 import 'package:blood_sugar_recorder/main.dart';
+import 'package:blood_sugar_recorder/pages/config/blood_sugar_setting.dart';
 import 'package:blood_sugar_recorder/pages/config/medicine_setting.dart';
 import 'package:blood_sugar_recorder/pages/config/user_setting.dart';
 import 'package:blood_sugar_recorder/pages/index/index.dart';
@@ -17,6 +18,8 @@ import 'package:flutter/material.dart';
     AutoRoute(page: WelcomePage),
     CustomRoute(page: UserSettingPage, transitionsBuilder: slideTransition),
     CustomRoute(page: MedicineSettingPage, transitionsBuilder: slideTransition),
+    CustomRoute(
+        page: BloodSugarSettingPage, transitionsBuilder: slideTransition),
     AutoRoute(page: MyHomePage),
   ],
 )

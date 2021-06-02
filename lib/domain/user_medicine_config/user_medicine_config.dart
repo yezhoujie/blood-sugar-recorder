@@ -47,6 +47,7 @@ class UserMedicineConfig {
       type: MedicineType.INS,
       name: "门冬胰岛素",
       color: Colors.orange.value.toRadixString(16),
+      unit: "单位",
     );
   }
 }

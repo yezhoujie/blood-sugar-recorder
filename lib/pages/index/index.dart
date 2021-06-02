@@ -21,7 +21,9 @@ class _IndexPageState extends State<IndexPage> {
       body: Global.isFirstOpen
           ? WelcomePage()
           // : MyHomePage(title: "homepage"),
-          : MedicineSettingPage(),
+          : MedicineSettingPage(
+              init: true,
+            ),
       resizeToAvoidBottomInset: false,
     );
   }

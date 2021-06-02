@@ -7,6 +7,7 @@ import 'package:blood_sugar_recorder/global.dart';
 import 'package:blood_sugar_recorder/route/route.gr.dart';
 import 'package:blood_sugar_recorder/service/service.dart';
 import 'package:blood_sugar_recorder/utils/utils.dart';
+import 'package:blood_sugar_recorder/widgets/notification.dart';
 import 'package:blood_sugar_recorder/widgets/widgets.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
@@ -332,12 +333,18 @@ class _UserSettingPageState extends State<UserSettingPage> {
       setState(() {
         this._nameInputValid = false;
       });
-      showToast(msg: "姓名不能为空");
+      showNotification(
+        type: NotificationType.ERROR,
+        message: "姓名不能为空",
+      );
+      return;
     } else {
       setState(() {
         this._nameInputValid = true;
       });
     }
+
+    _currentUser!.name = name;
 
     /// 保存用户以及其他默认配置到本地数据库.
     CancelFunc cancelFunc = showLoading();
@@ -347,7 +354,9 @@ class _UserSettingPageState extends State<UserSettingPage> {
     /// 页面跳转到药物设置页面.
     if (widget.init) {
       /// 跳转到药物设置页面.
-      context.pushRoute(MedicineSettingRoute());
+      context.pushRoute(MedicineSettingRoute(
+        init: true,
+      ));
     } else {
       context.popRoute();
     }

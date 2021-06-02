@@ -2,13 +2,21 @@ import 'package:blood_sugar_recorder/datasource/datasource.dart';
 import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:blood_sugar_recorder/error/error_data.dart';
 
-/// 药物管理业务逻辑.
-class MedicineService {
-  /// 根据ID获取配置.
-  Future<UserMedicineConfig> getById(int id) async {
+/// 血檀指标设置业务处理类.
+/// 单例.
+class BloodSugarConfigService {
+  static final BloodSugarConfigService _instance =
+      BloodSugarConfigService._internal();
+
+  BloodSugarConfigService._internal();
+
+  factory BloodSugarConfigService() => _instance;
+
+  /// 根据用户ID获取用户血糖指标配置信息.
+  Future<UserBloodSugarConfig> getByUserId(int userId) async {
     try {
-      UserMedicineConfig? config =
-          await UserMedicineConfigDatasource().getById(id);
+      UserBloodSugarConfig? config =
+          await UserBloodSugarConfigDatasource().getByUserId(userId);
       if (null == config) {
         throw ErrorData(
             code: ErrorData.errorCodeMap['NOT_FOUND']!,
@@ -22,21 +30,10 @@ class MedicineService {
     }
   }
 
-  /// 保存药物信息.
-  Future<UserMedicineConfig> save(UserMedicineConfig config) async {
+  /// 保存血糖指标信息.
+  Future<UserBloodSugarConfig> save(UserBloodSugarConfig config) async {
     try {
-      return await UserMedicineConfigDatasource().saveConfig(config);
-    } catch (exception) {
-      throw ErrorData(
-          code: ErrorData.errorCodeMap['INTERNAL_ERROR']!,
-          message: "糟糕！程序出错了,请刷新后重试");
-    }
-  }
-
-  /// 根据ID删除记录.
-  Future<void> deleteById(int id) async {
-    try {
-      await UserMedicineConfigDatasource().deleteById(id);
+      return await UserBloodSugarConfigDatasource().saveConfig(config);
     } catch (exception) {
       throw ErrorData(
           code: ErrorData.errorCodeMap['INTERNAL_ERROR']!,
