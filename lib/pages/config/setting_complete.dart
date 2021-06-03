@@ -1,4 +1,6 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:blood_sugar_recorder/constant/constant.dart';
+import 'package:blood_sugar_recorder/route/route.gr.dart';
 import 'package:blood_sugar_recorder/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -67,7 +69,17 @@ class _SettingCompletePageState extends State<SettingCompletePage> {
                               children: [
                                 SizedBox(
                                   child: OutlinedButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      /// 跳转到设置页面
+                                      AutoRouter.of(context).pushAndPopUntil(
+                                        MainRoute(
+                                          children: [
+                                            SettingRoute(),
+                                          ],
+                                        ),
+                                        predicate: (route) => false,
+                                      );
+                                    },
                                     style: OutlinedButton.styleFrom(
                                       primary: Colors.pink,
                                       side: BorderSide(
@@ -87,7 +99,17 @@ class _SettingCompletePageState extends State<SettingCompletePage> {
                                 ),
                                 SizedBox(
                                   child: OutlinedButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      /// 跳转到程序主页面
+                                      AutoRouter.of(context).pushAndPopUntil(
+                                        MainRoute(
+                                          children: [
+                                            RecordRoute(),
+                                          ],
+                                        ),
+                                        predicate: (route) => false,
+                                      );
+                                    },
                                     style: OutlinedButton.styleFrom(
                                       primary: Colors.white,
                                       backgroundColor: Colors.pink,

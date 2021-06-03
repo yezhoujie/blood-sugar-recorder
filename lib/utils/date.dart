@@ -26,3 +26,8 @@ String formatDateline(DateTime? date) {
     return format.format(date);
   }
 }
+
+/// 获取年龄.
+int getAge(DateTime birthday) {
+  return DateTime.now().year - birthday.year;
+}

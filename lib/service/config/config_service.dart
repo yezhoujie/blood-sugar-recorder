@@ -19,8 +19,7 @@ class ConfigService {
     User user = await UserDatasource().saveUser(newUser);
 
     /// 设置为当前用户.
-    Global.currentUser = user;
-    await StorageUtil().setJson(CURRENT_USER_ID_KEY, user);
+    Global.saveCurrentUser(user);
 
     /// 保存默认血糖指标信息.
     await UserBloodSugarConfigDatasource()

@@ -2,9 +2,14 @@ import 'package:auto_route/annotations.dart';
 import 'package:blood_sugar_recorder/main.dart';
 import 'package:blood_sugar_recorder/pages/config/blood_sugar_setting.dart';
 import 'package:blood_sugar_recorder/pages/config/medicine_setting.dart';
+import 'package:blood_sugar_recorder/pages/config/setting.dart';
 import 'package:blood_sugar_recorder/pages/config/setting_complete.dart';
 import 'package:blood_sugar_recorder/pages/config/user_setting.dart';
+import 'package:blood_sugar_recorder/pages/history/history.dart';
 import 'package:blood_sugar_recorder/pages/index/index.dart';
+import 'package:blood_sugar_recorder/pages/main/main.dart';
+import 'package:blood_sugar_recorder/pages/record/record.dart';
+import 'package:blood_sugar_recorder/pages/stats/stats.dart';
 import 'package:blood_sugar_recorder/pages/welcome/welcome.dart';
 import 'package:flutter/material.dart';
 
@@ -17,11 +22,37 @@ import 'package:flutter/material.dart';
 
     /// 欢迎介绍页面.
     AutoRoute(page: WelcomePage),
+
+    /// 用户新增，编辑页面.
     CustomRoute(page: UserSettingPage, transitionsBuilder: slideTransition),
+
+    /// 用户药物新增，编辑页面.
     CustomRoute(page: MedicineSettingPage, transitionsBuilder: slideTransition),
+
+    /// 用户血糖指标设置页面.
     CustomRoute(
         page: BloodSugarSettingPage, transitionsBuilder: slideTransition),
+
+    /// 初始化设置完成页面.
     CustomRoute(page: SettingCompletePage, transitionsBuilder: slideTransition),
+
+    /// 程序主页面.
+    CustomRoute(
+        page: MainPage,
+        transitionsBuilder: slideTransition,
+        children: ([
+          /// 数据记录入口.
+          AutoRoute(page: RecordPage, maintainState: false),
+
+          /// 历史记录列表页面.
+          AutoRoute(page: HistoryPage),
+
+          /// 统计分析页面.
+          AutoRoute(page: StatsPage),
+
+          /// 设置入口页面
+          AutoRoute(page: SettingPage),
+        ])),
     AutoRoute(page: MyHomePage),
   ],
 )
