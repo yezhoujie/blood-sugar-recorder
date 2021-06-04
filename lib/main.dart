@@ -51,7 +51,6 @@ class MyApp extends StatelessWidget {
             // initialRoutes: [MyHomeRoute(title: "title")],
             navigatorObservers: () => [
               BotToastNavigatorObserver(), /** 为提示框注册路由观察者**/
-              CustomBottomTabAutoRouteObserver(),
             ],
           ),
         );

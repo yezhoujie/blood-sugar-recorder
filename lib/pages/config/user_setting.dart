@@ -349,6 +349,7 @@ class _UserSettingPageState extends State<UserSettingPage> {
     /// 保存用户以及其他默认配置到本地数据库.
     CancelFunc cancelFunc = showLoading();
     await ConfigService().saveInitConfig(_currentUser!);
+    showNotification(type: NotificationType.SUCCESS, message: "保存成功");
     cancelFunc();
 
     /// 页面跳转到药物设置页面.

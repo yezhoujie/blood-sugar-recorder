@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 
-/// Tab 路由观察者.
+/// 配合autoRoute创建的Tab路由观察者.
+/// 好像并没有什么卵用.
 class CustomBottomTabAutoRouteObserver extends AutoRouteObserver {
   static int index = -1;
 

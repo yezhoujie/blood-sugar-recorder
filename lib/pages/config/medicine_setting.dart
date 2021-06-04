@@ -48,7 +48,8 @@ class _MedicineSettingPageState extends State<MedicineSettingPage> {
 
   bool _nameInputValid = true;
 
-  late UserMedicineConfig _currentConfig;
+  late UserMedicineConfig _currentConfig =
+      UserMedicineConfig.byDefault(Global.currentUser!.id!);
 
   @override
   void initState() {
@@ -277,33 +278,37 @@ class _MedicineSettingPageState extends State<MedicineSettingPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           /// 保存并继续添加.
-          seFlatButton(
-            onPressed: () async {
-              /// 保存数据.
-              bool success = await _handleSaveConfig();
+          widget.init
+              ? seFlatButton(
+                  onPressed: () async {
+                    /// 保存数据.
+                    bool success = await _handleSaveConfig();
 
-              /// 刷新页面.
-              if (success) {
-                String newName =
-                    "${_currentConfig.name}${_currentConfig.id! + 1}";
-                UserMedicineConfig newConfig =
-                    UserMedicineConfig.byDefault(_currentConfig.userId);
-                newConfig.name = newName;
-                setState(() {
-                  _currentConfig = newConfig;
-                  _nameController..text = _currentConfig.name;
-                  _unitController..text = _currentConfig.unit ?? "";
-                });
-              }
-            },
-            title: "保存并继续添加",
-            width: 300.w,
-            height: 70.h,
-            fontSize: 25.sp,
-            bgColor: Colors.greenAccent,
-            fontColor: Colors.black54,
-            fontWeight: FontWeight.w900,
-          ),
+                    /// 刷新页面.
+                    if (success) {
+                      String newName =
+                          "${_currentConfig.name}${_currentConfig.id! + 1}";
+                      UserMedicineConfig newConfig =
+                          UserMedicineConfig.byDefault(_currentConfig.userId);
+                      newConfig.name = newName;
+                      setState(() {
+                        _currentConfig = newConfig;
+                        _nameController..text = _currentConfig.name;
+                        _unitController..text = _currentConfig.unit ?? "";
+                      });
+                    }
+                  },
+                  title: "保存并继续添加",
+                  width: 300.w,
+                  height: 70.h,
+                  fontSize: 25.sp,
+                  bgColor: Colors.greenAccent,
+                  fontColor: Colors.black54,
+                  fontWeight: FontWeight.w900,
+                )
+              : Container(
+                  height: 70.h,
+                ),
 
           /// 完成设置.
           seFlatButton(
@@ -311,12 +316,16 @@ class _MedicineSettingPageState extends State<MedicineSettingPage> {
               /// 保存数据
               bool success = await _handleSaveConfig();
               if (success) {
-                context.pushRoute(BloodSugarSettingRoute(
-                  init: true,
-                ));
+                if (widget.init) {
+                  context.pushRoute(BloodSugarSettingRoute(
+                    init: true,
+                  ));
+                } else {
+                  AutoRouter.of(context).navigate(MedicineListRoute());
+                }
               }
             },
-            title: "完成",
+            title: "${widget.init ? "完成" : "保存"}",
             width: 300.w,
             height: 70.h,
             fontSize: 25.sp,
@@ -354,7 +363,7 @@ class _MedicineSettingPageState extends State<MedicineSettingPage> {
     return transparentAppBar(
       context: context,
       title: Text(
-        "药物设置",
+        "${widget.init ? "药物设置" : (null == widget.id ? "药物添加" : "药物编辑")}",
         style: TextStyle(
           fontSize: 30.sp,
           color: AppColor.primaryText,

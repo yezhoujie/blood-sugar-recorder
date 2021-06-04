@@ -1,6 +1,7 @@
 import 'package:auto_route/annotations.dart';
 import 'package:blood_sugar_recorder/main.dart';
 import 'package:blood_sugar_recorder/pages/config/blood_sugar_setting.dart';
+import 'package:blood_sugar_recorder/pages/config/medicine_list.dart';
 import 'package:blood_sugar_recorder/pages/config/medicine_setting.dart';
 import 'package:blood_sugar_recorder/pages/config/setting.dart';
 import 'package:blood_sugar_recorder/pages/config/setting_complete.dart';
@@ -26,8 +27,14 @@ import 'package:flutter/material.dart';
     /// 用户新增，编辑页面.
     CustomRoute(page: UserSettingPage, transitionsBuilder: slideTransition),
 
+    /// 药物设置列表页.
+    CustomRoute(
+        page: MedicineListPage,
+        transitionsBuilder: slideTransition,
+        maintainState: false),
+
     /// 用户药物新增，编辑页面.
-    CustomRoute(page: MedicineSettingPage, transitionsBuilder: slideTransition),
+    CustomRoute(page: MedicineSettingPage, transitionsBuilder: slideTransition, maintainState: false),
 
     /// 用户血糖指标设置页面.
     CustomRoute(
@@ -40,19 +47,23 @@ import 'package:flutter/material.dart';
     CustomRoute(
         page: MainPage,
         transitionsBuilder: slideTransition,
-        children: ([
-          /// 数据记录入口.
-          AutoRoute(page: RecordPage, maintainState: false),
-
-          /// 历史记录列表页面.
-          AutoRoute(page: HistoryPage),
-
-          /// 统计分析页面.
-          AutoRoute(page: StatsPage),
-
-          /// 设置入口页面
-          AutoRoute(page: SettingPage),
-        ])),
+        maintainState: false),
+    // CustomRoute(
+    //     page: MainPage,
+    //     transitionsBuilder: slideTransition,
+    //     children: ([
+    //       /// 数据记录入口.
+    //       AutoRoute(page: RecordPage, maintainState: false),
+    //
+    //       /// 历史记录列表页面.
+    //       AutoRoute(page: HistoryPage),
+    //
+    //       /// 统计分析页面.
+    //       AutoRoute(page: StatsPage),
+    //
+    //       /// 设置入口页面
+    //       AutoRoute(page: SettingPage),
+    //     ])),
     AutoRoute(page: MyHomePage),
   ],
 )

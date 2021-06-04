@@ -16,7 +16,7 @@ class UserMedicineConfigDatasource {
   UserMedicineConfigDatasource._internal();
 
   /// 根据用户Id获取用户下的药物配置.
-  Future<List<UserMedicineConfig?>> findByUserId(int userId) async {
+  Future<List<UserMedicineConfig>> findByUserId(int userId) async {
     List<Map<String, dynamic>> resList = await Global.database
         .rawQuery('''select * from $_tableName where userId = ?''', [userId]);
 

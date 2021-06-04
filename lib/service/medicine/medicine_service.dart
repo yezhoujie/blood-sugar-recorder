@@ -43,4 +43,15 @@ class MedicineService {
           message: "糟糕！程序出错了,请刷新后重试");
     }
   }
+
+  /// 获取用户下的所有药物列表.
+  Future<List<UserMedicineConfig>> findByUserId(int userId) async {
+    try {
+      return await UserMedicineConfigDatasource().findByUserId(userId);
+    } catch (exception) {
+      throw ErrorData(
+          code: ErrorData.errorCodeMap['INTERNAL_ERROR']!,
+          message: "糟糕！程序出错了,请刷新后重试");
+    }
+  }
 }

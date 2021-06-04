@@ -37,8 +37,7 @@ class _RecordPageState extends State<RecordPage> {
   }
 
   void _dataRefresh() {
-    if (this._currentUser.id != Global.currentUser!.id ||
-        CustomBottomTabAutoRouteObserver.index == 0) {
+    if (this._currentUser.id != Global.currentUser!.id) {
       this._currentUser = Global.currentUser!;
       print("reload data");
       // todo reload data.

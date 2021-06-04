@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:blood_sugar_recorder/constant/constant.dart';
+import 'package:blood_sugar_recorder/pages/main/main.dart';
+import 'package:blood_sugar_recorder/pages/record/record.dart';
 import 'package:blood_sugar_recorder/route/route.gr.dart';
 import 'package:blood_sugar_recorder/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -72,11 +74,7 @@ class _SettingCompletePageState extends State<SettingCompletePage> {
                                     onPressed: () {
                                       /// 跳转到设置页面
                                       AutoRouter.of(context).pushAndPopUntil(
-                                        MainRoute(
-                                          children: [
-                                            SettingRoute(),
-                                          ],
-                                        ),
+                                        MainRoute(tabIndex: 3),
                                         predicate: (route) => false,
                                       );
                                     },
@@ -103,9 +101,7 @@ class _SettingCompletePageState extends State<SettingCompletePage> {
                                       /// 跳转到程序主页面
                                       AutoRouter.of(context).pushAndPopUntil(
                                         MainRoute(
-                                          children: [
-                                            RecordRoute(),
-                                          ],
+                                          tabIndex: 0,
                                         ),
                                         predicate: (route) => false,
                                       );

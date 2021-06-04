@@ -9,7 +9,7 @@ buildscript {
 
         maven { url 'https://maven.aliyun.com/repository/jcenter' }
 //        google()
-        jcenter()
+//        jcenter()
     }
 
     dependencies {
@@ -29,7 +29,7 @@ allprojects {
         maven { url 'https://maven.aliyun.com/repository/jcenter' }
 
 //        google()
-        jcenter()
+//        jcenter()
     }
 }
 
