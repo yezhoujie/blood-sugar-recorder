@@ -40,4 +40,15 @@ class BloodSugarConfigService {
           message: "糟糕！程序出错了,请刷新后重试");
     }
   }
+
+  /// 删除用户下的血糖指标信息.
+  Future<void> deleteByUserId(int userId) async {
+    try {
+      return await UserBloodSugarConfigDatasource().deleteByUserId(userId);
+    } catch (exception) {
+      throw ErrorData(
+          code: ErrorData.errorCodeMap['INTERNAL_ERROR']!,
+          message: "糟糕！程序出错了,请刷新后重试");
+    }
+  }
 }

@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:blood_sugar_recorder/constant/constant.dart';
 import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:blood_sugar_recorder/global.dart';
+import 'package:blood_sugar_recorder/provider/user_switch_state.dart';
 import 'package:blood_sugar_recorder/route/route.gr.dart';
 import 'package:blood_sugar_recorder/service/service.dart';
 import 'package:blood_sugar_recorder/utils/utils.dart';
@@ -14,14 +16,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 /// 用户设置页面，创建或编辑.
 class UserSettingPage extends StatefulWidget {
   final bool init;
+  final int? userId;
+  final bool? create;
 
   UserSettingPage({
     Key? key,
     required this.init,
+    this.userId,
+    this.create = false,
   }) : super(key: key);
 
   @override
@@ -77,11 +84,33 @@ class _UserSettingPageState extends State<UserSettingPage> {
   void initState() {
     super.initState();
 
-    /// 获取当前用户.
-    _currentUser = Global.currentUser ??
-        User(name: "用户001", gender: Gender.UNKNOWN, birthday: DateTime.now());
-    this._nameController..text = this._currentUser!.name;
+    if (null == widget.userId) {
+      if (widget.create ?? false) {
+        /// 创建新用户.
+        _currentUser = User(
+            name: "新建用户", gender: Gender.UNKNOWN, birthday: DateTime.now());
+      } else {
+        /// 获取当前用户.
+        _currentUser = Global.currentUser ??
+            User(
+                name: "新建用户", gender: Gender.UNKNOWN, birthday: DateTime.now());
+      }
+      this._nameController..text = this._currentUser!.name;
+    } else {
+      /// 通过id 获取用户.
+      _loadUserById();
+    }
+
     // print(this._currentUser!.id);
+  }
+
+  /// 通过id 获取用户信息.
+  void _loadUserById() async {
+    _currentUser = await UserService().getById(widget.userId!);
+    this._nameController..text = this._currentUser!.name;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   /// 头部导航栏.
@@ -348,7 +377,18 @@ class _UserSettingPageState extends State<UserSettingPage> {
 
     /// 保存用户以及其他默认配置到本地数据库.
     CancelFunc cancelFunc = showLoading();
-    await ConfigService().saveInitConfig(_currentUser!);
+    if (null == widget.userId) {
+      /// 如果是初始化，或者创建新用户.
+      await ConfigService().saveInitConfig(_currentUser!);
+
+      /// 切换用户.
+      Provider.of<UserSwitchState>(context, listen: false)
+          .switchCurrentUserTo(_currentUser);
+
+    } else {
+      await UserService().save(_currentUser!);
+    }
+
     showNotification(type: NotificationType.SUCCESS, message: "保存成功");
     cancelFunc();
 

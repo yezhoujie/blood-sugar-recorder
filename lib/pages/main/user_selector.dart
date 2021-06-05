@@ -154,7 +154,7 @@ class _UserSelectionCardState extends State<UserSelectionCard> {
           onTap: () async {
             /// 切换用户.
             await Global.saveCurrentUser(e.value);
-            // todo provider 切换用户.
+            /// 切换用户.
             Provider.of<UserSwitchState>(context, listen: false).switchCurrentUserTo(e.value);
 
             widget.cancelFunc();

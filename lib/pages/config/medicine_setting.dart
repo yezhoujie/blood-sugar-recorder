@@ -454,15 +454,23 @@ class _MedicineSettingPageState extends State<MedicineSettingPage> {
     if (unit.isNotEmpty) {
       _currentConfig.unit = unit;
     }
-    await MedicineService().save(_currentConfig);
+    try {
+      await MedicineService().save(_currentConfig);
+
+      /// 显示提示.
+      showNotification(
+        type: NotificationType.SUCCESS,
+        message: "保存成功",
+      );
+    } catch (errorData) {
+      showNotification(
+        type: NotificationType.ERROR,
+        message: (errorData as ErrorData).message,
+      );
+    }
 
     cancelFunc();
 
-    /// 显示提示.
-    showNotification(
-      type: NotificationType.SUCCESS,
-      message: "保存成功",
-    );
     return true;
   }
 }

@@ -26,6 +26,8 @@ class UserMedicineConfig {
   /// 药物单位.
   String? unit;
 
+  int deleted;
+
   UserMedicineConfig({
     this.id,
     required this.userId,
@@ -33,6 +35,7 @@ class UserMedicineConfig {
     required this.name,
     required this.color,
     this.unit,
+    this.deleted = 0,
   });
 
   factory UserMedicineConfig.fromJson(Map<String, dynamic> json) =>
@@ -48,6 +51,7 @@ class UserMedicineConfig {
       name: "门冬胰岛素",
       color: Colors.orange.value.toRadixString(16),
       unit: "单位",
+      deleted: 0,
     );
   }
 }

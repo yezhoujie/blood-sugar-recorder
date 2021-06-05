@@ -5,6 +5,7 @@ Widget getCircleAvatarByName({
   String? name,
   Color backgroundColor = Colors.amber,
   double radius = 20,
+  double fontSize = 20
 }) {
   return CircleAvatar(
     radius: radius.w,
@@ -13,7 +14,7 @@ Widget getCircleAvatarByName({
       getLastLetterFromName(name),
       style: TextStyle(
         color: Colors.white,
-        fontSize: 20.sp,
+        fontSize: fontSize.sp,
         fontWeight: FontWeight.bold,
       ),
     ),

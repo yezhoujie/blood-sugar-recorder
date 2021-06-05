@@ -47,8 +47,33 @@ class _SettingPageState extends State<SettingPage> {
               ),
             ),
 
-            /// 个人设置卡片.
-            _buildPersonalSettingCart(),
+            /// 用户设置卡片.
+            _buildPersonalSettingCard(),
+
+            Padding(padding: EdgeInsets.only(top: 30.h)),
+            Text(
+              '用户管理',
+              style: TextStyle(
+                color: AppColor.thirdElementText,
+                fontSize: 15.sp,
+              ),
+            ),
+
+            /// 用户设置设置卡片.
+            _buildUserSettingCard(),
+
+            Padding(padding: EdgeInsets.only(top: 30.h)),
+            Text(
+              '关于',
+              style: TextStyle(
+                color: AppColor.thirdElementText,
+                fontSize: 15.sp,
+              ),
+            ),
+
+            /// 关于卡片.
+            _buildAboutCard(),
+
           ],
         ),
       ),
@@ -60,7 +85,7 @@ class _SettingPageState extends State<SettingPage> {
     Function()? onPress,
   }) {
     return SizedBox(
-      width: 120.w,
+      width: 210.w,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -93,7 +118,49 @@ class _SettingPageState extends State<SettingPage> {
         ));
   }
 
-  Widget _buildPersonalSettingCart() {
+
+  Widget _buildAboutCard(){
+    return Card(
+      color: Colors.white,
+      child: Column(
+        children: [
+          ListTile(
+            title: Text(
+              '版本号',
+              style: this.settingItemTextStyle,
+            ),
+            trailing: _getMainText(
+              value: Global.packageInfo!.version,
+              color: AppColor.thirdElementText,
+              fontSize: 20.sp,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserSettingCard() {
+    return Card(
+      color: Colors.white,
+      child: Column(
+        children: [
+          ListTile(
+            title: Text(
+              '用户管理',
+              style: this.settingItemTextStyle,
+            ),
+            trailing: _getTextTrailing(
+              text: "",
+              onPress: () => context.pushRoute(UserListRoute()),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPersonalSettingCard() {
     /// 监听当前用户的切换状态.
     UserSwitchState userSwitchState = Provider.of<UserSwitchState>(context);
 
@@ -115,6 +182,7 @@ class _SettingPageState extends State<SettingPage> {
               ),
             ),
           ),
+          Divider(),
           ListTile(
             title: Text(
               '药物设置',
@@ -125,6 +193,7 @@ class _SettingPageState extends State<SettingPage> {
               onPress: () => context.pushRoute(MedicineListRoute()),
             ),
           ),
+          Divider(),
           ListTile(
             title: Text(
               '血糖指标设置',

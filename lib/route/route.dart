@@ -5,6 +5,7 @@ import 'package:blood_sugar_recorder/pages/config/medicine_list.dart';
 import 'package:blood_sugar_recorder/pages/config/medicine_setting.dart';
 import 'package:blood_sugar_recorder/pages/config/setting.dart';
 import 'package:blood_sugar_recorder/pages/config/setting_complete.dart';
+import 'package:blood_sugar_recorder/pages/config/user_list.dart';
 import 'package:blood_sugar_recorder/pages/config/user_setting.dart';
 import 'package:blood_sugar_recorder/pages/history/history.dart';
 import 'package:blood_sugar_recorder/pages/index/index.dart';
@@ -24,6 +25,12 @@ import 'package:flutter/material.dart';
     /// 欢迎介绍页面.
     AutoRoute(page: WelcomePage),
 
+    /// 用户列表页面.
+    CustomRoute(
+        page: UserListPage,
+        transitionsBuilder: slideTransition,
+        maintainState: false),
+
     /// 用户新增，编辑页面.
     CustomRoute(page: UserSettingPage, transitionsBuilder: slideTransition),
 
@@ -34,7 +41,10 @@ import 'package:flutter/material.dart';
         maintainState: false),
 
     /// 用户药物新增，编辑页面.
-    CustomRoute(page: MedicineSettingPage, transitionsBuilder: slideTransition, maintainState: false),
+    CustomRoute(
+        page: MedicineSettingPage,
+        transitionsBuilder: slideTransition,
+        maintainState: false),
 
     /// 用户血糖指标设置页面.
     CustomRoute(

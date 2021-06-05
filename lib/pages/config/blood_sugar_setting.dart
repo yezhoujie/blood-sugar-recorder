@@ -144,7 +144,6 @@ class _BloodSugarSettingPageState extends State<BloodSugarSettingPage> {
             width: 80.w,
             height: 70.h,
             keyboardType: TextInputType.number,
-            hintText: "数字或小数点",
             textInputFormatters: [
               FilteringTextInputFormatter.allow(
 

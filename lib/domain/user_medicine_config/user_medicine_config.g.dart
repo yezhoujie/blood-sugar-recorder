@@ -14,6 +14,7 @@ UserMedicineConfig _$UserMedicineConfigFromJson(Map<String, dynamic> json) {
     name: json['name'] as String,
     color: json['color'] as String,
     unit: json['unit'] as String?,
+    deleted: json['deleted'] as int,
   );
 }
 
@@ -25,6 +26,7 @@ Map<String, dynamic> _$UserMedicineConfigToJson(UserMedicineConfig instance) =>
       'name': instance.name,
       'color': instance.color,
       'unit': instance.unit,
+      'deleted': instance.deleted,
     };
 
 K _$enumDecode<K, V>(

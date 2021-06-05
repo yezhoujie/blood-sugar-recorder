@@ -54,4 +54,15 @@ class MedicineService {
           message: "糟糕！程序出错了,请刷新后重试");
     }
   }
+
+  /// 删除用户下的所有药物信息.
+  Future<void> deleteAllByUserId(int userId) async {
+    try {
+      return await UserMedicineConfigDatasource().deleteByUserId(userId);
+    } catch (exception) {
+      throw ErrorData(
+          code: ErrorData.errorCodeMap['INTERNAL_ERROR']!,
+          message: "糟糕！程序出错了,请刷新后重试");
+    }
+  }
 }
