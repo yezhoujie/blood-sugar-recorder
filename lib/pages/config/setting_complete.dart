@@ -1,7 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:blood_sugar_recorder/constant/constant.dart';
-import 'package:blood_sugar_recorder/pages/main/main.dart';
-import 'package:blood_sugar_recorder/pages/record/record.dart';
 import 'package:blood_sugar_recorder/route/route.gr.dart';
 import 'package:blood_sugar_recorder/utils/utils.dart';
 import 'package:flutter/material.dart';

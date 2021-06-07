@@ -1,8 +1,6 @@
-import 'package:blood_sugar_recorder/constant/constant.dart';
 import 'package:blood_sugar_recorder/datasource/datasource.dart';
 import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:blood_sugar_recorder/global.dart';
-import 'package:blood_sugar_recorder/utils/utils.dart';
 
 /// 用户信息数据配置逻辑处理类
 /// 单例.

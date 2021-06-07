@@ -1,6 +1,3 @@
-import 'dart:math';
-
-import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 

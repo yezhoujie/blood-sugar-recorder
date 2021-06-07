@@ -1,13 +1,9 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:blood_sugar_recorder/global.dart';
 import 'package:blood_sugar_recorder/pages/config/setting.dart';
 import 'package:blood_sugar_recorder/pages/history/history.dart';
-import 'package:blood_sugar_recorder/pages/main/custom_auto_route_observer.dart';
 import 'package:blood_sugar_recorder/pages/main/user_selector.dart';
 import 'package:blood_sugar_recorder/pages/record/record.dart';
 import 'package:blood_sugar_recorder/pages/stats/stats.dart';
 import 'package:blood_sugar_recorder/provider/user_switch_state.dart';
-import 'package:blood_sugar_recorder/route/route.gr.dart';
 import 'package:blood_sugar_recorder/utils/utils.dart';
 import 'package:blood_sugar_recorder/widgets/avatar.dart';
 import 'package:blood_sugar_recorder/widgets/widgets.dart';
@@ -39,6 +35,12 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     _pageController = new PageController(initialPage: this._tabIndex);
+  }
+
+  @override
+  void dispose() {
+    this._pageController.dispose();
+    super.dispose();
   }
 
   @override

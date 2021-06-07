@@ -3,15 +3,11 @@ import 'package:blood_sugar_recorder/main.dart';
 import 'package:blood_sugar_recorder/pages/config/blood_sugar_setting.dart';
 import 'package:blood_sugar_recorder/pages/config/medicine_list.dart';
 import 'package:blood_sugar_recorder/pages/config/medicine_setting.dart';
-import 'package:blood_sugar_recorder/pages/config/setting.dart';
 import 'package:blood_sugar_recorder/pages/config/setting_complete.dart';
 import 'package:blood_sugar_recorder/pages/config/user_list.dart';
 import 'package:blood_sugar_recorder/pages/config/user_setting.dart';
-import 'package:blood_sugar_recorder/pages/history/history.dart';
 import 'package:blood_sugar_recorder/pages/index/index.dart';
 import 'package:blood_sugar_recorder/pages/main/main.dart';
-import 'package:blood_sugar_recorder/pages/record/record.dart';
-import 'package:blood_sugar_recorder/pages/stats/stats.dart';
 import 'package:blood_sugar_recorder/pages/welcome/welcome.dart';
 import 'package:flutter/material.dart';
 

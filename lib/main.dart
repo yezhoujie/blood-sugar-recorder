@@ -1,6 +1,4 @@
-import 'package:blood_sugar_recorder/constant/error.dart';
 import 'package:blood_sugar_recorder/global.dart';
-import 'package:blood_sugar_recorder/pages/main/custom_auto_route_observer.dart';
 import 'package:blood_sugar_recorder/provider/user_switch_state.dart';
 import 'package:blood_sugar_recorder/route/route.gr.dart';
 import 'package:blood_sugar_recorder/widgets/notification.dart';

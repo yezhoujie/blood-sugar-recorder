@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:blood_sugar_recorder/constant/constant.dart';
 import 'package:blood_sugar_recorder/datasource/datasource.dart';
-import 'package:blood_sugar_recorder/provider/user_switch_state.dart';
 import 'package:blood_sugar_recorder/utils/utils.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';

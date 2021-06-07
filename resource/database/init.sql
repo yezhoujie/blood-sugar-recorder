@@ -83,7 +83,7 @@ CREATE TABLE food_record_item
     id            INTEGER PRIMARY KEY NOT NULL, -- 主键ID
     userId        INTEGER             NOT NULL, -- 冗余用户ID
     cycleRecordId INTEGER             NOT NULL, -- 关联周期ID
-    food_info     TEXT                NOT NULL, -- 食物清单
+    foodInfo      TEXT                NOT NULL, -- 食物清单
     comment       TEXT                NOT NULL, -- 进食备注
     recordTime    TEXT                NOT NULL  -- 记录时间
 );
@@ -105,7 +105,7 @@ CREATE TABLE blood_sugar_record_item
     cycleRecordId INTEGER             NOT NULL, -- 关联周期ID
     bloodSugar    REAL                NOT NULL, -- 血糖
     recordTime    TEXT                NOT NULL, -- 记录时间
-    FPG           INTEGER             NOT NULL  -- 是否为空腹0:否，1:是
+    fpg           INTEGER             NOT NULL  -- 是否为空腹0:否，1:是
 
 );
 -- 创建周期id索引

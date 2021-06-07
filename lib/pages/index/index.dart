@@ -1,6 +1,4 @@
 import 'package:blood_sugar_recorder/global.dart';
-import 'package:blood_sugar_recorder/main.dart';
-import 'package:blood_sugar_recorder/pages/config/medicine_setting.dart';
 import 'package:blood_sugar_recorder/pages/config/setting_complete.dart';
 import 'package:blood_sugar_recorder/pages/welcome/welcome.dart';
 import 'package:flutter/material.dart';
