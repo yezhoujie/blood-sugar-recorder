@@ -4,10 +4,11 @@ import 'package:blood_sugar_recorder/error/error_data.dart';
 
 /// 周期内记录抽象service.
 abstract class RecordItemService<T extends RecordItem> {
-  Future<T> create(T item) async {
+  Future<T> save(T item) async {
     try {
-      this._checkCycle(item);
-      return await this._doCreate(item);
+      CycleRecord cycle = await this._checkCycle(item);
+      item.cycleRecordId = cycle.id;
+      return await this.doSave(item);
     } catch (exception) {
       throw ErrorData(
           code: ErrorData.errorCodeMap['INTERNAL_ERROR']!,
@@ -17,16 +18,26 @@ abstract class RecordItemService<T extends RecordItem> {
 
   /// 确认是否存在正在进行的记录周期，如果不存在则创建一个新周期.
   Future<CycleRecord> _checkCycle(T item) async {
-    CycleRecord? cycle =
-        await CycleRecordDatasource().getCurrentByUserId(item.userId);
-    if (null == cycle) {
-      /// 创建一个新记录周期
-      CycleRecord newCycle = CycleRecord.byDefault(item.userId);
-      return await CycleRecordDatasource().save(newCycle);
-    } else {
-      return cycle;
+    CycleRecord? cycle;
+
+    /// 如果明细关联有周期.直接获取周期.
+    if (null != item.cycleRecordId) {
+      cycle = await CycleRecordDatasource().getById(item.cycleRecordId!);
     }
+
+    /// 如果明细没有关联周期.尝试获取当前未关闭的周期.
+    if (null == cycle) {
+      cycle = await CycleRecordDatasource().getCurrentByUserId(item.userId);
+    }
+
+    ///创建一个新的周期.
+    if (null == cycle) {
+      cycle = CycleRecord.byDefault(item.userId);
+      return await CycleRecordDatasource().save(cycle);
+    }
+
+    return cycle;
   }
 
-  Future<T> _doCreate(T item);
+  Future<T> doSave(T item);
 }

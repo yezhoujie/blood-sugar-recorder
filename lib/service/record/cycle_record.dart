@@ -96,6 +96,13 @@ class CycleRecordService {
         print("items saved!");
       }
 
+      /// 周期默认关闭.
+      record.closed = true;
+
+      /// 周期内最后一次详细记录的时间为周期时间.
+      record.datetime = itemList.last.recordTime;
+      record = await this.save(record);
+
       return record;
     } catch (exception) {
       throw ErrorData(

@@ -1,5 +1,8 @@
 /// 周期内记录项抽象类.
 abstract class RecordItem {
+  /// -- 主键ID
+  int? id;
+
   ///冗余用户ID
   int userId;
 
@@ -10,5 +13,5 @@ abstract class RecordItem {
   int? cycleRecordId;
 
   RecordItem(
-      {required this.recordTime, required this.userId, this.cycleRecordId});
+      {this.id, required this.recordTime, required this.userId, this.cycleRecordId});
 }

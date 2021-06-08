@@ -1,7 +1,11 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:blood_sugar_recorder/constant/constant.dart';
+import 'package:blood_sugar_recorder/datasource/datasource.dart';
 import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:blood_sugar_recorder/global.dart';
 import 'package:blood_sugar_recorder/provider/user_switch_state.dart';
+import 'package:blood_sugar_recorder/route/route.gr.dart';
 import 'package:blood_sugar_recorder/service/record/cycle_record.dart';
 import 'package:blood_sugar_recorder/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +41,8 @@ class _RecordPageState extends State<RecordPage> {
             _buildItemButtons(),
           ],
         ),
-      ),);
+      ),
+    );
   }
 
   void _dataRefresh() {
@@ -90,7 +95,7 @@ class _RecordPageState extends State<RecordPage> {
             ),
             child: ListView(
               children:
-              ListTile.divideTiles(context: context, tiles: []).toList(),
+                  ListTile.divideTiles(context: context, tiles: []).toList(),
             ),
           ),
         ),
@@ -101,21 +106,7 @@ class _RecordPageState extends State<RecordPage> {
     }
   }
 
-  ////////////////事件处理区域////////////////
-  _getCurrentCycle() async {
-    /// 从数据库获取当前或者最近一次周期记录.
-    await this._refreshCurrentCycle();
-
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  _refreshCurrentCycle() async {
-    this._currentCycle =
-    await CycleRecordService().getCurrentByUserId(this._currentUser.id!);
-  }
-
+  /// 构建当前周期的操作按钮区域.
   _buildCycleOperation() {
     return Container(
       margin: EdgeInsets.only(right: 5.w),
@@ -126,12 +117,12 @@ class _RecordPageState extends State<RecordPage> {
           onPressed: this._currentCycle!.closed
               ? null
               : () {
-            /// todo 结束周期.
-          },
+                  /// todo 结束周期.
+                },
           style: OutlinedButton.styleFrom(
             primary: Colors.white,
             backgroundColor:
-            this._currentCycle!.closed ? Colors.grey : Colors.pink,
+                this._currentCycle!.closed ? Colors.grey : Colors.pink,
             textStyle: TextStyle(
               fontSize: 20.sp,
             ),
@@ -144,6 +135,7 @@ class _RecordPageState extends State<RecordPage> {
     );
   }
 
+  /// 构建底部添加各种记录的按钮.
   Widget _buildItemButtons() {
     return SizedBox(
       height: 110.h,
@@ -152,8 +144,9 @@ class _RecordPageState extends State<RecordPage> {
         children: [
           OutlinedButton.icon(
             icon: Icon(Iconfont.yaowu),
-            onPressed: () {
-              /// todo 结束周期.
+            onPressed: () async {
+              /// 跳转到添加药物记录页面.
+              await _handleToMedicinePage();
             },
             style: OutlinedButton.styleFrom(
               primary: Colors.white,
@@ -168,8 +161,8 @@ class _RecordPageState extends State<RecordPage> {
           ),
           OutlinedButton.icon(
             icon: Icon(Iconfont.jinshi),
-            onPressed: () {
-              /// todo 跳转药物干预页面.
+            onPressed: () async {
+              // todo 跳转到记录用餐记录页面.
             },
             style: OutlinedButton.styleFrom(
               primary: Colors.white,
@@ -201,5 +194,51 @@ class _RecordPageState extends State<RecordPage> {
         ],
       ),
     );
+  }
+
+  ////////////////事件处理区域////////////////
+  _getCurrentCycle() async {
+    /// 从数据库获取当前或者最近一次周期记录.
+    await this._refreshCurrentCycle();
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  /// 从数据库中获取当前周期记录.
+  _refreshCurrentCycle() async {
+    this._currentCycle =
+        await CycleRecordService().getCurrentByUserId(this._currentUser.id!);
+  }
+
+  /// 处理跳转到创建药物记录页面.
+  Future<void> _handleToMedicinePage() async {
+    List<UserMedicineConfig> medicineConfigList =
+        await UserMedicineConfigDatasource()
+            .findByUserId(this._currentUser.id!);
+    if (medicineConfigList.isEmpty) {
+      OkCancelResult res = await showOkCancelAlertDialog(
+        context: this.context,
+        title: "您还没有设置任何药物信息",
+        message: "现在就去创建药物信息吗？",
+        okLabel: "确定",
+        cancelLabel: "取消",
+        barrierDismissible: false,
+      );
+
+      if (res.index == OkCancelResult.ok.index) {
+        /// 跳转到药物信息设置页面.
+        AutoRouter.of(context).pushAll([
+          MedicineListRoute(),
+          MedicineSettingRoute(
+            init: false,
+          )
+        ]);
+      }
+    } else {
+      /// 跳转到创建药物使用记录页面.
+      context.pushRoute(MedicineRecordRoute(autoSave: true));
+    }
   }
 }

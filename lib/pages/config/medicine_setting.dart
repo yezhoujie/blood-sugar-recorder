@@ -126,14 +126,14 @@ class _MedicineSettingPageState extends State<MedicineSettingPage> {
             width: 250.w,
             height: 70.h,
             keyboardType: TextInputType.text,
-            hintText: "10个以内的中英文数字或下划线",
+            hintText: "8个以内的中英文数字或下划线",
             textInputFormatters: [
               FilteringTextInputFormatter.allow(
                 /// 只允许中文，英文，数字，下划线.
                 RegExp("^[\u4e00-\u9fa5_a-zA-Z0-9\\s]+\$"),
               )
             ],
-            maxLength: 10,
+            maxLength: 8,
             maxLengthEnforcement: MaxLengthEnforcement.enforced,
             maxLines: 1,
             isValid: _nameInputValid,

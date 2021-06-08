@@ -5,9 +5,6 @@ part 'blood_sugar_record_item.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class BloodSugarRecordItem extends RecordItem {
-  ///主键ID
-  int? id;
-
   ///血糖
   double? bloodSugar;
 
@@ -15,13 +12,14 @@ class BloodSugarRecordItem extends RecordItem {
   bool? fpg = false;
 
   BloodSugarRecordItem(
-      {this.id,
+      {int? id,
       required int userId,
       int? cycleRecordId,
       this.bloodSugar,
       this.fpg,
       required DateTime recordTime})
       : super(
+            id: id,
             recordTime: recordTime,
             userId: userId,
             cycleRecordId: cycleRecordId);

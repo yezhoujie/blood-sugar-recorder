@@ -5,7 +5,8 @@
 // **************************************************************************
 
 import 'package:auto_route/auto_route.dart' as _i1;
-import 'package:blood_sugar_recorder/main.dart' as _i13;
+import 'package:blood_sugar_recorder/domain/domain.dart' as _i15;
+import 'package:blood_sugar_recorder/main.dart' as _i14;
 import 'package:blood_sugar_recorder/pages/config/blood_sugar_setting.dart'
     as _i10;
 import 'package:blood_sugar_recorder/pages/config/medicine_list.dart' as _i8;
@@ -16,6 +17,7 @@ import 'package:blood_sugar_recorder/pages/config/user_list.dart' as _i5;
 import 'package:blood_sugar_recorder/pages/config/user_setting.dart' as _i7;
 import 'package:blood_sugar_recorder/pages/index/index.dart' as _i3;
 import 'package:blood_sugar_recorder/pages/main/main.dart' as _i12;
+import 'package:blood_sugar_recorder/pages/record/medicine_record.dart' as _i13;
 import 'package:blood_sugar_recorder/pages/welcome/welcome.dart' as _i4;
 import 'package:blood_sugar_recorder/route/route.dart' as _i6;
 import 'package:flutter/material.dart' as _i2;
@@ -103,6 +105,18 @@ class AppRoute extends _i1.RootStackRouter {
           final args = data.argsAs<MainRouteArgs>();
           return _i12.MainPage(key: args.key, tabIndex: args.tabIndex);
         },
+        transitionsBuilder: _i6.slideTransition,
+        opaque: true,
+        barrierDismissible: false),
+    MedicineRecordRoute.name: (routeData) => _i1.CustomPage<dynamic>(
+        routeData: routeData,
+        builder: (data) {
+          final args = data.argsAs<MedicineRecordRouteArgs>();
+          return _i13.MedicineRecordPage(
+              key: args.key,
+              medicineRecordItem: args.medicineRecordItem,
+              autoSave: args.autoSave);
+        },
         maintainState: false,
         transitionsBuilder: _i6.slideTransition,
         opaque: true,
@@ -111,7 +125,7 @@ class AppRoute extends _i1.RootStackRouter {
         routeData: routeData,
         builder: (data) {
           final args = data.argsAs<MyHomeRouteArgs>();
-          return _i13.MyHomePage(key: args.key, title: args.title);
+          return _i14.MyHomePage(key: args.key, title: args.title);
         })
   };
 
@@ -129,6 +143,8 @@ class AppRoute extends _i1.RootStackRouter {
         _i1.RouteConfig(SettingCompleteRoute.name,
             path: '/setting-complete-page'),
         _i1.RouteConfig(MainRoute.name, path: '/main-page'),
+        _i1.RouteConfig(MedicineRecordRoute.name,
+            path: '/medicine-record-page'),
         _i1.RouteConfig(MyHomeRoute.name, path: '/my-home-page')
       ];
 }
@@ -247,6 +263,32 @@ class MainRouteArgs {
   final _i2.Key? key;
 
   final int tabIndex;
+}
+
+class MedicineRecordRoute extends _i1.PageRouteInfo<MedicineRecordRouteArgs> {
+  MedicineRecordRoute(
+      {_i2.Key? key,
+      _i15.MedicineRecordItem? medicineRecordItem,
+      required bool autoSave})
+      : super(name,
+            path: '/medicine-record-page',
+            args: MedicineRecordRouteArgs(
+                key: key,
+                medicineRecordItem: medicineRecordItem,
+                autoSave: autoSave));
+
+  static const String name = 'MedicineRecordRoute';
+}
+
+class MedicineRecordRouteArgs {
+  const MedicineRecordRouteArgs(
+      {this.key, this.medicineRecordItem, required this.autoSave});
+
+  final _i2.Key? key;
+
+  final _i15.MedicineRecordItem? medicineRecordItem;
+
+  final bool autoSave;
 }
 
 class MyHomeRoute extends _i1.PageRouteInfo<MyHomeRouteArgs> {

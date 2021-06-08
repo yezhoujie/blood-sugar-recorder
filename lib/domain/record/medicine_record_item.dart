@@ -6,9 +6,6 @@ part 'medicine_record_item.g.dart';
 /// 周期内的药物干预记录.
 @JsonSerializable(explicitToJson: true)
 class MedicineRecordItem extends RecordItem {
-  /// -- 主键ID
-  int? id;
-
   ///药物ID
   int? medicineId;
 
@@ -19,7 +16,7 @@ class MedicineRecordItem extends RecordItem {
   bool extra;
 
   MedicineRecordItem({
-    this.id,
+    int? id,
     required int userId,
     int? cycleRecordId,
     this.medicineId,
@@ -27,6 +24,7 @@ class MedicineRecordItem extends RecordItem {
     required DateTime recordTime,
     this.extra = false,
   }) : super(
+            id: id,
             recordTime: recordTime,
             userId: userId,
             cycleRecordId: cycleRecordId);

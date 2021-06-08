@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:blood_sugar_recorder/constant/constant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart' hide PickerItem;
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -93,7 +93,100 @@ showPickerDate({
   ).show(scaffoldState);
 }
 
-typedef PickerItem = Widget Function(Color color);
+
+showPickerDateTime({
+  required BuildContext context,
+  required ScaffoldState scaffoldState,
+  DateTime? beginDate,
+  DateTime? endDate,
+  DateTime? selected,
+  Function(Picker picker, List selected)? onConfirm,
+}) {
+  Picker(
+    adapter: DateTimePickerAdapter(
+      type: PickerDateTimeType.kYMDHM,
+      isNumberMonth: true,
+      yearSuffix: "年",
+      monthSuffix: "月",
+      daySuffix: "日",
+      minValue: beginDate,
+      maxValue: endDate,
+      value: selected ?? DateTime.now(),
+    ),
+    title: Text(""),
+    textAlign: TextAlign.right,
+    selectedTextStyle: TextStyle(
+      color: Colors.red,
+      fontSize: 30.sp,
+    ),
+    itemExtent: 60.h,
+    selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
+      background: Colors.transparent,
+    ),
+    delimiter: [
+      PickerDelimiter(
+          column: 5,
+          child: Container(
+            width: 16.0.w,
+            alignment: Alignment.center,
+            color: Colors.white,
+          ))
+    ],
+    confirmText: "确定",
+    confirmTextStyle: TextStyle(
+      fontSize: 25.sp,
+      color: Colors.red,
+    ),
+    cancelText: "取消",
+    cancelTextStyle: TextStyle(
+      fontSize: 25.sp,
+      color: AppColor.thirdElementText,
+    ),
+    onConfirm: onConfirm,
+  ).show(scaffoldState);
+}
+
+/// 显示自定义选择器.
+showCustomPicker({
+  required BuildContext context,
+  required ScaffoldState scaffoldState,
+  Function(Picker picker, List selected)? onConfirm,
+  List<PickerItem> dataList = const [],
+  List<int>? columnFlex,
+  List<int>? selected,
+}) {
+  Picker(
+    adapter: PickerDataAdapter(data: dataList),
+    title: Text(""),
+    textAlign: TextAlign.right,
+    // textStyle: TextStyle(
+    //   color: Colors.blue,
+    // ),
+    selectedTextStyle: TextStyle(
+      color: Colors.red,
+      fontSize: 21.sp,
+    ),
+    itemExtent: 60.h,
+    selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
+      background: Colors.transparent,
+    ),
+    confirmText: "确定",
+    confirmTextStyle: TextStyle(
+      fontSize: 25.sp,
+      color: Colors.red,
+    ),
+    cancelText: "取消",
+    cancelTextStyle: TextStyle(
+      fontSize: 25.sp,
+      color: AppColor.thirdElementText,
+    ),
+    onConfirm: onConfirm,
+    columnFlex: columnFlex,
+    selecteds: selected,
+  ).show(scaffoldState);
+}
+
+typedef ColorPickerItem = Widget Function(Color color);
 
 class ColorPicker {
   static late PersistentBottomSheetController _controller;
@@ -209,7 +302,7 @@ class ColorPicker {
   }
 
   static Widget _colorLayoutBuilder(
-      BuildContext context, List<Color> colors, PickerItem child) {
+      BuildContext context, List<Color> colors, ColorPickerItem child) {
     Orientation orientation = MediaQuery.of(context).orientation;
 
     return Container(

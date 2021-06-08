@@ -8,6 +8,7 @@ import 'package:blood_sugar_recorder/pages/config/user_list.dart';
 import 'package:blood_sugar_recorder/pages/config/user_setting.dart';
 import 'package:blood_sugar_recorder/pages/index/index.dart';
 import 'package:blood_sugar_recorder/pages/main/main.dart';
+import 'package:blood_sugar_recorder/pages/record/medicine_record.dart';
 import 'package:blood_sugar_recorder/pages/welcome/welcome.dart';
 import 'package:flutter/material.dart';
 
@@ -51,7 +52,12 @@ import 'package:flutter/material.dart';
 
     /// 程序主页面.
     CustomRoute(
-        page: MainPage,
+      page: MainPage,
+      transitionsBuilder: slideTransition,
+    ),
+    /// 药物使用记录新增修改页面.
+    CustomRoute(
+        page: MedicineRecordPage,
         transitionsBuilder: slideTransition,
         maintainState: false),
     // CustomRoute(
