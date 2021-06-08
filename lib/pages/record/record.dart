@@ -391,6 +391,7 @@ class _RecordPageState extends State<RecordPage> {
             " 补",
             style: TextStyle(
               fontSize: 15.sp,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
