@@ -63,7 +63,8 @@ class _MedicineListPageState extends State<MedicineListPage> {
           size: 35.sp,
         ),
         onPressed: () {
-          context.popRoute();
+          AutoRouter.of(context)
+              .pushAndPopUntil(MainRoute(tabIndex: 3), predicate: (_) => false);
         },
       ),
     );

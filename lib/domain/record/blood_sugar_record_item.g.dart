@@ -12,7 +12,7 @@ BloodSugarRecordItem _$BloodSugarRecordItemFromJson(Map<String, dynamic> json) {
     userId: json['userId'] as int,
     cycleRecordId: json['cycleRecordId'] as int?,
     bloodSugar: (json['bloodSugar'] as num?)?.toDouble(),
-    fpg: json['fpg'] as bool?,
+    fpg: boolFromIntWithNull(json['fpg'] as int?),
     recordTime: DateTime.parse(json['recordTime'] as String),
   );
 }
@@ -20,10 +20,10 @@ BloodSugarRecordItem _$BloodSugarRecordItemFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$BloodSugarRecordItemToJson(
         BloodSugarRecordItem instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'userId': instance.userId,
       'recordTime': instance.recordTime.toIso8601String(),
       'cycleRecordId': instance.cycleRecordId,
-      'id': instance.id,
       'bloodSugar': instance.bloodSugar,
-      'fpg': instance.fpg,
+      'fpg': boolToIntWithNull(instance.fpg),
     };

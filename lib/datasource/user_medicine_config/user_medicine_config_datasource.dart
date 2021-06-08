@@ -18,7 +18,8 @@ class UserMedicineConfigDatasource {
   /// 根据用户Id获取用户下的药物配置.
   Future<List<UserMedicineConfig>> findByUserId(int userId) async {
     List<Map<String, dynamic>> resList = await Global.database.rawQuery(
-        '''select * from $_tableName where userId = ? and deleted = 0''',
+        '''select * from $_tableName where userId = ? and deleted = false
+        ''',
         [userId]);
 
     if (resList.isNotEmpty) {
@@ -44,7 +45,7 @@ class UserMedicineConfigDatasource {
   Future<List<UserMedicineConfig>> getByUserIdAndType(
       int userId, MedicineType type) async {
     List<Map<String, dynamic>> resList = await Global.database.rawQuery(
-        '''select * from $_tableName where userId = ? and type = ? and deleted = 0''',
+        '''select * from $_tableName where userId = ? and type = ? and deleted = false''',
         [userId, EnumToString.convertToString(type)]);
     if (resList.isNotEmpty) {
       return resList.map((item) => UserMedicineConfig.fromJson(item)).toList();
@@ -66,7 +67,7 @@ class UserMedicineConfigDatasource {
   Future<void> deleteById(int id) async {
     UserMedicineConfig? config = await this.getById(id);
     if (null != config) {
-      config.deleted = 1;
+      config.deleted = true;
       await this.saveConfig(config);
     }
   }

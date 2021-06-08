@@ -1,4 +1,5 @@
 import 'package:blood_sugar_recorder/domain/record/record_item.dart';
+import 'package:blood_sugar_recorder/utils/bool_converter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'medicine_record_item.g.dart';
@@ -13,6 +14,7 @@ class MedicineRecordItem extends RecordItem {
   double usage = 1;
 
   /// 是否进行额外药物补充
+  @JsonKey(fromJson: boolFromInt, toJson: boolToInt)
   bool extra;
 
   MedicineRecordItem({

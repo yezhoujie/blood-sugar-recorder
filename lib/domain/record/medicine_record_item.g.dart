@@ -14,17 +14,17 @@ MedicineRecordItem _$MedicineRecordItemFromJson(Map<String, dynamic> json) {
     medicineId: json['medicineId'] as int?,
     usage: (json['usage'] as num).toDouble(),
     recordTime: DateTime.parse(json['recordTime'] as String),
-    extra: json['extra'] as bool,
+    extra: boolFromInt(json['extra'] as int),
   );
 }
 
 Map<String, dynamic> _$MedicineRecordItemToJson(MedicineRecordItem instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'userId': instance.userId,
       'recordTime': instance.recordTime.toIso8601String(),
       'cycleRecordId': instance.cycleRecordId,
-      'id': instance.id,
       'medicineId': instance.medicineId,
       'usage': instance.usage,
-      'extra': instance.extra,
+      'extra': boolToInt(instance.extra),
     };

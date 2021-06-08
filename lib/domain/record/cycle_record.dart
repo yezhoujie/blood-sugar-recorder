@@ -1,4 +1,5 @@
 import 'package:blood_sugar_recorder/domain/domain.dart';
+import 'package:blood_sugar_recorder/utils/bool_converter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'cycle_record.g.dart';
@@ -17,6 +18,7 @@ class CycleRecord {
   DateTime? datetime;
 
   ///该周期是否关闭，0:false, 1:true
+  @JsonKey(fromJson: boolFromInt, toJson: boolToInt)
   bool closed;
 
   ///周期备注

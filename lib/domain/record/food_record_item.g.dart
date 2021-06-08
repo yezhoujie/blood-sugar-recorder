@@ -19,10 +19,10 @@ FoodRecordItem _$FoodRecordItemFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$FoodRecordItemToJson(FoodRecordItem instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'userId': instance.userId,
       'recordTime': instance.recordTime.toIso8601String(),
       'cycleRecordId': instance.cycleRecordId,
-      'id': instance.id,
       'foodInfo': instance.foodInfo,
       'comment': instance.comment,
     };

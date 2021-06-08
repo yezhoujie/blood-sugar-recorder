@@ -54,7 +54,9 @@ import 'package:flutter/material.dart';
     CustomRoute(
       page: MainPage,
       transitionsBuilder: slideTransition,
+      maintainState: false,
     ),
+
     /// 药物使用记录新增修改页面.
     CustomRoute(
         page: MedicineRecordPage,

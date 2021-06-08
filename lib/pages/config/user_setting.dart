@@ -131,7 +131,8 @@ class _UserSettingPageState extends State<UserSettingPage> {
           size: 35.sp,
         ),
         onPressed: () {
-          context.popRoute();
+          AutoRouter.of(context)
+              .pushAndPopUntil(MainRoute(tabIndex: 3), predicate: (_) => false);
         },
       ),
     );
@@ -383,7 +384,6 @@ class _UserSettingPageState extends State<UserSettingPage> {
       /// 切换用户.
       Provider.of<UserSwitchState>(context, listen: false)
           .switchCurrentUserTo(_currentUser);
-
     } else {
       await UserService().save(_currentUser!);
     }
@@ -398,7 +398,8 @@ class _UserSettingPageState extends State<UserSettingPage> {
         init: true,
       ));
     } else {
-      context.popRoute();
+      AutoRouter.of(context).popUntilRoot();AutoRouter.of(context)
+          .pushAndPopUntil(MainRoute(tabIndex: 3), predicate: (_) => false);
     }
   }
 }

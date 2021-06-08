@@ -105,6 +105,7 @@ class AppRoute extends _i1.RootStackRouter {
           final args = data.argsAs<MainRouteArgs>();
           return _i12.MainPage(key: args.key, tabIndex: args.tabIndex);
         },
+        maintainState: false,
         transitionsBuilder: _i6.slideTransition,
         opaque: true,
         barrierDismissible: false),

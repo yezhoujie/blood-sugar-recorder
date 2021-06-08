@@ -1,3 +1,4 @@
+import 'package:blood_sugar_recorder/utils/bool_converter.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -23,7 +24,8 @@ class UserMedicineConfig {
   /// 药物单位.
   String? unit;
 
-  int deleted;
+  @JsonKey(fromJson: boolFromInt, toJson: boolToInt)
+  bool deleted;
 
   UserMedicineConfig({
     this.id,
@@ -32,7 +34,7 @@ class UserMedicineConfig {
     required this.name,
     required this.color,
     this.unit,
-    this.deleted = 0,
+    this.deleted = false,
   });
 
   factory UserMedicineConfig.fromJson(Map<String, dynamic> json) =>
@@ -48,7 +50,7 @@ class UserMedicineConfig {
       name: "门冬胰岛素",
       color: Colors.orange.value.toRadixString(16),
       unit: "单位",
-      deleted: 0,
+      deleted: false,
     );
   }
 }

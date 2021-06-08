@@ -5,6 +5,7 @@ import 'package:blood_sugar_recorder/constant/constant.dart';
 import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:blood_sugar_recorder/error/error_data.dart';
 import 'package:blood_sugar_recorder/global.dart';
+import 'package:blood_sugar_recorder/route/route.gr.dart';
 import 'package:blood_sugar_recorder/service/record/medicine_record.dart';
 import 'package:blood_sugar_recorder/service/service.dart';
 import 'package:blood_sugar_recorder/utils/utils.dart';
@@ -104,6 +105,10 @@ class _MedicineRecordPageState extends State<MedicineRecordPage> {
           recordTime: DateTime.now(),
         );
 
+    if (null != widget.medicineRecordItem) {
+      this._usageController.text = widget.medicineRecordItem!.usage.toString();
+    }
+
     /// 获取用户配置的药物列表.
     _loadMedicineList();
   }
@@ -127,7 +132,8 @@ class _MedicineRecordPageState extends State<MedicineRecordPage> {
           size: 35.sp,
         ),
         onPressed: () {
-          context.popRoute();
+          AutoRouter.of(context)
+              .pushAndPopUntil(MainRoute(tabIndex: 0), predicate: (_) => false);
         },
       ),
     );
@@ -504,7 +510,9 @@ class _MedicineRecordPageState extends State<MedicineRecordPage> {
     }
 
     cancelFunc();
-    // /// 返回到列表页面.
-    // context.popRoute();
+
+    /// 返回到列表页面.
+    AutoRouter.of(context)
+        .pushAndPopUntil(MainRoute(tabIndex: 0), predicate: (_) => false);
   }
 }

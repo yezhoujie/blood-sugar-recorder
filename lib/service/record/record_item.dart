@@ -1,6 +1,7 @@
 import 'package:blood_sugar_recorder/datasource/datasource.dart';
 import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:blood_sugar_recorder/error/error_data.dart';
+import 'package:blood_sugar_recorder/service/record/cycle_record.dart';
 
 /// 周期内记录抽象service.
 abstract class RecordItemService<T extends RecordItem> {
@@ -8,7 +9,11 @@ abstract class RecordItemService<T extends RecordItem> {
     try {
       CycleRecord cycle = await this._checkCycle(item);
       item.cycleRecordId = cycle.id;
-      return await this.doSave(item);
+      T res = await this.doSave(item);
+
+      /// 更新周期信息.
+      await CycleRecordService().refresh(cycle);
+      return res;
     } catch (exception) {
       throw ErrorData(
           code: ErrorData.errorCodeMap['INTERNAL_ERROR']!,
@@ -40,4 +45,16 @@ abstract class RecordItemService<T extends RecordItem> {
   }
 
   Future<T> doSave(T item);
+
+  Future<void> doDelete(T item);
+
+  Future<void> delete(T item) async {
+    if (null != item.id) {
+      CycleRecord cycle =
+          await CycleRecordService().getById(item.cycleRecordId!);
+      await this.doDelete(item);
+      ///刷新周期数据.
+      await CycleRecordService().refresh(cycle);
+    }
+  }
 }

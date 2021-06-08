@@ -1,4 +1,5 @@
 import 'package:blood_sugar_recorder/domain/record/record_item.dart';
+import 'package:blood_sugar_recorder/utils/bool_converter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'blood_sugar_record_item.g.dart';
@@ -9,6 +10,7 @@ class BloodSugarRecordItem extends RecordItem {
   double? bloodSugar;
 
   ///是否为空腹0:否，1:是
+  @JsonKey(fromJson: boolFromIntWithNull, toJson: boolToIntWithNull)
   bool? fpg = false;
 
   BloodSugarRecordItem(

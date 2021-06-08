@@ -88,7 +88,8 @@ class _UserListPageState extends State<UserListPage> {
           size: 35.sp,
         ),
         onPressed: () {
-          context.popRoute();
+          AutoRouter.of(context)
+              .pushAndPopUntil(MainRoute(tabIndex: 3), predicate: (_) => false);
         },
       ),
     );
@@ -258,7 +259,6 @@ class _UserListPageState extends State<UserListPage> {
                             } else {
                               /// 切换用户.
                               if (e.id != _currentUser.id) {
-
                                 Global.saveCurrentUser(e);
                                 Provider.of<UserSwitchState>(context,
                                         listen: false)

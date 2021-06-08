@@ -24,7 +24,7 @@ CREATE TABLE user_medicine_config
     name    TEXT                NOT NULL, -- 药物名称
     color   TEXT                NOT NULL, -- 显示颜色
     unit    TEXT                NOT NULL, -- 单位名称
-    deleted INTEGER             NOT NULL  -- 删除标志位.
+    deleted BOOLEAN             NOT NULL  -- 删除标志位.
 );
 -- 创建用户ID索引
 CREATE INDEX medicine_config_user_id_index ON user_medicine_config (userId);
@@ -40,7 +40,7 @@ CREATE TABLE cycle_record
     id       INTEGER PRIMARY KEY NOT NULL, -- 主键id
     userId   INTEGER             NOT NULL, -- 关联用户id
     datetime TEXT,                         -- 周期所在时间，以周期内最后一次血糖记录时间为准
-    closed   INTEGER             NOT NULL, -- 该周期是否关闭，0:false, 1:true
+    closed   BOOLEAN             NOT NULL, -- 该周期是否关闭，0:false, 1:true
     comment  TEXT                          -- 周期备注
 );
 -- 创建周期表用户id索引
@@ -61,7 +61,7 @@ CREATE TABLE medicine_record_item
     medicineId    INTEGER             NOT NULL, -- 药物ID
     `usage`       REAL                NOT NULL, -- 药物用量
     recordTime    TEXT                NOT NULL, -- 记录时间
-    extra         INTEGER             NOT NULL  -- 是否进行额外药物补充
+    extra         BOOLEAN             NOT NULL  -- 是否进行额外药物补充
 );
 
 -- 创建周期id索引
@@ -105,7 +105,7 @@ CREATE TABLE blood_sugar_record_item
     cycleRecordId INTEGER             NOT NULL, -- 关联周期ID
     bloodSugar    REAL                NOT NULL, -- 血糖
     recordTime    TEXT                NOT NULL, -- 记录时间
-    fpg           INTEGER             NOT NULL  -- 是否为空腹0:否，1:是
+    fpg           BOOLEAN             NOT NULL  -- 是否为空腹0:否，1:是
 
 );
 -- 创建周期id索引

@@ -2,6 +2,7 @@ import 'package:blood_sugar_recorder/datasource/datasource.dart';
 import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:blood_sugar_recorder/domain/record/record_item.dart';
 import 'package:blood_sugar_recorder/error/error_data.dart';
+import 'package:blood_sugar_recorder/service/record/medicine_record.dart';
 
 ///记录周期service层.
 ///单例.
@@ -109,5 +110,38 @@ class CycleRecordService {
           code: ErrorData.errorCodeMap['INTERNAL_ERROR']!,
           message: "糟糕！程序出错了,请刷新后重试");
     }
+  }
+
+  /// 根据根据周期内的明细记录，更新该周期的时间.
+  Future<void> refresh(CycleRecord cycle) async {
+    List<List<RecordItem>> list = await Future.wait<List<RecordItem>>([
+      MedicineRecordItemDatasource().findByCycleId(cycle.id!),
+      FoodRecordItemDatasource().findByCycleId(cycle.id!),
+      BloodSugarRecordItemDatasource().findByCycleId(cycle.id!)
+    ]);
+    List<RecordItem> itemList = list.expand((element) => element).toList();
+    if (itemList.isEmpty) {
+      /// 如果周期内一条明细记录都没有，删除该周期数据.
+      await this.deleteById(cycle.id!);
+    } else {
+      if (cycle.closed || null != cycle.datetime) {
+        itemList.sort((a, b) => a.recordTime.compareTo(b.recordTime));
+        cycle.datetime = itemList.last.recordTime;
+        await this.save(cycle);
+      }
+    }
+  }
+
+  /// 只删除周期记录.
+  Future<void> deleteById(int id) async {
+    await CycleRecordDatasource().deleteById(id);
+  }
+
+  /// 删除周期数据以及周期内所有明细记录.
+  Future<void> deleteWithItemsById(int id) async {
+    await MedicineRecordItemDatasource().deleteByCycleId(id);
+    await FoodRecordItemDatasource().deleteByCycleId(id);
+    await BloodSugarRecordItemDatasource().deleteByCycleId(id);
+    await this.deleteById(id);
   }
 }

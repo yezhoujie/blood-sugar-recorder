@@ -13,7 +13,7 @@ CycleRecord _$CycleRecordFromJson(Map<String, dynamic> json) {
     datetime: json['datetime'] == null
         ? null
         : DateTime.parse(json['datetime'] as String),
-    closed: json['closed'] as bool,
+    closed: boolFromInt(json['closed'] as int),
     comment: json['comment'] as String?,
   );
 }
@@ -23,6 +23,6 @@ Map<String, dynamic> _$CycleRecordToJson(CycleRecord instance) =>
       'id': instance.id,
       'userId': instance.userId,
       'datetime': instance.datetime?.toIso8601String(),
-      'closed': instance.closed,
+      'closed': boolToInt(instance.closed),
       'comment': instance.comment,
     };

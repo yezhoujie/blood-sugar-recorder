@@ -281,7 +281,8 @@ class _BloodSugarSettingPageState extends State<BloodSugarSettingPage> {
           size: 35.sp,
         ),
         onPressed: () {
-          context.popRoute();
+          AutoRouter.of(context)
+              .pushAndPopUntil(MainRoute(tabIndex: 3), predicate: (_) => false);
         },
       ),
       actions: <Widget>[
@@ -436,7 +437,8 @@ class _BloodSugarSettingPageState extends State<BloodSugarSettingPage> {
       AutoRouter.of(context).pushAndPopUntil(
           SettingCompleteRoute(), predicate: (route) => false);
     } else {
-      context.popRoute();
+      AutoRouter.of(context)
+          .pushAndPopUntil(MainRoute(tabIndex: 3), predicate: (_) => false);
     }
     return true;
   }

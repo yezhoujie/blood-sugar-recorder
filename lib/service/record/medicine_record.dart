@@ -17,4 +17,9 @@ class MedicineRecordService extends RecordItemService<MedicineRecordItem> {
   Future<MedicineRecordItem> doSave(MedicineRecordItem item) async {
     return await MedicineRecordItemDatasource().save(item);
   }
+
+  @override
+  Future<void> doDelete(MedicineRecordItem item) async {
+    await MedicineRecordItemDatasource().deleteById(item.id!);
+  }
 }
