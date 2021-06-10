@@ -83,8 +83,8 @@ CREATE TABLE food_record_item
     id            INTEGER PRIMARY KEY NOT NULL, -- 主键ID
     userId        INTEGER             NOT NULL, -- 冗余用户ID
     cycleRecordId INTEGER             NOT NULL, -- 关联周期ID
-    foodInfo      TEXT                NOT NULL, -- 食物清单
-    comment       TEXT                NOT NULL, -- 进食备注
+    foodInfo      TEXT,                         -- 食物清单
+    comment       TEXT,                         -- 进食备注
     recordTime    TEXT                NOT NULL  -- 记录时间
 );
 

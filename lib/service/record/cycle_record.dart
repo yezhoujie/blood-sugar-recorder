@@ -26,7 +26,7 @@ class CycleRecordService {
       if (null != cycle) {
         /// 如果存在当前正在进行的记录周期，获取周期内的详细记录.
         List<List<RecordItem>> list = await Future.wait<List<RecordItem>>([
-          MedicineRecordItemDatasource().findByCycleId(cycle.id!),
+          MedicineRecordService().findByCycleId(cycle.id!),
           FoodRecordItemDatasource().findByCycleId(cycle.id!),
           BloodSugarRecordItemDatasource().findByCycleId(cycle.id!)
         ]);
@@ -143,5 +143,12 @@ class CycleRecordService {
     await FoodRecordItemDatasource().deleteByCycleId(id);
     await BloodSugarRecordItemDatasource().deleteByCycleId(id);
     await this.deleteById(id);
+  }
+
+  /// 关闭周期.
+  Future<void> close(CycleRecord cycle) async {
+    cycle.closed = true;
+    await this.save(cycle);
+    await this.refresh(cycle);
   }
 }

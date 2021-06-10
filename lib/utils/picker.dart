@@ -117,7 +117,7 @@ showPickerDateTime({
     textAlign: TextAlign.right,
     selectedTextStyle: TextStyle(
       color: Colors.red,
-      fontSize: 30.sp,
+      fontSize: 25.sp,
     ),
     itemExtent: 60.h,
     selectionOverlay: CupertinoPickerDefaultSelectionOverlay(

@@ -73,7 +73,6 @@ class _SettingPageState extends State<SettingPage> {
 
             /// 关于卡片.
             _buildAboutCard(),
-
           ],
         ),
       ),
@@ -85,7 +84,7 @@ class _SettingPageState extends State<SettingPage> {
     Function()? onPress,
   }) {
     return SizedBox(
-      width: 210.w,
+      width: 150.w,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -118,8 +117,7 @@ class _SettingPageState extends State<SettingPage> {
         ));
   }
 
-
-  Widget _buildAboutCard(){
+  Widget _buildAboutCard() {
     return Card(
       color: Colors.white,
       child: Column(

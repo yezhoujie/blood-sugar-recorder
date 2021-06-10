@@ -89,6 +89,10 @@ dependencies:
   enum_to_string: ^2.0.1
   #颜色选择器.
   flutter_colorpicker: ^0.4.0
+  #调用安卓系统组件
+  android_intent_plus: ^1.0.1
+  #调用其他app.
+  url_launcher: ^6.0.6
 
 dev_dependencies:
   flutter_test:

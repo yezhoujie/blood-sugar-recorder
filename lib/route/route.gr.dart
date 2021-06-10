@@ -5,8 +5,8 @@
 // **************************************************************************
 
 import 'package:auto_route/auto_route.dart' as _i1;
-import 'package:blood_sugar_recorder/domain/domain.dart' as _i15;
-import 'package:blood_sugar_recorder/main.dart' as _i14;
+import 'package:blood_sugar_recorder/domain/domain.dart' as _i16;
+import 'package:blood_sugar_recorder/main.dart' as _i15;
 import 'package:blood_sugar_recorder/pages/config/blood_sugar_setting.dart'
     as _i10;
 import 'package:blood_sugar_recorder/pages/config/medicine_list.dart' as _i8;
@@ -17,6 +17,7 @@ import 'package:blood_sugar_recorder/pages/config/user_list.dart' as _i5;
 import 'package:blood_sugar_recorder/pages/config/user_setting.dart' as _i7;
 import 'package:blood_sugar_recorder/pages/index/index.dart' as _i3;
 import 'package:blood_sugar_recorder/pages/main/main.dart' as _i12;
+import 'package:blood_sugar_recorder/pages/record/food_record.dart' as _i14;
 import 'package:blood_sugar_recorder/pages/record/medicine_record.dart' as _i13;
 import 'package:blood_sugar_recorder/pages/welcome/welcome.dart' as _i4;
 import 'package:blood_sugar_recorder/route/route.dart' as _i6;
@@ -122,11 +123,24 @@ class AppRoute extends _i1.RootStackRouter {
         transitionsBuilder: _i6.slideTransition,
         opaque: true,
         barrierDismissible: false),
+    FoodRecordRoute.name: (routeData) => _i1.CustomPage<dynamic>(
+        routeData: routeData,
+        builder: (data) {
+          final args = data.argsAs<FoodRecordRouteArgs>();
+          return _i14.FoodRecordPage(
+              key: args.key,
+              foodRecordItem: args.foodRecordItem,
+              autoSave: args.autoSave);
+        },
+        maintainState: false,
+        transitionsBuilder: _i6.slideTransition,
+        opaque: true,
+        barrierDismissible: false),
     MyHomeRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (data) {
           final args = data.argsAs<MyHomeRouteArgs>();
-          return _i14.MyHomePage(key: args.key, title: args.title);
+          return _i15.MyHomePage(key: args.key, title: args.title);
         })
   };
 
@@ -146,6 +160,7 @@ class AppRoute extends _i1.RootStackRouter {
         _i1.RouteConfig(MainRoute.name, path: '/main-page'),
         _i1.RouteConfig(MedicineRecordRoute.name,
             path: '/medicine-record-page'),
+        _i1.RouteConfig(FoodRecordRoute.name, path: '/food-record-page'),
         _i1.RouteConfig(MyHomeRoute.name, path: '/my-home-page')
       ];
 }
@@ -269,7 +284,7 @@ class MainRouteArgs {
 class MedicineRecordRoute extends _i1.PageRouteInfo<MedicineRecordRouteArgs> {
   MedicineRecordRoute(
       {_i2.Key? key,
-      _i15.MedicineRecordItem? medicineRecordItem,
+      _i16.MedicineRecordItem? medicineRecordItem,
       required bool autoSave})
       : super(name,
             path: '/medicine-record-page',
@@ -287,7 +302,31 @@ class MedicineRecordRouteArgs {
 
   final _i2.Key? key;
 
-  final _i15.MedicineRecordItem? medicineRecordItem;
+  final _i16.MedicineRecordItem? medicineRecordItem;
+
+  final bool autoSave;
+}
+
+class FoodRecordRoute extends _i1.PageRouteInfo<FoodRecordRouteArgs> {
+  FoodRecordRoute(
+      {_i2.Key? key,
+      _i16.FoodRecordItem? foodRecordItem,
+      required bool autoSave})
+      : super(name,
+            path: '/food-record-page',
+            args: FoodRecordRouteArgs(
+                key: key, foodRecordItem: foodRecordItem, autoSave: autoSave));
+
+  static const String name = 'FoodRecordRoute';
+}
+
+class FoodRecordRouteArgs {
+  const FoodRecordRouteArgs(
+      {this.key, this.foodRecordItem, required this.autoSave});
+
+  final _i2.Key? key;
+
+  final _i16.FoodRecordItem? foodRecordItem;
 
   final bool autoSave;
 }

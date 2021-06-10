@@ -1,3 +1,4 @@
+import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:blood_sugar_recorder/domain/record/record_item.dart';
 import 'package:blood_sugar_recorder/utils/bool_converter.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -16,6 +17,10 @@ class MedicineRecordItem extends RecordItem {
   /// 是否进行额外药物补充
   @JsonKey(fromJson: boolFromInt, toJson: boolToInt)
   bool extra;
+
+  /// 冗余 使用药物Id 关联的药物信息.
+  @JsonKey(ignore: true)
+  UserMedicineConfig? medicine;
 
   MedicineRecordItem({
     int? id,

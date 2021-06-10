@@ -14,6 +14,9 @@ CancelFunc showTooltip({
   Color cardColor = Colors.black,
   Duration? duration,
 }) {
+  if (content.isEmpty) {
+    return () {};
+  }
   return BotToast.showAttachedWidget(
       target: target,
       targetContext: context,
@@ -29,19 +32,18 @@ CancelFunc showTooltip({
       enableSafeArea: true,
       backgroundColor: backgroundColor,
       attachedBuilder: (cancel) => (Card(
-            color: cardColor,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: RadiusConstant.k6pxRadius,
+          color: cardColor,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: RadiusConstant.k6pxRadius,
+            ),
+            child: Text(
+              content,
+              style: TextStyle(
+                fontSize: fontSize.sp,
+                color: fontColor,
               ),
-              child: Text(
-                content,
-                style: TextStyle(
-                  fontSize: fontSize.sp,
-                  color: fontColor,
-                ),
-              ),
-              margin: EdgeInsets.all(20.w),
-            )
-          )));
+            ),
+            margin: EdgeInsets.all(20.w),
+          ))));
 }

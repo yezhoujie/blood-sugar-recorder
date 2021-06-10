@@ -317,6 +317,7 @@ class _MedicineSettingPageState extends State<MedicineSettingPage> {
               bool success = await _handleSaveConfig();
               if (success) {
                 if (widget.init) {
+                  await _handleSaveConfig();
                   context.pushRoute(BloodSugarSettingRoute(
                     init: true,
                   ));

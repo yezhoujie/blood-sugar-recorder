@@ -343,7 +343,7 @@ class _UserSettingPageState extends State<UserSettingPage> {
                 RegExp("^[\u4e00-\u9fa5_a-zA-Z0-9\\s]+\$"),
               )
             ],
-            maxLength: 10,
+            maxLength: 5,
             maxLengthEnforcement: MaxLengthEnforcement.enforced,
             maxLines: 1,
             isValid: _nameInputValid,
@@ -368,9 +368,21 @@ class _UserSettingPageState extends State<UserSettingPage> {
       );
       return;
     } else {
-      setState(() {
-        this._nameInputValid = true;
-      });
+      if(name.length > 5){
+        setState(() {
+          this._nameInputValid = false;
+        });
+        showNotification(
+          type: NotificationType.ERROR,
+          message: "姓名不能大于5个字符",
+        );
+        return;
+      }else{
+        setState(() {
+          this._nameInputValid = true;
+        });
+      }
+
     }
 
     _currentUser!.name = name;

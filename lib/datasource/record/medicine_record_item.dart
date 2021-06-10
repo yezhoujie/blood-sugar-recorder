@@ -57,9 +57,7 @@ class MedicineRecordItemDatasource {
 
   /// 删除一个周期下的所有药物干预记录.
   Future<void> deleteByCycleId(int cycleId) async {
-    await Global.database
-        .delete(this._tableName, where: "cycleRecordId = ?", whereArgs: [
-      [cycleId]
-    ]);
+    await Global.database.delete(this._tableName,
+        where: "cycleRecordId = ?", whereArgs: [cycleId]);
   }
 }

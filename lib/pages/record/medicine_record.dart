@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:blood_sugar_recorder/constant/constant.dart';
 import 'package:blood_sugar_recorder/domain/domain.dart';
@@ -19,7 +17,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 /// 创建药物使用记录页面.
-/// [medicineRecordItem] 编辑是传入的被编辑数据对象.
+/// [medicineRecordItem] 编辑时传入的被编辑数据对象.
 /// [autoSave] 点击保存按钮是否自动保存后台.
 class MedicineRecordPage extends StatefulWidget {
   /// 当前的药物使用记录信息.
@@ -54,44 +52,12 @@ class _MedicineRecordPageState extends State<MedicineRecordPage> {
 
   bool _usageInputValid = true;
 
+  CancelFunc? _cancelLoading;
+
   @override
   Widget build(BuildContext context) {
     AutoRouter.of(context);
-    return this._medicineList.isEmpty
-        ? Container()
-        : Scaffold(
-            key: this._scaffoldKey,
-            resizeToAvoidBottomInset: false,
-            appBar: _buildAppBar(),
-            body: Container(
-              margin: EdgeInsets.only(top: 25.h),
-              width: double.infinity,
-              child: ListView(
-                children: ListTile.divideTiles(
-                  context: context,
-                  tiles: <Widget>[
-                    /// 药物类型.
-                    _buildMediType(),
-
-                    /// 药物选择.
-                    _buildMedicinePicker(),
-
-                    /// 药物使用单位
-                    _buildUsage(),
-
-                    /// 是否为补充使用.
-                    _buildExtra(),
-
-                    ///记录时间.
-                    _buildRecordTime(),
-
-                    ///按钮区域.
-                    _buildButtons(),
-                  ],
-                ).toList(),
-              ),
-            ),
-          );
+    return this._medicineList.isEmpty ? _buildLoading() : _buildPage();
   }
 
   @override
@@ -114,6 +80,61 @@ class _MedicineRecordPageState extends State<MedicineRecordPage> {
   }
 
   ////////////widget构建区域//////////
+  _buildLoading() {
+    this._cancelLoading = showLoading();
+    return Container();
+  }
+
+  @override
+  void dispose() {
+    this._usageController.dispose();
+    if (null != this._cancelLoading) {
+      this._cancelLoading!();
+      this._cancelLoading = null;
+    }
+    super.dispose();
+  }
+
+  _buildPage() {
+    if (null != this._cancelLoading) {
+      this._cancelLoading!();
+      this._cancelLoading = null;
+    }
+    return Scaffold(
+      key: this._scaffoldKey,
+      resizeToAvoidBottomInset: false,
+      appBar: _buildAppBar(),
+      body: Container(
+        margin: EdgeInsets.only(top: 25.h),
+        width: double.infinity,
+        child: ListView(
+          children: ListTile.divideTiles(
+            context: context,
+            tiles: <Widget>[
+              /// 药物类型.
+              _buildMediType(),
+
+              /// 药物选择.
+              _buildMedicinePicker(),
+
+              /// 药物使用单位
+              _buildUsage(),
+
+              /// 是否为补充使用.
+              _buildExtra(),
+
+              ///记录时间.
+              _buildRecordTime(),
+
+              ///按钮区域.
+              _buildButtons(),
+            ],
+          ).toList(),
+        ),
+      ),
+    );
+  }
+
   PreferredSizeWidget _buildAppBar() {
     return transparentAppBar(
       context: context,
@@ -344,7 +365,7 @@ class _MedicineRecordPageState extends State<MedicineRecordPage> {
         fontSize: 25.sp,
       ),
       trailing: SizedBox(
-        width: 193.w,
+        width: 212.w,
         child: Row(
           children: [
             Text(
