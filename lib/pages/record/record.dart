@@ -293,7 +293,10 @@ class _RecordPageState extends State<RecordPage> {
           OutlinedButton.icon(
             icon: Icon(Iconfont.xietang),
             onPressed: () {
-              /// todo 跳转记录血糖页面.
+              context.pushRoute(BloodSugarRecordRoute(
+                autoSave: true,
+                returnWithPop: false,
+              ));
             },
             style: OutlinedButton.styleFrom(
               primary: Colors.white,

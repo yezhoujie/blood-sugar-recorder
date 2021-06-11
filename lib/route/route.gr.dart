@@ -5,8 +5,8 @@
 // **************************************************************************
 
 import 'package:auto_route/auto_route.dart' as _i1;
-import 'package:blood_sugar_recorder/domain/domain.dart' as _i16;
-import 'package:blood_sugar_recorder/main.dart' as _i15;
+import 'package:blood_sugar_recorder/domain/domain.dart' as _i17;
+import 'package:blood_sugar_recorder/main.dart' as _i16;
 import 'package:blood_sugar_recorder/pages/config/blood_sugar_setting.dart'
     as _i10;
 import 'package:blood_sugar_recorder/pages/config/medicine_list.dart' as _i8;
@@ -17,6 +17,8 @@ import 'package:blood_sugar_recorder/pages/config/user_list.dart' as _i5;
 import 'package:blood_sugar_recorder/pages/config/user_setting.dart' as _i7;
 import 'package:blood_sugar_recorder/pages/index/index.dart' as _i3;
 import 'package:blood_sugar_recorder/pages/main/main.dart' as _i12;
+import 'package:blood_sugar_recorder/pages/record/blood_sugar_record.dart'
+    as _i15;
 import 'package:blood_sugar_recorder/pages/record/food_record.dart' as _i14;
 import 'package:blood_sugar_recorder/pages/record/medicine_record.dart' as _i13;
 import 'package:blood_sugar_recorder/pages/welcome/welcome.dart' as _i4;
@@ -136,11 +138,25 @@ class AppRoute extends _i1.RootStackRouter {
         transitionsBuilder: _i6.slideTransition,
         opaque: true,
         barrierDismissible: false),
+    BloodSugarRecordRoute.name: (routeData) => _i1.CustomPage<dynamic>(
+        routeData: routeData,
+        builder: (data) {
+          final args = data.argsAs<BloodSugarRecordRouteArgs>();
+          return _i15.BloodSugarRecordPage(
+              key: args.key,
+              bloodSugarRecordItem: args.bloodSugarRecordItem,
+              autoSave: args.autoSave,
+              returnWithPop: args.returnWithPop);
+        },
+        maintainState: false,
+        transitionsBuilder: _i6.slideTransition,
+        opaque: true,
+        barrierDismissible: false),
     MyHomeRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (data) {
           final args = data.argsAs<MyHomeRouteArgs>();
-          return _i15.MyHomePage(key: args.key, title: args.title);
+          return _i16.MyHomePage(key: args.key, title: args.title);
         })
   };
 
@@ -161,6 +177,8 @@ class AppRoute extends _i1.RootStackRouter {
         _i1.RouteConfig(MedicineRecordRoute.name,
             path: '/medicine-record-page'),
         _i1.RouteConfig(FoodRecordRoute.name, path: '/food-record-page'),
+        _i1.RouteConfig(BloodSugarRecordRoute.name,
+            path: '/blood-sugar-record-page'),
         _i1.RouteConfig(MyHomeRoute.name, path: '/my-home-page')
       ];
 }
@@ -284,7 +302,7 @@ class MainRouteArgs {
 class MedicineRecordRoute extends _i1.PageRouteInfo<MedicineRecordRouteArgs> {
   MedicineRecordRoute(
       {_i2.Key? key,
-      _i16.MedicineRecordItem? medicineRecordItem,
+      _i17.MedicineRecordItem? medicineRecordItem,
       required bool autoSave})
       : super(name,
             path: '/medicine-record-page',
@@ -302,7 +320,7 @@ class MedicineRecordRouteArgs {
 
   final _i2.Key? key;
 
-  final _i16.MedicineRecordItem? medicineRecordItem;
+  final _i17.MedicineRecordItem? medicineRecordItem;
 
   final bool autoSave;
 }
@@ -310,7 +328,7 @@ class MedicineRecordRouteArgs {
 class FoodRecordRoute extends _i1.PageRouteInfo<FoodRecordRouteArgs> {
   FoodRecordRoute(
       {_i2.Key? key,
-      _i16.FoodRecordItem? foodRecordItem,
+      _i17.FoodRecordItem? foodRecordItem,
       required bool autoSave})
       : super(name,
             path: '/food-record-page',
@@ -326,9 +344,43 @@ class FoodRecordRouteArgs {
 
   final _i2.Key? key;
 
-  final _i16.FoodRecordItem? foodRecordItem;
+  final _i17.FoodRecordItem? foodRecordItem;
 
   final bool autoSave;
+}
+
+class BloodSugarRecordRoute
+    extends _i1.PageRouteInfo<BloodSugarRecordRouteArgs> {
+  BloodSugarRecordRoute(
+      {_i2.Key? key,
+      _i17.BloodSugarRecordItem? bloodSugarRecordItem,
+      required bool autoSave,
+      required bool returnWithPop})
+      : super(name,
+            path: '/blood-sugar-record-page',
+            args: BloodSugarRecordRouteArgs(
+                key: key,
+                bloodSugarRecordItem: bloodSugarRecordItem,
+                autoSave: autoSave,
+                returnWithPop: returnWithPop));
+
+  static const String name = 'BloodSugarRecordRoute';
+}
+
+class BloodSugarRecordRouteArgs {
+  const BloodSugarRecordRouteArgs(
+      {this.key,
+      this.bloodSugarRecordItem,
+      required this.autoSave,
+      required this.returnWithPop});
+
+  final _i2.Key? key;
+
+  final _i17.BloodSugarRecordItem? bloodSugarRecordItem;
+
+  final bool autoSave;
+
+  final bool returnWithPop;
 }
 
 class MyHomeRoute extends _i1.PageRouteInfo<MyHomeRouteArgs> {

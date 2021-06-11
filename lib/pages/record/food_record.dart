@@ -52,8 +52,6 @@ class _FoodRecordPageState extends State<FoodRecordPage> {
   /// 用备注况输入校验状态.
   bool _commentInputValid = true;
 
-  bool _createAlert = false;
-
   @override
   void initState() {
     super.initState();

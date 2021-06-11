@@ -8,6 +8,7 @@ import 'package:blood_sugar_recorder/pages/config/user_list.dart';
 import 'package:blood_sugar_recorder/pages/config/user_setting.dart';
 import 'package:blood_sugar_recorder/pages/index/index.dart';
 import 'package:blood_sugar_recorder/pages/main/main.dart';
+import 'package:blood_sugar_recorder/pages/record/blood_sugar_record.dart';
 import 'package:blood_sugar_recorder/pages/record/food_record.dart';
 import 'package:blood_sugar_recorder/pages/record/medicine_record.dart';
 import 'package:blood_sugar_recorder/pages/welcome/welcome.dart';
@@ -67,6 +68,12 @@ import 'package:flutter/material.dart';
     /// 用餐记录新增修改页面.
     CustomRoute(
         page: FoodRecordPage,
+        transitionsBuilder: slideTransition,
+        maintainState: false),
+
+    /// 血糖测量记录新增修改页面.
+    CustomRoute(
+        page: BloodSugarRecordPage,
         transitionsBuilder: slideTransition,
         maintainState: false),
     // CustomRoute(
