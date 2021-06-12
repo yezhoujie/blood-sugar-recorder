@@ -52,14 +52,15 @@ class _SettingCompletePageState extends State<SettingCompletePage> {
                           child: Align(
                             alignment: Alignment.center,
                             child: Text(
-                              "提示: 所有配置项可在\n 设置页面中重新修改",
+                              "提示:\n 1.本程序采用周期记录方式\n 2.一个周期的流程一般为[药物使用]->[用餐]->[血糖测量]\n 3.每个周期内最多包含10条明细记录\n 4.所有配置项可在设置页面中重新修改",
                               style: TextStyle(
                                 fontSize: 25.sp,
                                 color: AppColor.thirdElementText,
                               ),
+                              textAlign: TextAlign.start,
                             ),
                           ),
-                          flex: 3,
+                          flex: 7,
                         ),
                         Expanded(
                           child: Align(
@@ -121,7 +122,7 @@ class _SettingCompletePageState extends State<SettingCompletePage> {
                               ],
                             ),
                           ),
-                          flex: 6,
+                          flex: 2,
                         ),
                       ],
                     ),

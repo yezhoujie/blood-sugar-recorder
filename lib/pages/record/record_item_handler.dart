@@ -2,6 +2,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:blood_sugar_recorder/route/route.gr.dart';
+import 'package:blood_sugar_recorder/service/record/blood_sugar_record.dart';
 import 'package:blood_sugar_recorder/service/record/food_record.dart';
 import 'package:blood_sugar_recorder/service/record/medicine_record.dart';
 import 'package:blood_sugar_recorder/widgets/notification.dart';
@@ -10,7 +11,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 
 ///记录明细处理
-void handleRecordItemEdit(BuildContext context, RecordItem item) {
+void defaultHandleRecordItemEdit(BuildContext context, RecordItem item) {
   switch (item.runtimeType) {
     case MedicineRecordItem:
       {
@@ -24,11 +25,18 @@ void handleRecordItemEdit(BuildContext context, RecordItem item) {
             autoSave: true, foodRecordItem: item as FoodRecordItem));
         break;
       }
-    // todo more runtimeType.
+    case BloodSugarRecordItem:
+      {
+        AutoRouter.of(context).push(BloodSugarRecordRoute(
+            autoSave: true,
+            bloodSugarRecordItem: item as BloodSugarRecordItem,
+            returnWithPop: false));
+        break;
+      }
   }
 }
 
-void handleRecordItemDelete(
+void defaultHandleRecordItemDelete(
     BuildContext context, RecordItem item, Function callback) async {
   // 删除提示框.
   OkCancelResult res = await showOkCancelAlertDialog(
@@ -52,7 +60,11 @@ void handleRecordItemDelete(
           await FoodRecordService().delete(item as FoodRecordItem);
           break;
         }
-      // todo more runtimeType.
+      case BloodSugarRecordItem:
+        {
+          await BloodSugarRecordService().delete(item as BloodSugarRecordItem);
+          break;
+        }
     }
 
     showNotification(type: NotificationType.SUCCESS, message: "删除成功");

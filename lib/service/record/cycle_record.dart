@@ -7,6 +7,7 @@ import 'package:blood_sugar_recorder/service/record/medicine_record.dart';
 ///记录周期service层.
 ///单例.
 class CycleRecordService {
+  static const MAX_ITEM_COUNT = 10;
   static final CycleRecordService _instance = CycleRecordService._internal();
 
   CycleRecordService._internal();
@@ -25,13 +26,7 @@ class CycleRecordService {
 
       if (null != cycle) {
         /// 如果存在当前正在进行的记录周期，获取周期内的详细记录.
-        List<List<RecordItem>> list = await Future.wait<List<RecordItem>>([
-          MedicineRecordService().findByCycleId(cycle.id!),
-          FoodRecordItemDatasource().findByCycleId(cycle.id!),
-          BloodSugarRecordItemDatasource().findByCycleId(cycle.id!)
-        ]);
-        List<RecordItem> itemList = list.expand((element) => element).toList()
-          ..sort((a, b) => a.recordTime.compareTo(b.recordTime));
+        List<RecordItem> itemList = await this.findItemsById(cycle.id!);
         cycle.itemList = itemList;
       }
       return cycle;
@@ -114,12 +109,7 @@ class CycleRecordService {
 
   /// 根据根据周期内的明细记录，更新该周期的时间.
   Future<void> refresh(CycleRecord cycle) async {
-    List<List<RecordItem>> list = await Future.wait<List<RecordItem>>([
-      MedicineRecordItemDatasource().findByCycleId(cycle.id!),
-      FoodRecordItemDatasource().findByCycleId(cycle.id!),
-      BloodSugarRecordItemDatasource().findByCycleId(cycle.id!)
-    ]);
-    List<RecordItem> itemList = list.expand((element) => element).toList();
+    List<RecordItem> itemList = await this.findItemsById(cycle.id!);
     if (itemList.isEmpty) {
       /// 如果周期内一条明细记录都没有，删除该周期数据.
       await this.deleteById(cycle.id!);
@@ -150,5 +140,22 @@ class CycleRecordService {
     cycle.closed = true;
     await this.save(cycle);
     await this.refresh(cycle);
+  }
+
+  /// 获取周期内的明细记录列表.
+  Future<List<RecordItem>> findItemsById(int id) async {
+    List<List<RecordItem>> list = await Future.wait<List<RecordItem>>([
+      MedicineRecordService().findByCycleId(id),
+      FoodRecordItemDatasource().findByCycleId(id),
+      BloodSugarRecordItemDatasource().findByCycleId(id)
+    ]);
+    List<RecordItem> itemList = list.expand((element) => element).toList()
+      ..sort((a, b) => a.recordTime.compareTo(b.recordTime));
+    return itemList;
+  }
+
+  /// 判断是否可以在一个周期内继续添加明细记录.
+  Future<bool> canAddItem(int id) async {
+    return (await findItemsById(id)).length < MAX_ITEM_COUNT;
   }
 }

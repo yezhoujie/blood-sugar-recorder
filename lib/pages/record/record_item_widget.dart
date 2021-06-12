@@ -38,6 +38,9 @@ Widget itemPopUpMenu({
   required BuildContext context,
   required RecordItem item,
   required Function callback,
+  Function(BuildContext context, RecordItem item)? handleRecordItemEdit,
+  Function(BuildContext context, RecordItem item, Function callback)?
+      handleRecordItemDelete,
 }) {
   return PopupMenuButton(
     shape: RoundedRectangleBorder(
@@ -84,9 +87,17 @@ Widget itemPopUpMenu({
     },
     onSelected: (value) async {
       if (value == "edit") {
-        handleRecordItemEdit(context, item);
+        if (null != handleRecordItemEdit) {
+          handleRecordItemEdit(context, item);
+        } else {
+          defaultHandleRecordItemEdit(context, item);
+        }
       } else if (value == "delete") {
-        handleRecordItemDelete(context, item, callback);
+        if (null != handleRecordItemDelete) {
+          handleRecordItemDelete(context, item, callback);
+        } else {
+          defaultHandleRecordItemDelete(context, item, callback);
+        }
       }
     },
   );
@@ -277,8 +288,11 @@ Widget buildMedicineRecordItem(BuildContext context, MedicineRecordItem item,
   );
 }
 
-List<Widget> buildDetailRecordItem(BuildContext context,
-    List<RecordItem> itemList, Function itemDeleteCallback) {
+List<Widget> buildDetailRecordItem(
+    BuildContext context,
+    List<RecordItem> itemList,
+    UserBloodSugarConfig standard,
+    Function itemDeleteCallback) {
   return itemList.map((item) {
     switch (item.runtimeType) {
       case MedicineRecordItem:
@@ -291,10 +305,165 @@ List<Widget> buildDetailRecordItem(BuildContext context,
           return buildFoodRecordItem(
               context, item as FoodRecordItem, itemDeleteCallback);
         }
+      case BloodSugarRecordItem:
+        {
+          return buildBloodRecordItem(context, item as BloodSugarRecordItem,
+              standard, itemDeleteCallback);
+        }
       default:
         return Container();
     }
   }).toList();
+}
+
+/// 构建血糖测试记录.
+Widget buildBloodRecordItem(BuildContext context, BloodSugarRecordItem item,
+    UserBloodSugarConfig standard, Function itemDeleteCallback) {
+  return Container(
+    // margin: EdgeInsets.only(right: 20.w),
+    height: 60.h,
+    child: Row(
+      children: [
+        Expanded(
+          flex: 2,
+          child: Builder(
+            builder: (leadingContext) => InkWell(
+              onTap: () {
+                showTooltip(
+                    context: leadingContext,
+                    content: _getBloodSugarRes(item, standard));
+              },
+              child: Icon(
+                Iconfont.xietang,
+                size: 40.sp,
+                color: _getBloodSugarColor(item, standard),
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 3,
+          child: timeColumn(item),
+        ),
+        Expanded(
+          flex: 4,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: bloodSugarTags(item, standard),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    '${item.bloodSugar}',
+                    style: TextStyle(
+                      fontSize: 30.sp,
+                    ),
+                  ),
+                  Text(
+                    'mmol/L',
+                    style: TextStyle(
+                      color: AppColor.thirdElementText,
+                      fontSize: 15.sp,
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: itemPopUpMenu(
+              context: context, item: item, callback: itemDeleteCallback),
+        ),
+      ],
+    ),
+  );
+}
+
+/// 血糖标签.
+bloodSugarTags(BloodSugarRecordItem item, UserBloodSugarConfig standard) {
+  List<Widget> list = [];
+
+  /// 判断血糖高低
+  String res = _getBloodSugarRes(item, standard);
+  IconData data = res == "高血糖"
+      ? Iconfont.xiangshangchaobiao
+      : (res == "低血糖" ? Iconfont.xiangxiachaobiao : Iconfont.wancheng);
+  list.add(Padding(
+    padding: EdgeInsets.only(top: 2.h, right: 5.w),
+    child: Icon(
+      data,
+      color: _getBloodSugarColor(item, standard),
+      size: 20.sp,
+    ),
+  ));
+
+  if (item.fpg!) {
+    list.add(
+      Container(
+        margin: EdgeInsets.only(top: 2.h),
+        color: Colors.amber,
+        height: 22.w,
+        width: 22.w,
+        child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            "空",
+            style: TextStyle(
+              color: Colors.pink,
+              fontSize: 15.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  return list;
+}
+
+Color _getBloodSugarColor(
+    BloodSugarRecordItem item, UserBloodSugarConfig standard) {
+  if (item.fpg!) {
+    /// 空腹
+    if (item.bloodSugar! > standard.fpgMax) {
+      return Colors.red;
+    } else if (item.bloodSugar! < standard.fpgMin) {
+      return Colors.blue;
+    }
+  } else {
+    if (item.bloodSugar! > standard.hpg2Max) {
+      return Colors.red;
+    } else if (item.bloodSugar! < standard.hpg2Min) {
+      return Colors.blue;
+    }
+  }
+  return Colors.green;
+}
+
+String _getBloodSugarRes(
+    BloodSugarRecordItem item, UserBloodSugarConfig standard) {
+  if (item.fpg!) {
+    /// 空腹
+    if (item.bloodSugar! > standard.fpgMax) {
+      return "高血糖";
+    } else if (item.bloodSugar! < standard.fpgMin) {
+      return "低血糖";
+    }
+  } else {
+    if (item.bloodSugar! > standard.hpg2Max) {
+      return "高血糖";
+    } else if (item.bloodSugar! < standard.hpg2Min) {
+      return "低血糖";
+    }
+  }
+  return "血糖正常";
 }
 
 List<Widget> medicineRecordTags(MedicineRecordItem item) {

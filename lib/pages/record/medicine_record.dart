@@ -23,12 +23,16 @@ class MedicineRecordPage extends StatefulWidget {
   /// 当前的药物使用记录信息.
   final MedicineRecordItem? medicineRecordItem;
 
+  /// 新增记录时的所属周期ID.
+  final int? cycleId;
+
   /// 点击按钮是否自动后台保存.
   final bool autoSave;
 
   MedicineRecordPage({
     Key? key,
     this.medicineRecordItem,
+    this.cycleId,
     required this.autoSave,
   }) : super(key: key);
 
@@ -69,6 +73,7 @@ class _MedicineRecordPageState extends State<MedicineRecordPage> {
         MedicineRecordItem(
           userId: Global.currentUser!.id!,
           recordTime: DateTime.now(),
+          cycleRecordId: widget.cycleId,
         );
 
     if (null != widget.medicineRecordItem) {

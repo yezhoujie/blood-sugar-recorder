@@ -7,6 +7,7 @@ import 'package:blood_sugar_recorder/global.dart';
 import 'package:blood_sugar_recorder/pages/record/record_item_widget.dart';
 import 'package:blood_sugar_recorder/provider/user_switch_state.dart';
 import 'package:blood_sugar_recorder/route/route.gr.dart';
+import 'package:blood_sugar_recorder/service/config/config_service.dart';
 import 'package:blood_sugar_recorder/service/record/cycle_record.dart';
 import 'package:blood_sugar_recorder/utils/utils.dart';
 import 'package:blood_sugar_recorder/widgets/notification.dart';
@@ -24,6 +25,9 @@ class RecordPage extends StatefulWidget {
 
 class _RecordPageState extends State<RecordPage> {
   User _currentUser = Global.currentUser!;
+
+  /// 血糖标准.
+  late UserBloodSugarConfig _standard;
 
   CycleRecord? _currentCycle;
 
@@ -140,12 +144,13 @@ class _RecordPageState extends State<RecordPage> {
                   Expanded(
                     child: ListView(
                       children: ListTile.divideTiles(
-                              context: context,
-                              tiles: buildDetailRecordItem(
-                                  context,
-                                  this._currentCycle!.itemList,
-                                  this._refreshCurrentCycle))
-                          .toList(),
+                          context: context,
+                          tiles: buildDetailRecordItem(
+                            context,
+                            this._currentCycle!.itemList,
+                            this._standard,
+                            this._refreshCurrentCycle,
+                          )).toList(),
                     ),
                   ),
                 ],
@@ -260,6 +265,13 @@ class _RecordPageState extends State<RecordPage> {
           OutlinedButton.icon(
             icon: Icon(Iconfont.yaowu),
             onPressed: () async {
+              if (!await _canAdd()) {
+                showNotification(
+                    type: NotificationType.ERROR,
+                    message: "一个周期内最多只能添加10条明细记录");
+                return;
+              }
+
               /// 跳转到添加药物记录页面.
               await _handleToMedicinePage();
             },
@@ -277,6 +289,12 @@ class _RecordPageState extends State<RecordPage> {
           OutlinedButton.icon(
             icon: Icon(Iconfont.jinshi),
             onPressed: () async {
+              if (!await _canAdd()) {
+                showNotification(
+                    type: NotificationType.ERROR,
+                    message: "一个周期内最多只能添加10条明细记录");
+                return;
+              }
               context.pushRoute(FoodRecordRoute(autoSave: true));
             },
             style: OutlinedButton.styleFrom(
@@ -292,7 +310,13 @@ class _RecordPageState extends State<RecordPage> {
           ),
           OutlinedButton.icon(
             icon: Icon(Iconfont.xietang),
-            onPressed: () {
+            onPressed: () async {
+              if (!await _canAdd()) {
+                showNotification(
+                    type: NotificationType.ERROR,
+                    message: "一个周期内最多只能添加10条明细记录");
+                return;
+              }
               context.pushRoute(BloodSugarRecordRoute(
                 autoSave: true,
                 returnWithPop: false,
@@ -321,6 +345,8 @@ class _RecordPageState extends State<RecordPage> {
     CancelFunc cancel = showLoading();
     this._currentCycle =
         await CycleRecordService().getCurrentByUserId(this._currentUser.id!);
+
+    this._standard = await ConfigService().getStandard(this._currentUser.id!);
     if (mounted) {
       setState(() {
         this._initDone = true;
@@ -416,6 +442,18 @@ class _RecordPageState extends State<RecordPage> {
 
       /// 刷新页面；
       this._refreshCurrentCycle();
+    }
+  }
+
+  Future<bool> _canAdd() async {
+    if (null == this._currentCycle) {
+      return true;
+    } else {
+      if (this._currentCycle!.closed) {
+        return true;
+      } else {
+        return CycleRecordService().canAddItem(this._currentCycle!.id!);
+      }
     }
   }
 }

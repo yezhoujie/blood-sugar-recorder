@@ -21,12 +21,16 @@ class FoodRecordPage extends StatefulWidget {
   /// 当前的进食记录信息.
   final FoodRecordItem? foodRecordItem;
 
+  /// 新增记录时的所属周期ID.
+  final int? cycleId;
+
   /// 点击按钮是否自动后台保存.
   final bool autoSave;
 
   const FoodRecordPage({
     Key? key,
     this.foodRecordItem,
+    this.cycleId,
     required this.autoSave,
   }) : super(key: key);
 
@@ -61,6 +65,7 @@ class _FoodRecordPageState extends State<FoodRecordPage> {
         FoodRecordItem(
           userId: Global.currentUser!.id!,
           recordTime: DateTime.now(),
+          cycleRecordId: widget.cycleId,
         );
 
     if (null != widget.foodRecordItem) {

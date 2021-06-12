@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
 
 class Iconfont {
-    // iconName: 完成
+    // iconName: 向上超标
+  static const xiangshangchaobiao = IconData(
+    0xe619,
+    fontFamily: 'Iconfont',
+    matchTextDirection: true,
+  );
+
+  // iconName: 向下超标
+  static const xiangxiachaobiao = IconData(
+    0xe61a,
+    fontFamily: 'Iconfont',
+    matchTextDirection: true,
+  );
+
+  // iconName: 完成
   static const wancheng = IconData(
     0xe672,
     fontFamily: 'Iconfont',

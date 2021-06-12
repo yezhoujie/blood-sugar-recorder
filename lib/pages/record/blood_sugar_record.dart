@@ -1,3 +1,4 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:blood_sugar_recorder/constant/constant.dart';
 import 'package:blood_sugar_recorder/domain/domain.dart';
@@ -20,6 +21,9 @@ class BloodSugarRecordPage extends StatefulWidget {
   /// 当前的血糖记录信息.
   final BloodSugarRecordItem? bloodSugarRecordItem;
 
+  /// 新增记录时的所属周期ID.
+  final int? cycleId;
+
   /// 点击按钮是否自动后台保存.
   final bool autoSave;
 
@@ -29,6 +33,7 @@ class BloodSugarRecordPage extends StatefulWidget {
   const BloodSugarRecordPage({
     Key? key,
     this.bloodSugarRecordItem,
+    this.cycleId,
     required this.autoSave,
     required this.returnWithPop,
   }) : super(key: key);
@@ -56,6 +61,7 @@ class _BloodSugarRecordPageState extends State<BloodSugarRecordPage> {
         BloodSugarRecordItem(
           userId: Global.currentUser!.id!,
           recordTime: DateTime.now(),
+          cycleRecordId: widget.cycleId,
           fpg: false,
         );
 
@@ -258,17 +264,37 @@ class _BloodSugarRecordPageState extends State<BloodSugarRecordPage> {
       height: 370.h,
       child: Align(
         alignment: Alignment.bottomCenter,
-        child: seFlatButton(
-          onPressed: () {
-            _handleSave();
-          },
-          title: "完成",
-          width: 300.w,
-          height: 70.h,
-          fontSize: 25.sp,
-          bgColor: Colors.redAccent,
-          fontColor: Colors.black54,
-          fontWeight: FontWeight.w900,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            seFlatButton(
+              onPressed: () {
+                _handleSave();
+              },
+              title: "完成",
+              width: 300.w,
+              height: 70.h,
+              fontSize: 25.sp,
+              bgColor: Colors.redAccent,
+              fontColor: Colors.black54,
+              fontWeight: FontWeight.w900,
+            ),
+            SizedBox(
+              height: 20.h,
+            ),
+            seFlatButton(
+              onPressed: () {
+                _handleSaveAndCloseCycle();
+              },
+              title: "完成并关闭当前记录周期",
+              width: 300.w,
+              height: 70.h,
+              fontSize: 25.sp,
+              bgColor: Colors.greenAccent,
+              fontColor: Colors.black54,
+              fontWeight: FontWeight.w900,
+            ),
+          ],
         ),
       ),
     );
@@ -326,5 +352,74 @@ class _BloodSugarRecordPageState extends State<BloodSugarRecordPage> {
     /// 返回到列表页面.
     AutoRouter.of(context)
         .pushAndPopUntil(MainRoute(tabIndex: 0), predicate: (_) => false);
+  }
+
+  void _handleSaveAndCloseCycle() async {
+    /// 整合、验证数据.
+    String bloodSugar = this._bloodSugarController.value.text;
+
+    /// 验证姓名输入.
+    if (bloodSugar.trim().isEmpty) {
+      setState(() {
+        this._bloodSugarInputValid = false;
+      });
+      showNotification(type: NotificationType.ERROR, message: "血糖值不能为空");
+      return;
+    }
+
+    if (bloodSugar.length > 5) {
+      setState(() {
+        this._bloodSugarInputValid = false;
+      });
+      showNotification(type: NotificationType.ERROR, message: "血糖值输入不正确");
+      return;
+    }
+    this._bloodSugarRecordItem.bloodSugar = double.parse(bloodSugar);
+
+    /// 保存数据到数据库.
+    try {
+      /// 弹出备注记录dialog
+      final text = await showTextInputDialog(
+        fullyCapitalizedForMaterial: false,
+        okLabel: "确定结束该周期",
+        cancelLabel: "取消",
+        context: context,
+        textFields: const [
+          DialogTextField(
+            hintText: "给这个周期写点备注吧",
+            minLines: 3,
+            maxLines: 3,
+          ),
+        ],
+      );
+      String comment = "";
+
+      if (null != text) {
+        if (text.isNotEmpty) {
+          comment = text.first;
+        }
+        CancelFunc cancelFunc = showLoading();
+
+        await BloodSugarRecordService()
+            .saveAndCloseCycle(this._bloodSugarRecordItem, comment);
+
+        /// 显示提示.
+        showNotification(
+          type: NotificationType.SUCCESS,
+          message: "保存成功",
+        );
+
+        cancelFunc();
+
+        /// 返回到列表页面.
+        AutoRouter.of(context)
+            .pushAndPopUntil(MainRoute(tabIndex: 0), predicate: (_) => false);
+      }
+    } catch (errorData) {
+      showNotification(
+        type: NotificationType.ERROR,
+        message: (errorData as ErrorData).message,
+      );
+    }
   }
 }

@@ -119,6 +119,7 @@ class AppRoute extends _i1.RootStackRouter {
           return _i13.MedicineRecordPage(
               key: args.key,
               medicineRecordItem: args.medicineRecordItem,
+              cycleId: args.cycleId,
               autoSave: args.autoSave);
         },
         maintainState: false,
@@ -132,6 +133,7 @@ class AppRoute extends _i1.RootStackRouter {
           return _i14.FoodRecordPage(
               key: args.key,
               foodRecordItem: args.foodRecordItem,
+              cycleId: args.cycleId,
               autoSave: args.autoSave);
         },
         maintainState: false,
@@ -145,6 +147,7 @@ class AppRoute extends _i1.RootStackRouter {
           return _i15.BloodSugarRecordPage(
               key: args.key,
               bloodSugarRecordItem: args.bloodSugarRecordItem,
+              cycleId: args.cycleId,
               autoSave: args.autoSave,
               returnWithPop: args.returnWithPop);
         },
@@ -303,12 +306,14 @@ class MedicineRecordRoute extends _i1.PageRouteInfo<MedicineRecordRouteArgs> {
   MedicineRecordRoute(
       {_i2.Key? key,
       _i17.MedicineRecordItem? medicineRecordItem,
+      int? cycleId,
       required bool autoSave})
       : super(name,
             path: '/medicine-record-page',
             args: MedicineRecordRouteArgs(
                 key: key,
                 medicineRecordItem: medicineRecordItem,
+                cycleId: cycleId,
                 autoSave: autoSave));
 
   static const String name = 'MedicineRecordRoute';
@@ -316,11 +321,16 @@ class MedicineRecordRoute extends _i1.PageRouteInfo<MedicineRecordRouteArgs> {
 
 class MedicineRecordRouteArgs {
   const MedicineRecordRouteArgs(
-      {this.key, this.medicineRecordItem, required this.autoSave});
+      {this.key,
+      this.medicineRecordItem,
+      this.cycleId,
+      required this.autoSave});
 
   final _i2.Key? key;
 
   final _i17.MedicineRecordItem? medicineRecordItem;
+
+  final int? cycleId;
 
   final bool autoSave;
 }
@@ -329,22 +339,28 @@ class FoodRecordRoute extends _i1.PageRouteInfo<FoodRecordRouteArgs> {
   FoodRecordRoute(
       {_i2.Key? key,
       _i17.FoodRecordItem? foodRecordItem,
+      int? cycleId,
       required bool autoSave})
       : super(name,
             path: '/food-record-page',
             args: FoodRecordRouteArgs(
-                key: key, foodRecordItem: foodRecordItem, autoSave: autoSave));
+                key: key,
+                foodRecordItem: foodRecordItem,
+                cycleId: cycleId,
+                autoSave: autoSave));
 
   static const String name = 'FoodRecordRoute';
 }
 
 class FoodRecordRouteArgs {
   const FoodRecordRouteArgs(
-      {this.key, this.foodRecordItem, required this.autoSave});
+      {this.key, this.foodRecordItem, this.cycleId, required this.autoSave});
 
   final _i2.Key? key;
 
   final _i17.FoodRecordItem? foodRecordItem;
+
+  final int? cycleId;
 
   final bool autoSave;
 }
@@ -354,6 +370,7 @@ class BloodSugarRecordRoute
   BloodSugarRecordRoute(
       {_i2.Key? key,
       _i17.BloodSugarRecordItem? bloodSugarRecordItem,
+      int? cycleId,
       required bool autoSave,
       required bool returnWithPop})
       : super(name,
@@ -361,6 +378,7 @@ class BloodSugarRecordRoute
             args: BloodSugarRecordRouteArgs(
                 key: key,
                 bloodSugarRecordItem: bloodSugarRecordItem,
+                cycleId: cycleId,
                 autoSave: autoSave,
                 returnWithPop: returnWithPop));
 
@@ -371,12 +389,15 @@ class BloodSugarRecordRouteArgs {
   const BloodSugarRecordRouteArgs(
       {this.key,
       this.bloodSugarRecordItem,
+      this.cycleId,
       required this.autoSave,
       required this.returnWithPop});
 
   final _i2.Key? key;
 
   final _i17.BloodSugarRecordItem? bloodSugarRecordItem;
+
+  final int? cycleId;
 
   final bool autoSave;
 
