@@ -259,6 +259,12 @@ class _BloodSugarRecordPageState extends State<BloodSugarRecordPage> {
     );
   }
 
+  @override
+  void dispose() {
+    this._bloodSugarController.dispose();
+    super.dispose();
+  }
+
   _buildButtons() {
     return SizedBox(
       height: 370.h,

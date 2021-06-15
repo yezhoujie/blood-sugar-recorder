@@ -93,6 +93,10 @@ dependencies:
   android_intent_plus: ^1.0.1
   #调用其他app.
   url_launcher: ^6.0.6
+  #列表过滤菜单
+  gzx_dropdown_menu: ^3.1.0
+  #获取页面内元素
+  rect_getter: ^1.0.0
 
 dev_dependencies:
   flutter_test:

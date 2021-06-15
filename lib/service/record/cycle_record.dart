@@ -3,6 +3,7 @@ import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:blood_sugar_recorder/domain/record/record_item.dart';
 import 'package:blood_sugar_recorder/error/error_data.dart';
 import 'package:blood_sugar_recorder/service/record/medicine_record.dart';
+import 'package:intl/intl.dart';
 
 ///记录周期service层.
 ///单例.
@@ -157,5 +158,31 @@ class CycleRecordService {
   /// 判断是否可以在一个周期内继续添加明细记录.
   Future<bool> canAddItem(int id) async {
     return (await findItemsById(id)).length < MAX_ITEM_COUNT;
+  }
+
+  /// 获取周期分页信息.
+  /// [userId] 当前用户信息.
+  /// [beginDate] 开始时间,只精确到天.
+  /// [next] 是否获[beginDate]取时间之后的记录.
+  Future<List<CycleRecord>> findPage(int userId, bool next, DateTime beginDate) async {
+    List<CycleRecord> cycleList = [];
+    if (next) {
+      cycleList =
+          await CycleRecordDatasource().findLimitByFrom(start: beginDate);
+    } else {
+      cycleList =
+          await CycleRecordDatasource().findLimitByBefore(start: beginDate);
+    }
+
+    /// 过滤未完成的周期.
+    cycleList = cycleList.where((element) => element.closed).toList();
+
+    /// 获取周期内的明细记录.
+    if (cycleList.isNotEmpty) {
+      for (var value in cycleList) {
+        value.itemList = await this.findItemsById(value.id!);
+      }
+    }
+    return cycleList;
   }
 }

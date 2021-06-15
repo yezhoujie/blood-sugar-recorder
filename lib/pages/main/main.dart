@@ -29,7 +29,7 @@ class _MainPageState extends State<MainPage> {
   /// 页面控制器.
   late PageController _pageController;
 
-  final List<String> _tabTitle = ["当前记录周期", "历史记录", "统计分析", "设置"];
+  final List<String> _tabTitle = ["当前记录周期", "历史周期记录", "统计分析", "设置"];
 
   @override
   void initState() {

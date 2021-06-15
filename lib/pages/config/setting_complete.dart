@@ -49,15 +49,18 @@ class _SettingCompletePageState extends State<SettingCompletePage> {
                           flex: 1,
                         ),
                         Expanded(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              "提示:\n 1.本程序采用周期记录方式\n 2.一个周期的流程一般为[药物使用]->[用餐]->[血糖测量]\n 3.每个周期内最多包含10条明细记录\n 4.所有配置项可在设置页面中重新修改",
-                              style: TextStyle(
-                                fontSize: 25.sp,
-                                color: AppColor.thirdElementText,
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 20.w, left: 20.w),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "提示:\n 1.本程序采用周期记录方式\n 2.一个周期的流程一般为[药物使用]->[用餐]->[血糖测量]\n 3.每个周期内最多包含10条明细记录\n 4.所有配置项可在设置页面中重新修改",
+                                style: TextStyle(
+                                  fontSize: 25.sp,
+                                  color: AppColor.thirdElementText,
+                                ),
+                                textAlign: TextAlign.start,
                               ),
-                              textAlign: TextAlign.start,
                             ),
                           ),
                           flex: 7,

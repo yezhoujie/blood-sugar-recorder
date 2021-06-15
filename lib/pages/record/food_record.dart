@@ -268,6 +268,13 @@ class _FoodRecordPageState extends State<FoodRecordPage> {
     ];
   }
 
+  @override
+  void dispose() {
+    this._commentController.dispose();
+    this._foodController.dispose();
+    super.dispose();
+  }
+
   _buildCommentInput() {
     return [
       ListTile(

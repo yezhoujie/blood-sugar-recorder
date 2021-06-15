@@ -71,6 +71,19 @@ class CycleRecordDatasource {
     }
   }
 
+  /// 获取某个时间之前的指定数量的记录.
+  Future<List<CycleRecord>> findLimitByBefore(
+      {required DateTime start, int limit = 20}) async {
+    List<Map<String, dynamic>> listMap = await Global.database.rawQuery(
+        "select * from ${this._tableName} where datetime < ? order by datetime desc limit ?",
+        [start.toIso8601String(), limit]);
+    if (listMap.isEmpty) {
+      return [];
+    } else {
+      return listMap.map((e) => CycleRecord.fromJson(e)).toList();
+    }
+  }
+
   Future<CycleRecord?> getLatestClosedByUserId(int userId) async {
     List<Map<String, dynamic>> listMap = await Global.database.rawQuery(
         "select * from ${this._tableName} where userId = ? order by datetime desc limit 1",
