@@ -1,9 +1,12 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:blood_sugar_recorder/constant/appColor.dart';
 import 'package:blood_sugar_recorder/pages/config/setting.dart';
 import 'package:blood_sugar_recorder/pages/history/history.dart';
 import 'package:blood_sugar_recorder/pages/main/user_selector.dart';
 import 'package:blood_sugar_recorder/pages/record/record.dart';
 import 'package:blood_sugar_recorder/pages/stats/stats.dart';
 import 'package:blood_sugar_recorder/provider/user_switch_state.dart';
+import 'package:blood_sugar_recorder/route/route.gr.dart';
 import 'package:blood_sugar_recorder/utils/utils.dart';
 import 'package:blood_sugar_recorder/widgets/avatar.dart';
 import 'package:blood_sugar_recorder/widgets/widgets.dart';
@@ -16,7 +19,11 @@ class MainPage extends StatefulWidget {
   /// 默认的选中的tab.
   final int tabIndex;
 
-  MainPage({Key? key, required this.tabIndex}) : super(key: key);
+  /// 历史记录页保存的过滤条件.
+  final HistoryFilterConfig? historyFilterConfig;
+
+  MainPage({Key? key, required this.tabIndex, this.historyFilterConfig})
+      : super(key: key);
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -98,6 +105,7 @@ class _MainPageState extends State<MainPage> {
           ),
         ),
       ),
+      actions: _buildAction(this._tabIndex),
     );
   }
 
@@ -145,13 +153,44 @@ class _MainPageState extends State<MainPage> {
       /// 可切换的页面列表.
       children: <Widget>[
         RecordPage(),
-        HistoryPage(),
+        HistoryPage(
+          filterConfig: widget.historyFilterConfig,
+        ),
         StatsPage(),
         SettingPage(),
       ],
       controller: _pageController,
       onPageChanged: _handlePageChange,
     );
+  }
+
+  List<Widget> _buildAction(int tabIndex) {
+    List<Widget> actions = [];
+    if (tabIndex == 1) {
+      /// 历史记录页面.
+      actions = [
+        IconButton(
+            onPressed: () {
+              AutoRouter.of(context).pushAndPopUntil(MainRoute(tabIndex: 1),
+                  predicate: (_) => false);
+            },
+            icon: Icon(
+              Icons.refresh,
+              color: AppColor.thirdElementText,
+              size: 30.sp,
+            )),
+        IconButton(
+            onPressed: () {
+              /// 跳转到补填周期页面.
+            },
+            icon: Icon(
+              Icons.add,
+              color: AppColor.thirdElementText,
+              size: 35.sp,
+            )),
+      ];
+    }
+    return actions;
   }
 
   ///////////////////////////事件处理区域////////////////////////////

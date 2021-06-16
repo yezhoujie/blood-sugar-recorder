@@ -29,11 +29,19 @@ class MedicineRecordPage extends StatefulWidget {
   /// 点击按钮是否自动后台保存.
   final bool autoSave;
 
+  /// 父页面路由.
+  final PageRouteInfo? parentRouter;
+
+  /// 是否返回在pop页面时返回保存后的数据.
+  final bool returnWithPop;
+
   MedicineRecordPage({
     Key? key,
     this.medicineRecordItem,
     this.cycleId,
     required this.autoSave,
+    this.parentRouter,
+    required this.returnWithPop,
   }) : super(key: key);
 
   @override
@@ -158,8 +166,9 @@ class _MedicineRecordPageState extends State<MedicineRecordPage> {
           size: 35.sp,
         ),
         onPressed: () {
-          AutoRouter.of(context)
-              .pushAndPopUntil(MainRoute(tabIndex: 0), predicate: (_) => false);
+          AutoRouter.of(context).pushAndPopUntil(
+              widget.parentRouter ?? MainRoute(tabIndex: 0),
+              predicate: (_) => false);
         },
       ),
     );
@@ -431,9 +440,11 @@ class _MedicineRecordPageState extends State<MedicineRecordPage> {
     if (null == widget.medicineRecordItem) {
       /// 如果是新增记录，设置默认值.
       this._medicineRecordItem = MedicineRecordItem(
-          userId: Global.currentUser!.id!,
-          recordTime: DateTime.now(),
-          medicineId: medicineList.first.id);
+        userId: Global.currentUser!.id!,
+        recordTime: DateTime.now(),
+        medicineId: medicineList.first.id,
+        cycleRecordId: widget.cycleId,
+      );
     }
 
     if (mounted) {
@@ -531,14 +542,17 @@ class _MedicineRecordPageState extends State<MedicineRecordPage> {
           message: (errorData as ErrorData).message,
         );
       }
-    } else {
-      /// todo 将保存的数据传给上层页面.
     }
 
     cancelFunc();
-
-    /// 返回到列表页面.
-    AutoRouter.of(context)
-        .pushAndPopUntil(MainRoute(tabIndex: 0), predicate: (_) => false);
+    if (!widget.returnWithPop) {
+      /// 返回到列表页面.
+      AutoRouter.of(context).pushAndPopUntil(
+          widget.parentRouter ?? MainRoute(tabIndex: 0),
+          predicate: (_) => false);
+    } else {
+      /// 返回上层，并传递数据.
+      AutoRouter.of(context).pop(this._medicineRecordItem);
+    }
   }
 }

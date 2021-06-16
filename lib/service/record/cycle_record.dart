@@ -3,7 +3,6 @@ import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:blood_sugar_recorder/domain/record/record_item.dart';
 import 'package:blood_sugar_recorder/error/error_data.dart';
 import 'package:blood_sugar_recorder/service/record/medicine_record.dart';
-import 'package:intl/intl.dart';
 
 ///记录周期service层.
 ///单例.
@@ -164,14 +163,15 @@ class CycleRecordService {
   /// [userId] 当前用户信息.
   /// [beginDate] 开始时间,只精确到天.
   /// [next] 是否获[beginDate]取时间之后的记录.
-  Future<List<CycleRecord>> findPage(int userId, bool next, DateTime beginDate) async {
+  Future<List<CycleRecord>> findPage(
+      int userId, bool next, DateTime beginDate) async {
     List<CycleRecord> cycleList = [];
     if (next) {
-      cycleList =
-          await CycleRecordDatasource().findLimitByFrom(start: beginDate);
+      cycleList = await CycleRecordDatasource()
+          .findLimitByFrom(userId: userId, start: beginDate);
     } else {
-      cycleList =
-          await CycleRecordDatasource().findLimitByBefore(start: beginDate);
+      cycleList = await CycleRecordDatasource()
+          .findLimitByBefore(userId: userId, start: beginDate);
     }
 
     /// 过滤未完成的周期.

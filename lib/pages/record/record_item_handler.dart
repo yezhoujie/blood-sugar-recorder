@@ -16,13 +16,18 @@ void defaultHandleRecordItemEdit(BuildContext context, RecordItem item) {
     case MedicineRecordItem:
       {
         AutoRouter.of(context).push(MedicineRecordRoute(
-            autoSave: true, medicineRecordItem: item as MedicineRecordItem));
+            autoSave: true,
+            returnWithPop: false,
+            medicineRecordItem: item as MedicineRecordItem));
         break;
       }
     case FoodRecordItem:
       {
         AutoRouter.of(context).push(FoodRecordRoute(
-            autoSave: true, foodRecordItem: item as FoodRecordItem));
+          autoSave: true,
+          foodRecordItem: item as FoodRecordItem,
+          returnWithPop: false,
+        ));
         break;
       }
     case BloodSugarRecordItem:
@@ -72,6 +77,6 @@ void defaultHandleRecordItemDelete(
     cancel();
 
     /// 刷新页面.
-    callback();
+    callback(item);
   }
 }

@@ -146,10 +146,12 @@ class _RecordPageState extends State<RecordPage> {
                       children: ListTile.divideTiles(
                           context: context,
                           tiles: buildDetailRecordItem(
-                            context,
-                            this._currentCycle!.itemList,
-                            this._standard,
-                            this._refreshCurrentCycle,
+                            context: context,
+                            itemList: this._currentCycle!.itemList,
+                            standard: this._standard,
+                            itemDeleteCallback: (_) {
+                              this._refreshCurrentCycle();
+                            },
                           )).toList(),
                     ),
                   ),
@@ -164,7 +166,6 @@ class _RecordPageState extends State<RecordPage> {
 
   /// 构建当前周期的操作按钮区域.
   _buildCycleOperation() {
-    /// todo change it to popup menu.
     return Align(
       alignment: Alignment.centerRight,
       child: Row(
@@ -295,7 +296,8 @@ class _RecordPageState extends State<RecordPage> {
                     message: "一个周期内最多只能添加10条明细记录");
                 return;
               }
-              context.pushRoute(FoodRecordRoute(autoSave: true));
+              context.pushRoute(
+                  FoodRecordRoute(autoSave: true, returnWithPop: false));
             },
             style: OutlinedButton.styleFrom(
               primary: Colors.white,
@@ -381,7 +383,8 @@ class _RecordPageState extends State<RecordPage> {
       }
     } else {
       /// 跳转到创建药物使用记录页面.
-      context.pushRoute(MedicineRecordRoute(autoSave: true));
+      context
+          .pushRoute(MedicineRecordRoute(autoSave: true, returnWithPop: false));
     }
   }
 

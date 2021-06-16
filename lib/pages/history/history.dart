@@ -1,8 +1,16 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:blood_sugar_recorder/constant/constant.dart';
 import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:blood_sugar_recorder/global.dart';
+import 'package:blood_sugar_recorder/pages/record/record_item_widget.dart';
+import 'package:blood_sugar_recorder/provider/user_switch_state.dart';
+import 'package:blood_sugar_recorder/route/route.gr.dart';
 import 'package:blood_sugar_recorder/service/record/cycle_record.dart';
+import 'package:blood_sugar_recorder/service/service.dart';
 import 'package:blood_sugar_recorder/utils/picker.dart';
+import 'package:blood_sugar_recorder/utils/utils.dart';
+import 'package:blood_sugar_recorder/widgets/notification.dart';
 import 'package:blood_sugar_recorder/widgets/widgets.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
@@ -10,26 +18,27 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:gzx_dropdown_menu/gzx_dropdown_menu.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:share/share.dart';
 
 /// 历史周期记录页面.
 class HistoryPage extends StatefulWidget {
-  const HistoryPage({Key? key}) : super(key: key);
+  final HistoryFilterConfig? filterConfig;
+
+  HistoryPage({Key? key, this.filterConfig}) : super(key: key);
 
   @override
   _HistoryPageState createState() => _HistoryPageState();
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  DateTime _startTime = DateTime.now();
+  /// 当前用户.
+  User _currentUser = Global.currentUser!;
 
   /// 总过滤菜单标题列表.
   List<String> _dropDownHeaderItemStrings = [];
 
-  ///明细过滤子菜单.
-  List<SortCondition> _detailConditions = [];
-
-  ///指标过滤子菜单.
-  List<SortCondition> _standardConditions = [];
+  HistoryFilterConfig _filterConfig = HistoryFilterConfig.byDefault();
 
   ///下拉过滤器控制器.
   GZXDropdownMenuController _dropdownMenuController =
@@ -42,29 +51,29 @@ class _HistoryPageState extends State<HistoryPage> {
   /// 周期列表数据.
   List<CycleRecord> _cycleList = [];
 
+  /// 血糖标准.
+  late UserBloodSugarConfig _standard;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
+    /// 设置默认过滤条件.
+    this._filterConfig = widget.filterConfig ?? HistoryFilterConfig.byDefault();
 
     /// 构建过滤菜单列表.
     this._buildFilterMenuTitles();
-
-    /// 明细过滤菜单.
-    _detailConditions.add(SortCondition(name: '药物记录', isSelected: true));
-    _detailConditions.add(SortCondition(name: '用餐记录', isSelected: true));
-    _detailConditions.add(SortCondition(name: '血糖监测', isSelected: true));
-
-    /// 指标过滤菜单.
-    _standardConditions.add(SortCondition(name: '正常', isSelected: true));
-    _standardConditions.add(SortCondition(name: '高血糖', isSelected: true));
-    _standardConditions.add(SortCondition(name: '低血糖', isSelected: true));
 
     _initCycles();
   }
 
   @override
   Widget build(BuildContext context) {
+    /// 注册监听
+    UserSwitchState userSwitchState = Provider.of<UserSwitchState>(context);
+
+    /// 切换用户时刷新数据.
+    this._dataRefresh();
     return Scaffold(
       key: this._scaffoldKey,
       // GZXDropDownMenu目前只能在Stack内，后续有时间会改进，以及支持CustomScrollView和NestedScrollView
@@ -88,12 +97,13 @@ class _HistoryPageState extends State<HistoryPage> {
                     iconDropDownData: Icons.keyboard_arrow_up,
                   ),
                   GZXDropDownHeaderItem(_dropDownHeaderItemStrings[2],
-                      iconData: this._detailConditions[2].isSelected
-                          ? Icons.keyboard_arrow_down
-                          : Icons.block,
+                      iconData:
+                          this._filterConfig.detailConditions[2].isSelected
+                              ? Icons.keyboard_arrow_down
+                              : Icons.block,
                       iconDropDownData: Icons.keyboard_arrow_up,
                       style: TextStyle(
-                        color: this._detailConditions[2].isSelected
+                        color: this._filterConfig.detailConditions[2].isSelected
                             ? Colors.black
                             : AppColor.thirdElementText,
                       )),
@@ -111,18 +121,20 @@ class _HistoryPageState extends State<HistoryPage> {
                         endDate: DateTime.now(),
                         context: context,
                         scaffoldState: _scaffoldKey.currentState!,
-                        selected: this._startTime,
+                        selected: this._filterConfig.startTime,
                         onConfirm: (picker, selected) {
+                          String pickTime = picker.adapter.text;
+                          pickTime = pickTime.split(" ")[0] + " 00:00:00";
                           setState(() {
-                            this._startTime = DateFormat("yyyy-MM-dd HH:mm")
-                                .parse(picker.adapter.text);
+                            this._filterConfig.startTime =
+                                DateFormat("yyyy-MM-dd HH:mm").parse(pickTime);
                           });
                           this._buildFilterMenuTitles();
                           this._initCycles();
                         });
                   } else if (index == 2) {
                     /// 如果明细过滤中，不显示血糖，那么禁用指标过滤
-                    if (!this._detailConditions[2].isSelected) {
+                    if (!this._filterConfig.detailConditions[2].isSelected) {
                       this._dropdownMenuController.hide();
                       setState(() {});
                     }
@@ -175,8 +187,9 @@ class _HistoryPageState extends State<HistoryPage> {
 //               });
 //             },
             dropdownMenuChanged: (isShow, index) {
-              ///进行现在有列表数据过滤
-              _doFilter();
+              if (!isShow && index != 0) {
+                /// 不需要干任何事情.
+              }
             },
             // 下拉菜单，高度自定义，你想显示什么就显示什么，完全由你决定，你只需要在选择后调用_dropdownMenuController.hide();即可
             menus: [
@@ -185,23 +198,25 @@ class _HistoryPageState extends State<HistoryPage> {
                 dropDownWidget: Container(),
               ),
               GZXDropdownMenuBuilder(
-                dropDownHeight: 40.0 * this._detailConditions.length,
+                dropDownHeight:
+                    40.0 * this._filterConfig.detailConditions.length,
                 dropDownWidget: _buildConditionListWidget(
-                  this._detailConditions,
+                  this._filterConfig.detailConditions,
                   (value) {
                     if (this
-                            ._detailConditions
+                            ._filterConfig
+                            .detailConditions
                             .where((element) => element.isSelected)
                             .length >
                         1) {
-                      this._detailConditions.forEach((element) {
+                      this._filterConfig.detailConditions.forEach((element) {
                         if (element == value) {
                           element.isSelected = !element.isSelected;
                         }
                       });
                       setState(() {});
                     } else {
-                      this._detailConditions.forEach((element) {
+                      this._filterConfig.detailConditions.forEach((element) {
                         if (element == value && !element.isSelected) {
                           element.isSelected = !element.isSelected;
                           setState(() {});
@@ -212,23 +227,25 @@ class _HistoryPageState extends State<HistoryPage> {
                 ),
               ),
               GZXDropdownMenuBuilder(
-                dropDownHeight: 40.0 * this._standardConditions.length,
+                dropDownHeight:
+                    40.0 * this._filterConfig.standardConditions.length,
                 dropDownWidget: _buildConditionListWidget(
-                  this._standardConditions,
+                  this._filterConfig.standardConditions,
                   (value) {
                     if (this
-                            ._standardConditions
+                            ._filterConfig
+                            .standardConditions
                             .where((element) => element.isSelected)
                             .length >
                         1) {
-                      this._standardConditions.forEach((element) {
+                      this._filterConfig.standardConditions.forEach((element) {
                         if (element == value) {
                           element.isSelected = !element.isSelected;
                         }
                       });
                       setState(() {});
                     } else {
-                      this._standardConditions.forEach((element) {
+                      this._filterConfig.standardConditions.forEach((element) {
                         if (element == value && !element.isSelected) {
                           element.isSelected = !element.isSelected;
                           setState(() {});
@@ -309,7 +326,7 @@ class _HistoryPageState extends State<HistoryPage> {
   void _buildFilterMenuTitles() {
     setState(() {
       _dropDownHeaderItemStrings = [
-        DateFormat("yyyy-MM-dd").format(_startTime),
+        DateFormat("yyyy-MM-dd").format(this._filterConfig.startTime),
         '明细过滤',
         '指标过滤'
       ];
@@ -346,9 +363,7 @@ class _HistoryPageState extends State<HistoryPage> {
               SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
-                    return ListTile(
-                      leading: Text("test$index"),
-                    );
+                    return _buildCycleCard(this._cycleList[index]);
                   },
                   childCount: this._cycleList.length,
                 ),
@@ -357,31 +372,333 @@ class _HistoryPageState extends State<HistoryPage> {
           );
   }
 
+  /// 构建历史周期记录卡片.
+  _buildCycleCard(CycleRecord cycle) {
+    List<RecordItem> itemList = this._doFilter(cycle);
+    Widget card = Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: RadiusConstant.k6pxRadius,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildCycleOperation(cycle),
+          Divider(
+            thickness: 5,
+            height: 1.h,
+            color: Colors.amber,
+          ),
+          Flexible(
+            fit: FlexFit.loose,
+            child: Column(
+              children: itemList.isNotEmpty
+                  ? ListTile.divideTiles(
+                      context: context,
+                      tiles: buildDetailRecordItem(
+                        context: context,
+                        itemList: _doFilter(cycle),
+                        standard: this._standard,
+                        itemDeleteCallback: this._handleItemDelete,
+                        handleRecordItemEdit: this._pushItemEditPage,
+                      )).toList()
+                  : [
+                      Container(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "暂无数据",
+                            style: TextStyle(
+                              color: AppColor.thirdElementText,
+                              fontSize: 25.sp,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+            ),
+          ),
+        ],
+      ),
+    );
+    return Padding(
+      padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
+      child: card,
+    );
+  }
+
+  /// 构建周期的操作按钮区域.
+  _buildCycleOperation(CycleRecord cycle) {
+    return Container(
+      height: 40.h,
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Row(
+          children: [
+            Expanded(
+              child: Container(),
+              flex: 2,
+            ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.center,
+                child: Builder(
+                  builder: (cycleCommentContext) {
+                    return InkWell(
+                      onTap: () {
+                        showTooltip(
+                          context: cycleCommentContext,
+                          content: cycle.comment ?? '',
+                          preferDirection: PreferDirection.bottomCenter,
+                        );
+                      },
+                      child: Text(
+                        "${null == cycle.comment || cycle.comment!.isEmpty ? '暂无备注' : cycle.comment}",
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 25.sp,
+                          color: AppColor.thirdElementText,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              flex: 6,
+            ),
+            Expanded(
+              flex: 2,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: PopupMenuButton(
+                  icon: Icon(
+                    Icons.settings,
+                    color: AppColor.thirdElementText,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: RadiusConstant.k6pxRadius,
+                  ),
+                  offset: Offset(0, 40.h),
+                  iconSize: 30.sp,
+                  itemBuilder: (BuildContext bc) {
+                    const operationList = [
+                      {
+                        "key": "delete",
+                        "title": "删除",
+                        "icon": Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        )
+                      },
+                      {
+                        "key": "share",
+                        "title": "分享",
+                        "icon": Icon(
+                          Icons.share,
+                          color: Colors.blue,
+                        )
+                      },
+                      {
+                        "key": "medicine",
+                        "title": "添加药物记录",
+                        "icon": Icon(
+                          Iconfont.yaowu,
+                          color: Colors.amber,
+                        )
+                      },
+                      {
+                        "key": "food",
+                        "title": "添加用餐记录",
+                        "icon": Icon(
+                          Iconfont.jinshi,
+                          color: Colors.green,
+                        )
+                      },
+                      {
+                        "key": "bloodSugar",
+                        "title": "添加血糖记录",
+                        "icon": Icon(
+                          Iconfont.xietang,
+                          color: Colors.red,
+                        )
+                      },
+                    ];
+                    return operationList
+                        .map((operation) => PopupMenuItem(
+                              child: Row(
+                                children: [
+                                  operation["icon"] as Widget,
+                                  Padding(
+                                      padding: EdgeInsets.only(right: 10.w)),
+                                  Text(
+                                    operation["title"].toString(),
+                                    style: TextStyle(
+                                      fontSize: 18.sp,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              value: operation['key'].toString(),
+                            ))
+                        .toList();
+                  },
+                  onSelected: (value) async {
+                    if (value == "delete") {
+                      _handleDeleteCycle(cycle);
+                    } else if (value == "share") {
+                      /// 删除整个周期的数据记录.
+                      Share.share(CycleRecord.toShareText(cycle),
+                          subject: '【血糖记录器】分享数据');
+                    } else if (value == "medicine") {
+                      if (!await _canAdd(cycle)) {
+                        showNotification(
+                            type: NotificationType.ERROR,
+                            message: "一个周期内最多只能添加10条明细记录");
+                        return;
+                      }
+                      AutoRouter.of(context).push(MedicineRecordRoute(
+                          autoSave: true,
+                          cycleId: cycle.id!,
+                          returnWithPop: false,
+                          parentRouter: MainRoute(
+                              tabIndex: 1,
+                              historyFilterConfig: this._filterConfig)));
+                    } else if (value == "food") {
+                      if (!await _canAdd(cycle)) {
+                        showNotification(
+                            type: NotificationType.ERROR,
+                            message: "一个周期内最多只能添加10条明细记录");
+                        return;
+                      }
+                      AutoRouter.of(context).push(FoodRecordRoute(
+                          autoSave: true,
+                          returnWithPop: false,
+                          cycleId: cycle.id!,
+                          parentRouter: MainRoute(
+                              tabIndex: 1,
+                              historyFilterConfig: this._filterConfig)));
+                    } else if (value == "bloodSugar") {
+                      if (!await _canAdd(cycle)) {
+                        showNotification(
+                            type: NotificationType.ERROR,
+                            message: "一个周期内最多只能添加10条明细记录");
+                        return;
+                      }
+                      AutoRouter.of(context).push(BloodSugarRecordRoute(
+                        autoSave: true,
+                        cycleId: cycle.id!,
+                        showCloseButton: false,
+                        parentRouter: MainRoute(
+                            tabIndex: 1,
+                            historyFilterConfig: this._filterConfig),
+                        returnWithPop: false,
+                      ));
+                    }
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   ////////////////////////事件处理区域///////////////////////////
   /// 进行原有数据过滤
-  void _doFilter() {
-    /// todo 对原有数据进行过滤
-    setState(() {});
+  List<RecordItem> _doFilter(CycleRecord cycle) {
+    List<RecordItem> res = [];
+
+    /// 第一步，过滤明细数据.
+    if (cycle.itemList.isNotEmpty) {
+      List<SortCondition> detailFilter = this
+          ._filterConfig
+          .detailConditions
+          .where((detail) => detail.isSelected)
+          .toList();
+
+      List<Type> allowTypeList = detailFilter.map((detail) {
+        if (detail.name == "药物记录") return MedicineRecordItem;
+        if (detail.name == "用餐记录") return FoodRecordItem;
+        if (detail.name == "血糖监测") return BloodSugarRecordItem;
+        return String;
+      }).toList();
+
+      res = cycle.itemList
+          .where((element) => allowTypeList.contains(element.runtimeType))
+          .toList();
+
+      /// 第二步，过滤指标数据.
+      for (var value in this
+          ._filterConfig
+          .standardConditions
+          .where((element) => !element.isSelected)) {
+        /// 删除没有勾选的
+        res.removeWhere((element) {
+          if (element.runtimeType == BloodSugarRecordItem) {
+            element as BloodSugarRecordItem;
+            if (value.name == "正常") {
+              /// 过滤血糖正常的数据
+              if (element.fpg ?? true) {
+                return element.bloodSugar! >= this._standard.fpgMin &&
+                    element.bloodSugar! <= this._standard.fpgMax;
+              } else {
+                return element.bloodSugar! >= this._standard.hpg2Min &&
+                    element.bloodSugar! <= this._standard.hpg2Max;
+              }
+            } else if (value.name == "高血糖") {
+              /// 过滤高血糖
+              if (element.fpg ?? true) {
+                return element.bloodSugar! > this._standard.fpgMax;
+              } else {
+                return element.bloodSugar! > this._standard.hpg2Max;
+              }
+            } else if (value.name == "低血糖") {
+              /// 过滤低血糖
+              if (element.fpg ?? true) {
+                return element.bloodSugar! < this._standard.fpgMin;
+              } else {
+                return element.bloodSugar! < this._standard.hpg2Min;
+              }
+            }
+          }
+          return false;
+        });
+      }
+    }
+    return res;
   }
 
   /// 获取初始化历史周期数据.
   Future<void> _initCycles() async {
     CancelFunc cancel = showLoading();
 
-    this._cycleList = await CycleRecordService().findPage(
-        Global.currentUser!.id!,
-        false,
-        DateFormat("yyyy-MM-dd HH:mm:ss")
-            .parse(
-                "${DateFormat("yyyy-MM-dd").format(this._startTime)} 00:00:00")
-            .add(Duration(days: 1)));
+    this._standard = await ConfigService().getStandard(this._currentUser.id!);
+
+    DateFormat format = DateFormat("yyyy-MM-dd HH:mm:ss");
+
+    /// 处理时间.
+    DateTime begin = this._filterConfig.startTime;
+    if (format.format(begin).split(" ")[1] == "00:00:00") {
+      begin = format
+          .parse(
+              "${DateFormat("yyyy-MM-dd").format(this._filterConfig.startTime)} 00:00:00")
+          .add(Duration(days: 1));
+    }
+
+    this._cycleList = await CycleRecordService()
+        .findPage(Global.currentUser!.id!, false, begin);
     if (mounted) {
       setState(() {});
     }
-
-    /// 根据条件过滤明细.
-    this._doFilter();
     cancel();
+  }
+
+  /// 切换用户时刷新数据.
+  void _dataRefresh() {
+    if (this._currentUser.id != Global.currentUser!.id) {
+      this._currentUser = Global.currentUser!;
+      this._initCycles();
+    }
   }
 
   /// 获取更多周期数据.
@@ -392,10 +709,12 @@ class _HistoryPageState extends State<HistoryPage> {
     List<CycleRecord> newRecords = await CycleRecordService().findPage(
         Global.currentUser!.id!,
         next,
-        this._cycleList.first.datetime ??
+        (next
+                ? this._cycleList.first.datetime
+                : this._cycleList.last.datetime) ??
             DateFormat("yyyy-MM-dd HH:mm:ss")
                 .parse(
-                    "${DateFormat("yyyy-MM-dd").format(this._startTime)} 00:00:00")
+                    "${DateFormat("yyyy-MM-dd").format(this._filterConfig.startTime)} 00:00:00")
                 .add(Duration(days: 1)));
     if (newRecords.isEmpty) {
       showToast(msg: "没有更多数据了");
@@ -411,9 +730,95 @@ class _HistoryPageState extends State<HistoryPage> {
     if (mounted) {
       setState(() {});
     }
+  }
 
-    /// 根据条件过滤明细.
-    this._doFilter();
+  /// 删除选定周期以及周期下的所有明细记录.
+  void _handleDeleteCycle(CycleRecord cycleRecord) async {
+    // 删除提示框.
+    OkCancelResult res = await showOkCancelAlertDialog(
+      context: this.context,
+      title: "确定要删除吗？",
+      message: "删除周期将一同删除周期下所有的明细记录",
+      okLabel: "确定",
+      cancelLabel: "取消",
+      barrierDismissible: false,
+    );
+
+    if (res.index == OkCancelResult.ok.index) {
+      CancelFunc cancel = showLoading();
+
+      await CycleRecordService().deleteWithItemsById(cycleRecord.id!);
+
+      showNotification(type: NotificationType.SUCCESS, message: "删除成功");
+
+      cancel();
+
+      /// 刷新页面.
+      this._initCycles();
+    }
+  }
+
+  Future<bool> _canAdd(CycleRecord cycle) async {
+    return CycleRecordService().canAddItem(cycle.id!);
+  }
+
+  /// 某个周期中的明细被删除后的回调处理.
+  /// [deleteItem] 已经从数据被删除掉的明细数据.
+  _handleItemDelete(RecordItem deleteItem) {
+    CycleRecord record = this
+        ._cycleList
+        .where((element) => element.id == deleteItem.cycleRecordId)
+        .first;
+    if (record.itemList.length <= 1) {
+      this._cycleList.remove(record);
+    } else {
+      record.itemList.remove(deleteItem);
+    }
+
+    setState(() {});
+  }
+
+  /// 跳转周期内明细编辑页面.
+  _pushItemEditPage(BuildContext context, RecordItem item) {
+    switch (item.runtimeType) {
+      case MedicineRecordItem:
+        {
+          AutoRouter.of(context).push(MedicineRecordRoute(
+            autoSave: true,
+            returnWithPop: false,
+            medicineRecordItem: item as MedicineRecordItem,
+            cycleId: item.cycleRecordId,
+            parentRouter:
+                MainRoute(tabIndex: 1, historyFilterConfig: this._filterConfig),
+          ));
+          break;
+        }
+      case FoodRecordItem:
+        {
+          AutoRouter.of(context).push(FoodRecordRoute(
+            autoSave: true,
+            foodRecordItem: item as FoodRecordItem,
+            returnWithPop: false,
+            cycleId: item.cycleRecordId,
+            parentRouter:
+                MainRoute(tabIndex: 1, historyFilterConfig: this._filterConfig),
+          ));
+          break;
+        }
+      case BloodSugarRecordItem:
+        {
+          AutoRouter.of(context).push(BloodSugarRecordRoute(
+            autoSave: true,
+            bloodSugarRecordItem: item as BloodSugarRecordItem,
+            returnWithPop: false,
+            showCloseButton: false,
+            cycleId: item.cycleRecordId,
+            parentRouter:
+                MainRoute(tabIndex: 1, historyFilterConfig: this._filterConfig),
+          ));
+          break;
+        }
+    }
   }
 }
 
@@ -425,4 +830,37 @@ class SortCondition {
     required this.name,
     required this.isSelected,
   });
+}
+
+class HistoryFilterConfig {
+  /// 记录搜索开始时间.
+  DateTime startTime;
+
+  /// 明细项过滤配置.
+  List<SortCondition> detailConditions;
+
+  /// 指标项过滤配置.
+  List<SortCondition> standardConditions;
+
+  HistoryFilterConfig({
+    required this.startTime,
+    required this.detailConditions,
+    required this.standardConditions,
+  });
+
+  static HistoryFilterConfig byDefault() {
+    return HistoryFilterConfig(
+      startTime: DateTime.now(),
+      detailConditions: [
+        SortCondition(name: '药物记录', isSelected: true),
+        SortCondition(name: '用餐记录', isSelected: true),
+        SortCondition(name: '血糖监测', isSelected: true)
+      ],
+      standardConditions: [
+        SortCondition(name: '正常', isSelected: true),
+        SortCondition(name: '高血糖', isSelected: true),
+        SortCondition(name: '低血糖', isSelected: true)
+      ],
+    );
+  }
 }

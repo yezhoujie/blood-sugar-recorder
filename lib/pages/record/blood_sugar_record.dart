@@ -30,12 +30,19 @@ class BloodSugarRecordPage extends StatefulWidget {
   /// 是否返回在pop页面时返回保存后的数据.
   final bool returnWithPop;
 
+  /// 父页面路由.
+  final PageRouteInfo? parentRouter;
+
+  final bool? showCloseButton;
+
   const BloodSugarRecordPage({
     Key? key,
     this.bloodSugarRecordItem,
     this.cycleId,
     required this.autoSave,
     required this.returnWithPop,
+    this.parentRouter,
+    this.showCloseButton = true,
   }) : super(key: key);
 
   @override
@@ -122,8 +129,9 @@ class _BloodSugarRecordPageState extends State<BloodSugarRecordPage> {
           size: 35.sp,
         ),
         onPressed: () {
-          AutoRouter.of(context)
-              .pushAndPopUntil(MainRoute(tabIndex: 0), predicate: (_) => false);
+          AutoRouter.of(context).pushAndPopUntil(
+              widget.parentRouter ?? MainRoute(tabIndex: 0),
+              predicate: (_) => false);
         },
       ),
     );
@@ -266,41 +274,45 @@ class _BloodSugarRecordPageState extends State<BloodSugarRecordPage> {
   }
 
   _buildButtons() {
+    List<Widget> res = [];
+    res.add(seFlatButton(
+      onPressed: () {
+        _handleSave();
+      },
+      title: "完成",
+      width: 300.w,
+      height: 70.h,
+      fontSize: 25.sp,
+      bgColor: Colors.redAccent,
+      fontColor: Colors.black54,
+      fontWeight: FontWeight.w900,
+    ));
+    if (widget.showCloseButton ?? true) {
+      res.addAll([
+        SizedBox(
+          height: 20.h,
+        ),
+        seFlatButton(
+          onPressed: () {
+            _handleSaveAndCloseCycle();
+          },
+          title: "完成并关闭当前记录周期",
+          width: 300.w,
+          height: 70.h,
+          fontSize: 25.sp,
+          bgColor: Colors.greenAccent,
+          fontColor: Colors.black54,
+          fontWeight: FontWeight.w900,
+        ),
+      ]);
+    }
     return SizedBox(
       height: 370.h,
       child: Align(
         alignment: Alignment.bottomCenter,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            seFlatButton(
-              onPressed: () {
-                _handleSave();
-              },
-              title: "完成",
-              width: 300.w,
-              height: 70.h,
-              fontSize: 25.sp,
-              bgColor: Colors.redAccent,
-              fontColor: Colors.black54,
-              fontWeight: FontWeight.w900,
-            ),
-            SizedBox(
-              height: 20.h,
-            ),
-            seFlatButton(
-              onPressed: () {
-                _handleSaveAndCloseCycle();
-              },
-              title: "完成并关闭当前记录周期",
-              width: 300.w,
-              height: 70.h,
-              fontSize: 25.sp,
-              bgColor: Colors.greenAccent,
-              fontColor: Colors.black54,
-              fontWeight: FontWeight.w900,
-            ),
-          ],
+          children: res,
         ),
       ),
     );
@@ -349,15 +361,19 @@ class _BloodSugarRecordPageState extends State<BloodSugarRecordPage> {
           message: (errorData as ErrorData).message,
         );
       }
-    } else {
-      /// todo 将保存的数据传给上层页面.
     }
 
     cancelFunc();
 
-    /// 返回到列表页面.
-    AutoRouter.of(context)
-        .pushAndPopUntil(MainRoute(tabIndex: 0), predicate: (_) => false);
+    if (!widget.returnWithPop) {
+      /// 返回到列表页面.
+      AutoRouter.of(context).pushAndPopUntil(
+          widget.parentRouter ?? MainRoute(tabIndex: 0),
+          predicate: (_) => false);
+    } else {
+      /// 返回上层，并传递数据.
+      AutoRouter.of(context).pop(this._bloodSugarRecordItem);
+    }
   }
 
   void _handleSaveAndCloseCycle() async {

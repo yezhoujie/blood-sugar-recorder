@@ -37,9 +37,10 @@ Widget timeColumn(RecordItem item) {
 Widget itemPopUpMenu({
   required BuildContext context,
   required RecordItem item,
-  required Function callback,
+  required Function(RecordItem) callback,
   Function(BuildContext context, RecordItem item)? handleRecordItemEdit,
-  Function(BuildContext context, RecordItem item, Function callback)?
+  Function(
+          BuildContext context, RecordItem item, Function(RecordItem) callback)?
       handleRecordItemDelete,
 }) {
   return PopupMenuButton(
@@ -107,8 +108,13 @@ Widget itemPopUpMenu({
 /// [context] BuildContext
 /// [item] FoodRecordItem 明细记录数据.
 /// [itemDeleteCallback] 记录删除后的回调函数.
-Widget buildFoodRecordItem(
-    BuildContext context, FoodRecordItem item, Function itemDeleteCallback) {
+/// [handleRecordItemEdit] 处理点击编辑按钮跳转操作.
+Widget buildFoodRecordItem({
+  required BuildContext context,
+  required FoodRecordItem item,
+  required Function(RecordItem) itemDeleteCallback,
+  Function(BuildContext context, RecordItem item)? handleRecordItemEdit,
+}) {
   return Container(
     // margin: EdgeInsets.only(right: 20.w),
     height: 60.h,
@@ -136,6 +142,7 @@ Widget buildFoodRecordItem(
                 children: [
                   Container(
                     width: 135.w,
+                    height: 35.h,
                     child: Builder(
                       builder: (itemContext) {
                         return InkWell(
@@ -206,7 +213,11 @@ Widget buildFoodRecordItem(
         Expanded(
           flex: 1,
           child: itemPopUpMenu(
-              context: context, item: item, callback: itemDeleteCallback),
+            context: context,
+            item: item,
+            callback: itemDeleteCallback,
+            handleRecordItemEdit: handleRecordItemEdit,
+          ),
         ),
       ],
     ),
@@ -217,8 +228,13 @@ Widget buildFoodRecordItem(
 /// [context] BuildContext
 /// [item] MedicineRecordItem 明细记录数据.
 /// [itemDeleteCallback] 记录删除后的回调函数.
-Widget buildMedicineRecordItem(BuildContext context, MedicineRecordItem item,
-    Function itemDeleteCallback) {
+/// [handleRecordItemEdit] 处理点击编辑按钮跳转操作.
+Widget buildMedicineRecordItem({
+  required BuildContext context,
+  required MedicineRecordItem item,
+  required Function(RecordItem) itemDeleteCallback,
+  Function(BuildContext context, RecordItem item)? handleRecordItemEdit,
+}) {
   return Container(
     // margin: EdgeInsets.only(right: 20.w),
     height: 60.h,
@@ -281,34 +297,53 @@ Widget buildMedicineRecordItem(BuildContext context, MedicineRecordItem item,
         Expanded(
           flex: 1,
           child: itemPopUpMenu(
-              context: context, item: item, callback: itemDeleteCallback),
+            context: context,
+            item: item,
+            callback: itemDeleteCallback,
+            handleRecordItemEdit: handleRecordItemEdit,
+          ),
         ),
       ],
     ),
   );
 }
 
-List<Widget> buildDetailRecordItem(
-    BuildContext context,
-    List<RecordItem> itemList,
-    UserBloodSugarConfig standard,
-    Function itemDeleteCallback) {
+List<Widget> buildDetailRecordItem({
+  required BuildContext context,
+  required List<RecordItem> itemList,
+  required UserBloodSugarConfig standard,
+  required Function(RecordItem) itemDeleteCallback,
+  Function(BuildContext context, RecordItem item)? handleRecordItemEdit,
+}) {
   return itemList.map((item) {
     switch (item.runtimeType) {
       case MedicineRecordItem:
         {
           return buildMedicineRecordItem(
-              context, item as MedicineRecordItem, itemDeleteCallback);
+            context: context,
+            item: item as MedicineRecordItem,
+            itemDeleteCallback: itemDeleteCallback,
+            handleRecordItemEdit: handleRecordItemEdit,
+          );
         }
       case FoodRecordItem:
         {
           return buildFoodRecordItem(
-              context, item as FoodRecordItem, itemDeleteCallback);
+            context: context,
+            item: item as FoodRecordItem,
+            itemDeleteCallback: itemDeleteCallback,
+            handleRecordItemEdit: handleRecordItemEdit,
+          );
         }
       case BloodSugarRecordItem:
         {
-          return buildBloodRecordItem(context, item as BloodSugarRecordItem,
-              standard, itemDeleteCallback);
+          return buildBloodRecordItem(
+            context: context,
+            standard: standard,
+            item: item as BloodSugarRecordItem,
+            itemDeleteCallback: itemDeleteCallback,
+            handleRecordItemEdit: handleRecordItemEdit,
+          );
         }
       default:
         return Container();
@@ -317,8 +352,17 @@ List<Widget> buildDetailRecordItem(
 }
 
 /// 构建血糖测试记录.
-Widget buildBloodRecordItem(BuildContext context, BloodSugarRecordItem item,
-    UserBloodSugarConfig standard, Function itemDeleteCallback) {
+/// [context] BuildContext
+/// [item] BloodSugarRecordItem 明细记录数据.
+/// [itemDeleteCallback] 记录删除后的回调函数.
+/// [handleRecordItemEdit] 处理点击编辑按钮跳转操作.
+Widget buildBloodRecordItem({
+  required BuildContext context,
+  required BloodSugarRecordItem item,
+  required UserBloodSugarConfig standard,
+  required Function(RecordItem) itemDeleteCallback,
+  Function(BuildContext context, RecordItem item)? handleRecordItemEdit,
+}) {
   return Container(
     // margin: EdgeInsets.only(right: 20.w),
     height: 60.h,
@@ -379,7 +423,11 @@ Widget buildBloodRecordItem(BuildContext context, BloodSugarRecordItem item,
         Expanded(
           flex: 1,
           child: itemPopUpMenu(
-              context: context, item: item, callback: itemDeleteCallback),
+            context: context,
+            item: item,
+            callback: itemDeleteCallback,
+            handleRecordItemEdit: handleRecordItemEdit,
+          ),
         ),
       ],
     ),

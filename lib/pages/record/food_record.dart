@@ -27,11 +27,19 @@ class FoodRecordPage extends StatefulWidget {
   /// 点击按钮是否自动后台保存.
   final bool autoSave;
 
+  /// 父页面路由.
+  final PageRouteInfo? parentRouter;
+
+  /// 是否返回在pop页面时返回保存后的数据.
+  final bool returnWithPop;
+
   const FoodRecordPage({
     Key? key,
     this.foodRecordItem,
     this.cycleId,
     required this.autoSave,
+    this.parentRouter,
+    required this.returnWithPop,
   }) : super(key: key);
 
   @override
@@ -132,8 +140,9 @@ class _FoodRecordPageState extends State<FoodRecordPage> {
           size: 35.sp,
         ),
         onPressed: () {
-          AutoRouter.of(context)
-              .pushAndPopUntil(MainRoute(tabIndex: 0), predicate: (_) => false);
+          AutoRouter.of(context).pushAndPopUntil(
+              widget.parentRouter ?? MainRoute(tabIndex: 0),
+              predicate: (_) => false);
         },
       ),
     );
@@ -331,21 +340,24 @@ class _FoodRecordPageState extends State<FoodRecordPage> {
           type: NotificationType.SUCCESS,
           message: "保存成功",
         );
-        cancelFunc();
-
-        /// 返回到列表页面.
-        AutoRouter.of(context)
-            .pushAndPopUntil(MainRoute(tabIndex: 0), predicate: (_) => false);
       } catch (errorData) {
         showNotification(
           type: NotificationType.ERROR,
           message: (errorData as ErrorData).message,
         );
-        cancelFunc();
       }
+    }
+
+    cancelFunc();
+
+    if (!widget.returnWithPop) {
+      /// 返回到列表页面.
+      AutoRouter.of(context).pushAndPopUntil(
+          widget.parentRouter ?? MainRoute(tabIndex: 0),
+          predicate: (_) => false);
     } else {
-      /// todo 将保存的数据传给上层页面.
-      cancelFunc();
+      /// 返回上层，并传递数据.
+      AutoRouter.of(context).pop(this._foodRecordItem);
     }
   }
 }

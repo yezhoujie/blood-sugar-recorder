@@ -5,7 +5,7 @@
 // **************************************************************************
 
 import 'package:auto_route/auto_route.dart' as _i1;
-import 'package:blood_sugar_recorder/domain/domain.dart' as _i17;
+import 'package:blood_sugar_recorder/domain/domain.dart' as _i18;
 import 'package:blood_sugar_recorder/main.dart' as _i16;
 import 'package:blood_sugar_recorder/pages/config/blood_sugar_setting.dart'
     as _i10;
@@ -15,6 +15,7 @@ import 'package:blood_sugar_recorder/pages/config/setting_complete.dart'
     as _i11;
 import 'package:blood_sugar_recorder/pages/config/user_list.dart' as _i5;
 import 'package:blood_sugar_recorder/pages/config/user_setting.dart' as _i7;
+import 'package:blood_sugar_recorder/pages/history/history.dart' as _i17;
 import 'package:blood_sugar_recorder/pages/index/index.dart' as _i3;
 import 'package:blood_sugar_recorder/pages/main/main.dart' as _i12;
 import 'package:blood_sugar_recorder/pages/record/blood_sugar_record.dart'
@@ -106,7 +107,10 @@ class AppRoute extends _i1.RootStackRouter {
         routeData: routeData,
         builder: (data) {
           final args = data.argsAs<MainRouteArgs>();
-          return _i12.MainPage(key: args.key, tabIndex: args.tabIndex);
+          return _i12.MainPage(
+              key: args.key,
+              tabIndex: args.tabIndex,
+              historyFilterConfig: args.historyFilterConfig);
         },
         maintainState: false,
         transitionsBuilder: _i6.slideTransition,
@@ -120,7 +124,9 @@ class AppRoute extends _i1.RootStackRouter {
               key: args.key,
               medicineRecordItem: args.medicineRecordItem,
               cycleId: args.cycleId,
-              autoSave: args.autoSave);
+              autoSave: args.autoSave,
+              parentRouter: args.parentRouter,
+              returnWithPop: args.returnWithPop);
         },
         maintainState: false,
         transitionsBuilder: _i6.slideTransition,
@@ -134,7 +140,9 @@ class AppRoute extends _i1.RootStackRouter {
               key: args.key,
               foodRecordItem: args.foodRecordItem,
               cycleId: args.cycleId,
-              autoSave: args.autoSave);
+              autoSave: args.autoSave,
+              parentRouter: args.parentRouter,
+              returnWithPop: args.returnWithPop);
         },
         maintainState: false,
         transitionsBuilder: _i6.slideTransition,
@@ -149,7 +157,9 @@ class AppRoute extends _i1.RootStackRouter {
               bloodSugarRecordItem: args.bloodSugarRecordItem,
               cycleId: args.cycleId,
               autoSave: args.autoSave,
-              returnWithPop: args.returnWithPop);
+              returnWithPop: args.returnWithPop,
+              parentRouter: args.parentRouter,
+              showCloseButton: args.showCloseButton);
         },
         maintainState: false,
         transitionsBuilder: _i6.slideTransition,
@@ -286,35 +296,48 @@ class SettingCompleteRoute extends _i1.PageRouteInfo {
 }
 
 class MainRoute extends _i1.PageRouteInfo<MainRouteArgs> {
-  MainRoute({_i2.Key? key, required int tabIndex})
+  MainRoute(
+      {_i2.Key? key,
+      required int tabIndex,
+      _i17.HistoryFilterConfig? historyFilterConfig})
       : super(name,
             path: '/main-page',
-            args: MainRouteArgs(key: key, tabIndex: tabIndex));
+            args: MainRouteArgs(
+                key: key,
+                tabIndex: tabIndex,
+                historyFilterConfig: historyFilterConfig));
 
   static const String name = 'MainRoute';
 }
 
 class MainRouteArgs {
-  const MainRouteArgs({this.key, required this.tabIndex});
+  const MainRouteArgs(
+      {this.key, required this.tabIndex, this.historyFilterConfig});
 
   final _i2.Key? key;
 
   final int tabIndex;
+
+  final _i17.HistoryFilterConfig? historyFilterConfig;
 }
 
 class MedicineRecordRoute extends _i1.PageRouteInfo<MedicineRecordRouteArgs> {
   MedicineRecordRoute(
       {_i2.Key? key,
-      _i17.MedicineRecordItem? medicineRecordItem,
+      _i18.MedicineRecordItem? medicineRecordItem,
       int? cycleId,
-      required bool autoSave})
+      required bool autoSave,
+      _i1.PageRouteInfo<dynamic>? parentRouter,
+      required bool returnWithPop})
       : super(name,
             path: '/medicine-record-page',
             args: MedicineRecordRouteArgs(
                 key: key,
                 medicineRecordItem: medicineRecordItem,
                 cycleId: cycleId,
-                autoSave: autoSave));
+                autoSave: autoSave,
+                parentRouter: parentRouter,
+                returnWithPop: returnWithPop));
 
   static const String name = 'MedicineRecordRoute';
 }
@@ -324,55 +347,76 @@ class MedicineRecordRouteArgs {
       {this.key,
       this.medicineRecordItem,
       this.cycleId,
-      required this.autoSave});
+      required this.autoSave,
+      this.parentRouter,
+      required this.returnWithPop});
 
   final _i2.Key? key;
 
-  final _i17.MedicineRecordItem? medicineRecordItem;
+  final _i18.MedicineRecordItem? medicineRecordItem;
 
   final int? cycleId;
 
   final bool autoSave;
+
+  final _i1.PageRouteInfo<dynamic>? parentRouter;
+
+  final bool returnWithPop;
 }
 
 class FoodRecordRoute extends _i1.PageRouteInfo<FoodRecordRouteArgs> {
   FoodRecordRoute(
       {_i2.Key? key,
-      _i17.FoodRecordItem? foodRecordItem,
+      _i18.FoodRecordItem? foodRecordItem,
       int? cycleId,
-      required bool autoSave})
+      required bool autoSave,
+      _i1.PageRouteInfo<dynamic>? parentRouter,
+      required bool returnWithPop})
       : super(name,
             path: '/food-record-page',
             args: FoodRecordRouteArgs(
                 key: key,
                 foodRecordItem: foodRecordItem,
                 cycleId: cycleId,
-                autoSave: autoSave));
+                autoSave: autoSave,
+                parentRouter: parentRouter,
+                returnWithPop: returnWithPop));
 
   static const String name = 'FoodRecordRoute';
 }
 
 class FoodRecordRouteArgs {
   const FoodRecordRouteArgs(
-      {this.key, this.foodRecordItem, this.cycleId, required this.autoSave});
+      {this.key,
+      this.foodRecordItem,
+      this.cycleId,
+      required this.autoSave,
+      this.parentRouter,
+      required this.returnWithPop});
 
   final _i2.Key? key;
 
-  final _i17.FoodRecordItem? foodRecordItem;
+  final _i18.FoodRecordItem? foodRecordItem;
 
   final int? cycleId;
 
   final bool autoSave;
+
+  final _i1.PageRouteInfo<dynamic>? parentRouter;
+
+  final bool returnWithPop;
 }
 
 class BloodSugarRecordRoute
     extends _i1.PageRouteInfo<BloodSugarRecordRouteArgs> {
   BloodSugarRecordRoute(
       {_i2.Key? key,
-      _i17.BloodSugarRecordItem? bloodSugarRecordItem,
+      _i18.BloodSugarRecordItem? bloodSugarRecordItem,
       int? cycleId,
       required bool autoSave,
-      required bool returnWithPop})
+      required bool returnWithPop,
+      _i1.PageRouteInfo<dynamic>? parentRouter,
+      bool? showCloseButton})
       : super(name,
             path: '/blood-sugar-record-page',
             args: BloodSugarRecordRouteArgs(
@@ -380,7 +424,9 @@ class BloodSugarRecordRoute
                 bloodSugarRecordItem: bloodSugarRecordItem,
                 cycleId: cycleId,
                 autoSave: autoSave,
-                returnWithPop: returnWithPop));
+                returnWithPop: returnWithPop,
+                parentRouter: parentRouter,
+                showCloseButton: showCloseButton));
 
   static const String name = 'BloodSugarRecordRoute';
 }
@@ -391,17 +437,23 @@ class BloodSugarRecordRouteArgs {
       this.bloodSugarRecordItem,
       this.cycleId,
       required this.autoSave,
-      required this.returnWithPop});
+      required this.returnWithPop,
+      this.parentRouter,
+      this.showCloseButton});
 
   final _i2.Key? key;
 
-  final _i17.BloodSugarRecordItem? bloodSugarRecordItem;
+  final _i18.BloodSugarRecordItem? bloodSugarRecordItem;
 
   final int? cycleId;
 
   final bool autoSave;
 
   final bool returnWithPop;
+
+  final _i1.PageRouteInfo<dynamic>? parentRouter;
+
+  final bool? showCloseButton;
 }
 
 class MyHomeRoute extends _i1.PageRouteInfo<MyHomeRouteArgs> {

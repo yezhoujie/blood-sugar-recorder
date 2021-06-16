@@ -60,10 +60,10 @@ class CycleRecordDatasource {
 
   /// 获取某个时间之后的指定数量的记录.
   Future<List<CycleRecord>> findLimitByFrom(
-      {required DateTime start, int limit = 20}) async {
+      {required int userId, required DateTime start, int limit = 20}) async {
     List<Map<String, dynamic>> listMap = await Global.database.rawQuery(
-        "select * from ${this._tableName} where datetime > ? order by datetime limit ?",
-        [start.toIso8601String(), limit]);
+        "select * from ${this._tableName} where userId = ? and datetime > ? order by datetime limit ?",
+        [userId, start.toIso8601String(), limit]);
     if (listMap.isEmpty) {
       return [];
     } else {
@@ -73,10 +73,10 @@ class CycleRecordDatasource {
 
   /// 获取某个时间之前的指定数量的记录.
   Future<List<CycleRecord>> findLimitByBefore(
-      {required DateTime start, int limit = 20}) async {
+      {required int userId, required DateTime start, int limit = 20}) async {
     List<Map<String, dynamic>> listMap = await Global.database.rawQuery(
-        "select * from ${this._tableName} where datetime < ? order by datetime desc limit ?",
-        [start.toIso8601String(), limit]);
+        "select * from ${this._tableName} where userId = ? and datetime < ? order by datetime desc limit ?",
+        [userId, start.toIso8601String(), limit]);
     if (listMap.isEmpty) {
       return [];
     } else {
