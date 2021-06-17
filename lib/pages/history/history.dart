@@ -61,8 +61,6 @@ class _HistoryPageState extends State<HistoryPage> {
   /// 血糖标准.
   late UserBloodSugarConfig _standard;
 
-  ScrollController scrollController = ScrollController(keepScrollOffset: true);
-
   @override
   void initState() {
     super.initState();
@@ -375,7 +373,6 @@ class _HistoryPageState extends State<HistoryPage> {
             child: RectGetter(
               key: listViewKey,
               child: EasyRefresh.custom(
-                scrollController: this.scrollController,
                 header: BezierCircleHeader(
                     color: Colors.blue, backgroundColor: Colors.amber),
                 footer: BezierBounceFooter(
@@ -409,6 +406,7 @@ class _HistoryPageState extends State<HistoryPage> {
   _buildCycleCard(CycleRecord cycle) {
     List<RecordItem> itemList = this._doFilter(cycle);
     Widget card = Card(
+      key: ValueKey("cycle-card-${cycle.id}"),
       shape: RoundedRectangleBorder(
         borderRadius: RadiusConstant.k6pxRadius,
       ),
@@ -454,6 +452,7 @@ class _HistoryPageState extends State<HistoryPage> {
       ),
     );
     return Padding(
+      key: ValueKey("padding-${cycle.id}"),
       padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
       child: card,
     );

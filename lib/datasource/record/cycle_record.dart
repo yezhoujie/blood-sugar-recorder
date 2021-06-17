@@ -62,12 +62,16 @@ class CycleRecordDatasource {
   Future<List<CycleRecord>> findLimitByFrom(
       {required int userId, required DateTime start, int limit = 20}) async {
     List<Map<String, dynamic>> listMap = await Global.database.rawQuery(
-        "select * from ${this._tableName} where userId = ? and datetime > ? order by datetime desc limit ?",
+        "select * from ${this._tableName} where userId = ? and datetime > ? order by datetime limit ?",
         [userId, start.toIso8601String(), limit]);
     if (listMap.isEmpty) {
       return [];
     } else {
-      return listMap.map((e) => CycleRecord.fromJson(e)).toList();
+      return listMap
+          .map((e) => CycleRecord.fromJson(e))
+          .toList()
+          .reversed
+          .toList();
     }
   }
 
