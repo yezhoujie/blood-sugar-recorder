@@ -1,4 +1,5 @@
 import 'package:auto_route/annotations.dart';
+import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:blood_sugar_recorder/main.dart';
 import 'package:blood_sugar_recorder/pages/config/blood_sugar_setting.dart';
 import 'package:blood_sugar_recorder/pages/config/medicine_list.dart';
@@ -6,6 +7,7 @@ import 'package:blood_sugar_recorder/pages/config/medicine_setting.dart';
 import 'package:blood_sugar_recorder/pages/config/setting_complete.dart';
 import 'package:blood_sugar_recorder/pages/config/user_list.dart';
 import 'package:blood_sugar_recorder/pages/config/user_setting.dart';
+import 'package:blood_sugar_recorder/pages/history/history_add.dart';
 import 'package:blood_sugar_recorder/pages/index/index.dart';
 import 'package:blood_sugar_recorder/pages/main/main.dart';
 import 'package:blood_sugar_recorder/pages/record/blood_sugar_record.dart';
@@ -76,6 +78,9 @@ import 'package:flutter/material.dart';
         page: BloodSugarRecordPage,
         transitionsBuilder: slideTransition,
         maintainState: false),
+
+    /// 历史周期记录补填页面.
+    CustomRoute(page: HistoryAddPage, transitionsBuilder: slideTransition),
     // CustomRoute(
     //     page: MainPage,
     //     transitionsBuilder: slideTransition,

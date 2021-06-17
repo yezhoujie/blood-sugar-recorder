@@ -5,8 +5,8 @@
 // **************************************************************************
 
 import 'package:auto_route/auto_route.dart' as _i1;
-import 'package:blood_sugar_recorder/domain/domain.dart' as _i18;
-import 'package:blood_sugar_recorder/main.dart' as _i16;
+import 'package:blood_sugar_recorder/domain/domain.dart' as _i19;
+import 'package:blood_sugar_recorder/main.dart' as _i17;
 import 'package:blood_sugar_recorder/pages/config/blood_sugar_setting.dart'
     as _i10;
 import 'package:blood_sugar_recorder/pages/config/medicine_list.dart' as _i8;
@@ -15,7 +15,8 @@ import 'package:blood_sugar_recorder/pages/config/setting_complete.dart'
     as _i11;
 import 'package:blood_sugar_recorder/pages/config/user_list.dart' as _i5;
 import 'package:blood_sugar_recorder/pages/config/user_setting.dart' as _i7;
-import 'package:blood_sugar_recorder/pages/history/history.dart' as _i17;
+import 'package:blood_sugar_recorder/pages/history/history.dart' as _i18;
+import 'package:blood_sugar_recorder/pages/history/history_add.dart' as _i16;
 import 'package:blood_sugar_recorder/pages/index/index.dart' as _i3;
 import 'package:blood_sugar_recorder/pages/main/main.dart' as _i12;
 import 'package:blood_sugar_recorder/pages/record/blood_sugar_record.dart'
@@ -165,11 +166,19 @@ class AppRoute extends _i1.RootStackRouter {
         transitionsBuilder: _i6.slideTransition,
         opaque: true,
         barrierDismissible: false),
+    HistoryAddRoute.name: (routeData) => _i1.CustomPage<dynamic>(
+        routeData: routeData,
+        builder: (_) {
+          return const _i16.HistoryAddPage();
+        },
+        transitionsBuilder: _i6.slideTransition,
+        opaque: true,
+        barrierDismissible: false),
     MyHomeRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (data) {
           final args = data.argsAs<MyHomeRouteArgs>();
-          return _i16.MyHomePage(key: args.key, title: args.title);
+          return _i17.MyHomePage(key: args.key, title: args.title);
         })
   };
 
@@ -192,6 +201,7 @@ class AppRoute extends _i1.RootStackRouter {
         _i1.RouteConfig(FoodRecordRoute.name, path: '/food-record-page'),
         _i1.RouteConfig(BloodSugarRecordRoute.name,
             path: '/blood-sugar-record-page'),
+        _i1.RouteConfig(HistoryAddRoute.name, path: '/history-add-page'),
         _i1.RouteConfig(MyHomeRoute.name, path: '/my-home-page')
       ];
 }
@@ -299,7 +309,7 @@ class MainRoute extends _i1.PageRouteInfo<MainRouteArgs> {
   MainRoute(
       {_i2.Key? key,
       required int tabIndex,
-      _i17.HistoryFilterConfig? historyFilterConfig})
+      _i18.HistoryFilterConfig? historyFilterConfig})
       : super(name,
             path: '/main-page',
             args: MainRouteArgs(
@@ -318,13 +328,13 @@ class MainRouteArgs {
 
   final int tabIndex;
 
-  final _i17.HistoryFilterConfig? historyFilterConfig;
+  final _i18.HistoryFilterConfig? historyFilterConfig;
 }
 
 class MedicineRecordRoute extends _i1.PageRouteInfo<MedicineRecordRouteArgs> {
   MedicineRecordRoute(
       {_i2.Key? key,
-      _i18.MedicineRecordItem? medicineRecordItem,
+      _i19.MedicineRecordItem? medicineRecordItem,
       int? cycleId,
       required bool autoSave,
       _i1.PageRouteInfo<dynamic>? parentRouter,
@@ -353,7 +363,7 @@ class MedicineRecordRouteArgs {
 
   final _i2.Key? key;
 
-  final _i18.MedicineRecordItem? medicineRecordItem;
+  final _i19.MedicineRecordItem? medicineRecordItem;
 
   final int? cycleId;
 
@@ -367,7 +377,7 @@ class MedicineRecordRouteArgs {
 class FoodRecordRoute extends _i1.PageRouteInfo<FoodRecordRouteArgs> {
   FoodRecordRoute(
       {_i2.Key? key,
-      _i18.FoodRecordItem? foodRecordItem,
+      _i19.FoodRecordItem? foodRecordItem,
       int? cycleId,
       required bool autoSave,
       _i1.PageRouteInfo<dynamic>? parentRouter,
@@ -396,7 +406,7 @@ class FoodRecordRouteArgs {
 
   final _i2.Key? key;
 
-  final _i18.FoodRecordItem? foodRecordItem;
+  final _i19.FoodRecordItem? foodRecordItem;
 
   final int? cycleId;
 
@@ -411,7 +421,7 @@ class BloodSugarRecordRoute
     extends _i1.PageRouteInfo<BloodSugarRecordRouteArgs> {
   BloodSugarRecordRoute(
       {_i2.Key? key,
-      _i18.BloodSugarRecordItem? bloodSugarRecordItem,
+      _i19.BloodSugarRecordItem? bloodSugarRecordItem,
       int? cycleId,
       required bool autoSave,
       required bool returnWithPop,
@@ -443,7 +453,7 @@ class BloodSugarRecordRouteArgs {
 
   final _i2.Key? key;
 
-  final _i18.BloodSugarRecordItem? bloodSugarRecordItem;
+  final _i19.BloodSugarRecordItem? bloodSugarRecordItem;
 
   final int? cycleId;
 
@@ -454,6 +464,12 @@ class BloodSugarRecordRouteArgs {
   final _i1.PageRouteInfo<dynamic>? parentRouter;
 
   final bool? showCloseButton;
+}
+
+class HistoryAddRoute extends _i1.PageRouteInfo {
+  const HistoryAddRoute() : super(name, path: '/history-add-page');
+
+  static const String name = 'HistoryAddRoute';
 }
 
 class MyHomeRoute extends _i1.PageRouteInfo<MyHomeRouteArgs> {

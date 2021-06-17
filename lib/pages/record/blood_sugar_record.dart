@@ -129,9 +129,16 @@ class _BloodSugarRecordPageState extends State<BloodSugarRecordPage> {
           size: 35.sp,
         ),
         onPressed: () {
-          AutoRouter.of(context).pushAndPopUntil(
-              widget.parentRouter ?? MainRoute(tabIndex: 0),
-              predicate: (_) => false);
+
+          if (!widget.returnWithPop) {
+            /// 返回到列表页面.
+            AutoRouter.of(context).pushAndPopUntil(
+                widget.parentRouter ?? MainRoute(tabIndex: 0),
+                predicate: (_) => false);
+          } else {
+            /// 返回上层，并传递数据.
+            AutoRouter.of(context).pop();
+          }
         },
       ),
     );

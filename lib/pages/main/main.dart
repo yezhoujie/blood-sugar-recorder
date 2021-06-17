@@ -182,6 +182,7 @@ class _MainPageState extends State<MainPage> {
         IconButton(
             onPressed: () {
               /// 跳转到补填周期页面.
+              AutoRouter.of(context).push(HistoryAddRoute());
             },
             icon: Icon(
               Icons.add,

@@ -27,9 +27,6 @@ class _SettingPageState extends State<SettingPage> {
     /// 初始化路由.
     AutoRouter.of(context);
 
-    /// 如果用户切换，应该初始化页面的数据.
-    _dataRefresh();
-
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -212,12 +209,4 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   ///////////////////事件处理区域///////////////////////
-  void _dataRefresh() {
-    if (this._currentUser.id != Global.currentUser!.id) {
-      this._currentUser = Global.currentUser!;
-      print("reload data");
-
-      /// todo reload data.
-    }
-  }
 }

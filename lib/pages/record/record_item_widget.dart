@@ -37,8 +37,10 @@ Widget timeColumn(RecordItem item) {
 Widget itemPopUpMenu({
   required BuildContext context,
   required RecordItem item,
+  required int index,
   required Function(RecordItem) callback,
-  Function(BuildContext context, RecordItem item)? handleRecordItemEdit,
+  Function(BuildContext context, RecordItem item, int index)?
+      handleRecordItemEdit,
   Function(
           BuildContext context, RecordItem item, Function(RecordItem) callback)?
       handleRecordItemDelete,
@@ -89,7 +91,7 @@ Widget itemPopUpMenu({
     onSelected: (value) async {
       if (value == "edit") {
         if (null != handleRecordItemEdit) {
-          handleRecordItemEdit(context, item);
+          handleRecordItemEdit(context, item, index);
         } else {
           defaultHandleRecordItemEdit(context, item);
         }
@@ -107,13 +109,16 @@ Widget itemPopUpMenu({
 /// 构建每个周期内的进食明细记录.
 /// [context] BuildContext
 /// [item] FoodRecordItem 明细记录数据.
+/// [index] 明细记录在列表中的序号.
 /// [itemDeleteCallback] 记录删除后的回调函数.
 /// [handleRecordItemEdit] 处理点击编辑按钮跳转操作.
 Widget buildFoodRecordItem({
   required BuildContext context,
   required FoodRecordItem item,
+  required int index,
   required Function(RecordItem) itemDeleteCallback,
-  Function(BuildContext context, RecordItem item)? handleRecordItemEdit,
+  Function(BuildContext context, RecordItem item, int index)?
+      handleRecordItemEdit,
 }) {
   return Container(
     // margin: EdgeInsets.only(right: 20.w),
@@ -215,6 +220,7 @@ Widget buildFoodRecordItem({
           child: itemPopUpMenu(
             context: context,
             item: item,
+            index: index,
             callback: itemDeleteCallback,
             handleRecordItemEdit: handleRecordItemEdit,
           ),
@@ -227,13 +233,16 @@ Widget buildFoodRecordItem({
 /// 构建每个周期内的药物使用明细记录.
 /// [context] BuildContext
 /// [item] MedicineRecordItem 明细记录数据.
+/// [index] 明细记录在列表中的序号.
 /// [itemDeleteCallback] 记录删除后的回调函数.
 /// [handleRecordItemEdit] 处理点击编辑按钮跳转操作.
 Widget buildMedicineRecordItem({
   required BuildContext context,
   required MedicineRecordItem item,
+  required int index,
   required Function(RecordItem) itemDeleteCallback,
-  Function(BuildContext context, RecordItem item)? handleRecordItemEdit,
+  Function(BuildContext context, RecordItem item, int index)?
+      handleRecordItemEdit,
 }) {
   return Container(
     // margin: EdgeInsets.only(right: 20.w),
@@ -299,6 +308,7 @@ Widget buildMedicineRecordItem({
           child: itemPopUpMenu(
             context: context,
             item: item,
+            index: index,
             callback: itemDeleteCallback,
             handleRecordItemEdit: handleRecordItemEdit,
           ),
@@ -313,55 +323,72 @@ List<Widget> buildDetailRecordItem({
   required List<RecordItem> itemList,
   required UserBloodSugarConfig standard,
   required Function(RecordItem) itemDeleteCallback,
-  Function(BuildContext context, RecordItem item)? handleRecordItemEdit,
+  Function(BuildContext context, RecordItem item, int index)?
+      handleRecordItemEdit,
 }) {
-  return itemList.map((item) {
-    switch (item.runtimeType) {
-      case MedicineRecordItem:
-        {
-          return buildMedicineRecordItem(
-            context: context,
-            item: item as MedicineRecordItem,
-            itemDeleteCallback: itemDeleteCallback,
-            handleRecordItemEdit: handleRecordItemEdit,
-          );
+  return itemList
+      .asMap()
+      .map((i, item) {
+        switch (item.runtimeType) {
+          case MedicineRecordItem:
+            {
+              return MapEntry(
+                  i,
+                  buildMedicineRecordItem(
+                    context: context,
+                    item: item as MedicineRecordItem,
+                    index: i,
+                    itemDeleteCallback: itemDeleteCallback,
+                    handleRecordItemEdit: handleRecordItemEdit,
+                  ));
+            }
+          case FoodRecordItem:
+            {
+              return MapEntry(
+                  i,
+                  buildFoodRecordItem(
+                    context: context,
+                    item: item as FoodRecordItem,
+                    index: i,
+                    itemDeleteCallback: itemDeleteCallback,
+                    handleRecordItemEdit: handleRecordItemEdit,
+                  ));
+            }
+          case BloodSugarRecordItem:
+            {
+              return MapEntry(
+                  i,
+                  buildBloodRecordItem(
+                    context: context,
+                    standard: standard,
+                    item: item as BloodSugarRecordItem,
+                    index: i,
+                    itemDeleteCallback: itemDeleteCallback,
+                    handleRecordItemEdit: handleRecordItemEdit,
+                  ));
+            }
+          default:
+            return MapEntry(i, Container());
         }
-      case FoodRecordItem:
-        {
-          return buildFoodRecordItem(
-            context: context,
-            item: item as FoodRecordItem,
-            itemDeleteCallback: itemDeleteCallback,
-            handleRecordItemEdit: handleRecordItemEdit,
-          );
-        }
-      case BloodSugarRecordItem:
-        {
-          return buildBloodRecordItem(
-            context: context,
-            standard: standard,
-            item: item as BloodSugarRecordItem,
-            itemDeleteCallback: itemDeleteCallback,
-            handleRecordItemEdit: handleRecordItemEdit,
-          );
-        }
-      default:
-        return Container();
-    }
-  }).toList();
+      })
+      .values
+      .toList();
 }
 
 /// 构建血糖测试记录.
 /// [context] BuildContext
 /// [item] BloodSugarRecordItem 明细记录数据.
+/// [index] 明细记录在列表中的序号.
 /// [itemDeleteCallback] 记录删除后的回调函数.
 /// [handleRecordItemEdit] 处理点击编辑按钮跳转操作.
 Widget buildBloodRecordItem({
   required BuildContext context,
   required BloodSugarRecordItem item,
+  required int index,
   required UserBloodSugarConfig standard,
   required Function(RecordItem) itemDeleteCallback,
-  Function(BuildContext context, RecordItem item)? handleRecordItemEdit,
+  Function(BuildContext context, RecordItem item, int index)?
+      handleRecordItemEdit,
 }) {
   return Container(
     // margin: EdgeInsets.only(right: 20.w),
@@ -425,6 +452,7 @@ Widget buildBloodRecordItem({
           child: itemPopUpMenu(
             context: context,
             item: item,
+            index: index,
             callback: itemDeleteCallback,
             handleRecordItemEdit: handleRecordItemEdit,
           ),

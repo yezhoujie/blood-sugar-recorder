@@ -19,6 +19,7 @@ import 'package:gzx_dropdown_menu/gzx_dropdown_menu.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:rect_getter/rect_getter.dart';
 import 'package:share/share.dart';
 
 /// 历史周期记录页面.
@@ -48,11 +49,19 @@ class _HistoryPageState extends State<HistoryPage> {
 
   GlobalKey _stackKey = GlobalKey();
 
+  /// 给整个ListView设置Rect信息获取能力
+  var listViewKey = RectGetter.createGlobalKey();
+
+  /// 每个周期的key.
+  var _keys = {};
+
   /// 周期列表数据.
   List<CycleRecord> _cycleList = [];
 
   /// 血糖标准.
   late UserBloodSugarConfig _standard;
+
+  ScrollController scrollController = ScrollController(keepScrollOffset: true);
 
   @override
   void initState() {
@@ -348,27 +357,51 @@ class _HistoryPageState extends State<HistoryPage> {
               ),
             ),
           )
-        : EasyRefresh.custom(
-            header: BezierCircleHeader(
-                color: Colors.blue, backgroundColor: Colors.amber),
-            footer: BezierBounceFooter(
-                color: Colors.blue, backgroundColor: Colors.amber),
-            onRefresh: () async {
-              await this._loadCycles(next: true);
+        : NotificationListener<ScrollUpdateNotification>(
+            onNotification: (notification) {
+              /// 将时间过滤条件随着列表滚动而改变.
+              List<int> itemIndexList = getVisible();
+              if (itemIndexList.isNotEmpty &&
+                  this._filterConfig.startTime !=
+                      this._cycleList[getVisible().first].datetime) {
+                setState(() {
+                  this._filterConfig.startTime =
+                      this._cycleList[getVisible().first].datetime!;
+                });
+                _buildFilterMenuTitles();
+              }
+              return true;
             },
-            onLoad: () async {
-              await this._loadCycles(next: false);
-            },
-            slivers: <Widget>[
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return _buildCycleCard(this._cycleList[index]);
-                  },
-                  childCount: this._cycleList.length,
-                ),
+            child: RectGetter(
+              key: listViewKey,
+              child: EasyRefresh.custom(
+                scrollController: this.scrollController,
+                header: BezierCircleHeader(
+                    color: Colors.blue, backgroundColor: Colors.amber),
+                footer: BezierBounceFooter(
+                    color: Colors.blue, backgroundColor: Colors.amber),
+                onRefresh: () async {
+                  await this._loadCycles(next: true);
+                },
+                onLoad: () async {
+                  await this._loadCycles(next: false);
+                },
+                slivers: <Widget>[
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        _keys[index] = RectGetter.createGlobalKey();
+                        return RectGetter(
+                          key: _keys[index],
+                          child: _buildCycleCard(this._cycleList[index]),
+                        );
+                      },
+                      childCount: this._cycleList.length,
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           );
   }
 
@@ -683,6 +716,8 @@ class _HistoryPageState extends State<HistoryPage> {
           .parse(
               "${DateFormat("yyyy-MM-dd").format(this._filterConfig.startTime)} 00:00:00")
           .add(Duration(days: 1));
+    } else {
+      begin = begin.add(Duration(seconds: 1));
     }
 
     this._cycleList = await CycleRecordService()
@@ -719,10 +754,11 @@ class _HistoryPageState extends State<HistoryPage> {
     if (newRecords.isEmpty) {
       showToast(msg: "没有更多数据了");
       return;
-    } else {}
+    }
+
     if (next) {
       /// 和当前时间越近的数据加载队列前面.
-      this._cycleList = newRecords..addAll(this._cycleList);
+      this._cycleList.insertAll(0, newRecords);
     } else {
       /// 越早的数据加到队列后面.
       this._cycleList.addAll(newRecords);
@@ -779,7 +815,7 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   /// 跳转周期内明细编辑页面.
-  _pushItemEditPage(BuildContext context, RecordItem item) {
+  _pushItemEditPage(BuildContext context, RecordItem item, int index) {
     switch (item.runtimeType) {
       case MedicineRecordItem:
         {
@@ -819,6 +855,23 @@ class _HistoryPageState extends State<HistoryPage> {
           break;
         }
     }
+  }
+
+  List<int> getVisible() {
+    /// 先获取整个ListView的rect信息，然后遍历map
+    /// 利用map中的key获取每个item的rect,如果该rect与ListView的rect存在交集
+    /// 则将对应的index加入到返回的index集合中
+    var rect = RectGetter.getRectFromKey(listViewKey);
+    var _items = <int>[];
+    _keys.forEach((index, key) {
+      var itemRect = RectGetter.getRectFromKey(key);
+      if (itemRect != null &&
+          !(itemRect.top > rect!.bottom || itemRect.bottom < rect.top))
+        _items.add(index);
+    });
+
+    /// 这个集合中存的就是当前处于显示状态的所有item的index
+    return _items;
   }
 }
 
