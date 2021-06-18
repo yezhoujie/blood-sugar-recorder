@@ -61,6 +61,14 @@ class _HistoryPageState extends State<HistoryPage> {
   /// 血糖标准.
   late UserBloodSugarConfig _standard;
 
+  ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    this._scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -368,11 +376,13 @@ class _HistoryPageState extends State<HistoryPage> {
                 });
                 _buildFilterMenuTitles();
               }
+
               return true;
             },
             child: RectGetter(
               key: listViewKey,
               child: EasyRefresh.custom(
+                scrollController: this._scrollController,
                 header: BezierCircleHeader(
                     color: Colors.blue, backgroundColor: Colors.amber),
                 footer: BezierBounceFooter(
@@ -434,6 +444,7 @@ class _HistoryPageState extends State<HistoryPage> {
                       )).toList()
                   : [
                       Container(
+                        height: 35.h,
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(
@@ -444,7 +455,7 @@ class _HistoryPageState extends State<HistoryPage> {
                             ),
                           ),
                         ),
-                      )
+                      ),
                     ],
             ),
           ),
@@ -758,6 +769,7 @@ class _HistoryPageState extends State<HistoryPage> {
     if (next) {
       /// 和当前时间越近的数据加载队列前面.
       this._cycleList.insertAll(0, newRecords);
+      this._scrollController.jumpTo(this._getScrollPosition(newRecords));
     } else {
       /// 越早的数据加到队列后面.
       this._cycleList.addAll(newRecords);
@@ -871,6 +883,25 @@ class _HistoryPageState extends State<HistoryPage> {
 
     /// 这个集合中存的就是当前处于显示状态的所有item的index
     return _items;
+  }
+
+  /// 计算当有新数据加载要页面顶部，为了防止滚动条跳到顶部，计算滚动条需要下拉的位置.
+  double _getScrollPosition(List<CycleRecord> cycleList) {
+    double position = 0;
+    if (cycleList.isNotEmpty) {
+      cycleList.forEach((element) {
+        /// 上下各padding 10.
+        double paddingHeight = 20;
+        double operatorHeight = 40 + 1;
+        double itemsHeight = 35;
+        List<RecordItem> itemList = this._doFilter(element);
+        if (itemList.isNotEmpty) {
+          itemsHeight = (60.0 + 1.0) * itemList.length;
+        }
+        position += (paddingHeight + operatorHeight + itemsHeight);
+      });
+    }
+    return position.h;
   }
 }
 

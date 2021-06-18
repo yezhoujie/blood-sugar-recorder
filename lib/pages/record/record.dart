@@ -16,6 +16,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:share/share.dart';
 
 /// 单周期，血糖，药物，进餐记录入口页面
 class RecordPage extends StatefulWidget {
@@ -191,63 +192,86 @@ class _RecordPageState extends State<RecordPage> {
             flex: 2,
             child: Align(
               alignment: Alignment.centerRight,
-              child: PopupMenuButton(
-                icon: Icon(
-                  Icons.settings,
-                  color: AppColor.thirdElementText,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: RadiusConstant.k6pxRadius,
-                ),
-                offset: Offset(0, 40.h),
-                iconSize: 30.sp,
-                itemBuilder: (BuildContext bc) {
-                  const operationList = [
-                    {
-                      "key": "close",
-                      "title": "结束该周期",
-                      "icon": Icon(
-                        Icons.done,
-                        color: Colors.green,
-                      )
-                    },
-                    {
-                      "key": "delete",
-                      "title": "删除",
-                      "icon": Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                      )
-                    },
-                  ];
-                  return operationList
-                      .map((operation) => PopupMenuItem(
-                            enabled: (operation["key"] != "close" ||
-                                !this._currentCycle!.closed),
-                            child: Row(
-                              children: [
-                                operation["icon"] as Widget,
-                                Padding(padding: EdgeInsets.only(right: 10.w)),
-                                Text(
-                                  operation["title"].toString(),
-                                  style: TextStyle(
-                                    fontSize: 18.sp,
-                                  ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: 20.w,
+                    child: IconButton(
+                      iconSize: 25.sp,
+                      tooltip: "分享",
+                      alignment: Alignment.center,
+                      onPressed: () {
+                        Share.share(
+                            CycleRecord.toShareText(this._currentCycle!),
+                            subject: '【血糖记录器】分享数据');
+                      },
+                      icon: Icon(
+                        Icons.share,
+                        color: AppColor.thirdElementText,
+                      ),
+                    ),
+                  ),
+                  PopupMenuButton(
+                    icon: Icon(
+                      Icons.settings,
+                      color: AppColor.thirdElementText,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: RadiusConstant.k6pxRadius,
+                    ),
+                    offset: Offset(0, 40.h),
+                    iconSize: 30.sp,
+                    itemBuilder: (BuildContext bc) {
+                      const operationList = [
+                        {
+                          "key": "close",
+                          "title": "结束该周期",
+                          "icon": Icon(
+                            Icons.done,
+                            color: Colors.green,
+                          )
+                        },
+                        {
+                          "key": "delete",
+                          "title": "删除",
+                          "icon": Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                          )
+                        },
+                      ];
+                      return operationList
+                          .map((operation) => PopupMenuItem(
+                                enabled: (operation["key"] != "close" ||
+                                    !this._currentCycle!.closed),
+                                child: Row(
+                                  children: [
+                                    operation["icon"] as Widget,
+                                    Padding(
+                                        padding: EdgeInsets.only(right: 10.w)),
+                                    Text(
+                                      operation["title"].toString(),
+                                      style: TextStyle(
+                                        fontSize: 18.sp,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            value: operation['key'].toString(),
-                          ))
-                      .toList();
-                },
-                onSelected: (value) async {
-                  if (value == "close") {
-                    _handleCloseCycle(this._currentCycle!);
-                  } else if (value == "delete") {
-                    /// 删除整个周期的数据记录.
-                    _handleDeleteCycle(this._currentCycle!);
-                  }
-                },
+                                value: operation['key'].toString(),
+                              ))
+                          .toList();
+                    },
+                    onSelected: (value) async {
+                      if (value == "close") {
+                        _handleCloseCycle(this._currentCycle!);
+                      } else if (value == "delete") {
+                        /// 删除整个周期的数据记录.
+                        _handleDeleteCycle(this._currentCycle!);
+                      }
+                    },
+                  ),
+                ],
               ),
             ),
           ),

@@ -168,10 +168,10 @@ class CycleRecordService {
     List<CycleRecord> cycleList = [];
     if (next) {
       cycleList = await CycleRecordDatasource()
-          .findLimitByFrom(userId: userId, start: beginDate, limit: 5);
+          .findLimitByFrom(userId: userId, start: beginDate, limit: 10);
     } else {
       cycleList = await CycleRecordDatasource()
-          .findLimitByBefore(userId: userId, start: beginDate, limit: 5);
+          .findLimitByBefore(userId: userId, start: beginDate, limit: 10);
     }
 
     /// 过滤未完成的周期.
