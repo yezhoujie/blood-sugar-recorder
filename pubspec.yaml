@@ -97,6 +97,8 @@ dependencies:
   gzx_dropdown_menu: ^3.1.0
   #获取页面内元素
   rect_getter: ^1.0.0
+  #统计图表
+  syncfusion_flutter_charts: ^19.1.69+1
 
 dev_dependencies:
   flutter_test:

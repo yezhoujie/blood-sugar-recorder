@@ -8,3 +8,5 @@ export 'record/cycle_record.dart';
 export 'record/food_record_item.dart';
 export 'record/medicine_record_item.dart';
 export 'record/record_item.dart';
+export 'stats/stats.dart';
+export 'stats/pie_chart_data.dart';
