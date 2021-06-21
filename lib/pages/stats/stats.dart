@@ -46,10 +46,10 @@ class _StatsPageState extends State<StatsPage> {
   List<PieChartData> _fpgBloodPeiChartList = [];
   List<PieChartData> _hpgBloodPeiChartList = [];
 
-  DateTime begin =
-      DateFormat("yyyy-mm-dd HH:mm:ss").parse("1900-01-01 00:00:00");
+  DateTime _begin =
+      DateFormat("yyyy-mm-dd HH:mm:ss").parse("1922-01-01 00:00:00");
 
-  DateTime end = DateFormat("yyyy-mm-dd HH:mm:ss").parse("3000-12-31 23:59:59");
+  DateTime _end = DateTime.now();
 
   ScrollController _scrollController = ScrollController();
 
@@ -90,17 +90,21 @@ class _StatsPageState extends State<StatsPage> {
     },
   );
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     /// 注册监听
     UserSwitchState userSwitchState = Provider.of<UserSwitchState>(context);
 
     return Scaffold(
+      key: _scaffoldKey,
       body: Container(
         width: MediaQuery.of(context).size.width,
         child: Column(
           children: [
             _buildTabButtons(),
+            _buildTimePicker(),
             _buildStatPage(),
           ],
         ),
@@ -142,9 +146,41 @@ class _StatsPageState extends State<StatsPage> {
                 (e) => Expanded(
                   child: InkWell(
                     onTap: () {
-                      setState(() {
-                        this._type = e;
-                      });
+                      DateTime begin = _begin;
+                      DateTime end = _end;
+                      switch (e) {
+                        case StatEnum.ALL:
+                          begin = DateFormat("yyyy-mm-dd HH:mm:ss")
+                              .parse("1922-01-01 00:00:00");
+                          end = DateTime.now();
+                          break;
+                        case StatEnum.MONTH:
+                          DateTime tmp = DateTime.now();
+                          begin = DateTime(
+                            tmp.year,
+                            tmp.month,
+                          );
+                          end = tmp;
+                          break;
+                        case StatEnum.YEAR:
+                          DateTime tmp = DateTime.now();
+                          begin = DateTime(
+                            tmp.year,
+                          );
+                          end = tmp;
+                          break;
+                        case StatEnum.CUSTOM:
+                          DateTime tmp = DateTime.now();
+                          int lastDay =
+                              DateTime(tmp.year, tmp.month + 1, 0).day;
+                          begin = tmp.subtract(Duration(days: 30));
+                          end = tmp;
+                          break;
+                      }
+                      this._type = e;
+                      this._begin = begin;
+                      this._end = end;
+                      this._loadData();
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -200,9 +236,6 @@ class _StatsPageState extends State<StatsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            /// 时间区间选择区域.
-            if (this._type != StatEnum.ALL) Row(),
-
             /// 连续记录天数，中断记录天数行
             _buildRecordDaysRow(),
             Divider(
@@ -292,12 +325,18 @@ class _StatsPageState extends State<StatsPage> {
               dataList: this._fpgBloodPeiChartList,
             ),
 
-            /// todo 空腹血糖变化折线图.
-            // if (this._type == StatEnum.MONTH || this._type == StatEnum.CUSTOM)
             SizedBox(
               height: 10.h,
             ),
-            this._buildLineChart(context),
+
+            if (this._type != StatEnum.ALL)
+              this._buildLineChart(
+                context,
+                title: "空腹血糖趋势",
+                dataList: this._statsData.fpgRecordList,
+                maxStandard: this._statsData.standard.fpgMax,
+                minStandard: this._statsData.standard.fpgMin,
+              ),
 
             Divider(
               thickness: 1.5,
@@ -306,16 +345,20 @@ class _StatsPageState extends State<StatsPage> {
               height: 40.h,
             ),
 
-            /// todo 餐后血糖指标饼图.
             this._buildPieChart(
               context,
               title: "餐后血糖分布",
               dataList: this._hpgBloodPeiChartList,
             ),
 
-            /// todo 空腹血糖变化折线图.
-            if (this._type == StatEnum.MONTH || this._type == StatEnum.CUSTOM)
-              Row(),
+            if (this._type != StatEnum.ALL)
+              this._buildLineChart(
+                context,
+                title: "餐后血糖趋势",
+                dataList: this._statsData.hpgRecordList,
+                maxStandard: this._statsData.standard.hpg2Max,
+                minStandard: this._statsData.standard.hpg2Min,
+              ),
           ],
         ),
       ),
@@ -615,24 +658,20 @@ class _StatsPageState extends State<StatsPage> {
             ),
             overflowMode: LegendItemOverflowMode.wrap),
         tooltipBehavior: this._pieChartTooltipBehavior,
-        series: <PieSeries<int, String>>[
-          PieSeries<int, String>(
-            pointColorMapper: (int data, index) => [
-              Colors.redAccent,
-              Colors.blue,
-              Colors.green,
-              Colors.amber
-            ][index],
+        series: <PieSeries<PieChartData, String>>[
+          PieSeries<PieChartData, String>(
+            pointColorMapper: (data, _) => data.color,
             enableSmartLabels: true,
-            dataSource: data,
+            dataSource: this._bloodPeiChartList,
             enableTooltip: true,
 
             /// legend label.
-            xValueMapper: (int data, _) => "$data",
+            xValueMapper: (data, _) => "${data.title}",
 
             /// 数据.
-            yValueMapper: (int data, _) => data,
-            dataLabelMapper: (int data, _) => "高血糖:\n${data}次\n50%",
+            yValueMapper: (data, _) => data.recordNum,
+            dataLabelMapper: (data, _) =>
+                "${data.title}:\n${data.recordNum}次\n${data.percent}%",
             dataLabelSettings: DataLabelSettings(
               labelIntersectAction: LabelIntersectAction.none,
               textStyle: TextStyle(
@@ -670,39 +709,22 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   /// 构建折线图.
-  Widget _buildLineChart(BuildContext context) {
-    List<double> dataList = [
-      6.6,
-      7.7,
-      8.8,
-      2.3,
-      10.65,
-      6.6,
-      7.7,
-      8.8,
-      2.3,
-      10.65,
-      6.6,
-      7.7,
-      8.8,
-      2.3,
-      10.65,
-      6.6,
-      7.7,
-      8.8,
-      2.3,
-      10.65
-    ];
-    List<double> maxLine = dataList.map((e) => 10.3).toList();
-    List<double> minLine = dataList.map((e) => 6.5).toList();
-    return Container(
-      height: 300.h,
-      width: MediaQuery.of(context).size.width,
-      child: SfCartesianChart(
+  Widget _buildLineChart(
+    BuildContext context, {
+    required String title,
+    required List<BloodSugarRecordItem> dataList,
+    required double maxStandard,
+    required double minStandard,
+  }) {
+    Widget chart;
+    if (dataList.isNotEmpty) {
+      List<double> maxLine = dataList.map((e) => maxStandard).toList();
+      List<double> minLine = dataList.map((e) => minStandard).toList();
+      chart = SfCartesianChart(
         palette: <Color>[Colors.amber, Colors.redAccent, Colors.blue],
         // Chart title text
         title: ChartTitle(
-            text: '空腹血糖趋势',
+            text: title,
             textStyle: TextStyle(
               fontSize: 25.sp,
               color: AppColor.thirdElementText,
@@ -716,14 +738,13 @@ class _StatsPageState extends State<StatsPage> {
         zoomPanBehavior: this._zoomPanBehavior,
         series: <ChartSeries>[
           // Initialize line series
-          FastLineSeries<double, DateTime>(
+          FastLineSeries<BloodSugarRecordItem, DateTime>(
             name: "空腹血糖",
             dataSource: dataList,
 
             /// x轴, 时间.
-            xValueMapper: (sales, index) =>
-                DateTime.now().add(Duration(days: index)),
-            yValueMapper: (sales, _) => sales,
+            xValueMapper: (data, index) => data.recordTime,
+            yValueMapper: (data, _) => data.bloodSugar,
             dataLabelSettings: DataLabelSettings(
               textStyle: TextStyle(
                 fontSize: 20.sp,
@@ -745,9 +766,8 @@ class _StatsPageState extends State<StatsPage> {
             dataSource: maxLine,
 
             /// x轴, 时间.
-            xValueMapper: (sales, index) =>
-                DateTime.now().add(Duration(days: index)),
-            yValueMapper: (sales, _) => sales,
+            xValueMapper: (_, index) => dataList[index].recordTime,
+            yValueMapper: (data, _) => data,
             dataLabelSettings: DataLabelSettings(
               isVisible: false,
             ),
@@ -759,21 +779,151 @@ class _StatsPageState extends State<StatsPage> {
             dataSource: minLine,
 
             /// x轴, 时间.
-            xValueMapper: (sales, index) =>
-                DateTime.now().add(Duration(days: index)),
-            yValueMapper: (sales, _) => sales,
+            xValueMapper: (_, index) => dataList[index].recordTime,
+            yValueMapper: (data, _) => data,
             dataLabelSettings: DataLabelSettings(
               isVisible: false,
             ),
           ),
         ],
-      ),
+      );
+    } else {
+      chart = Center(
+        child: Text(
+          "$title:\n暂无数据",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 35.sp,
+            color: AppColor.thirdElementText,
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      height: 300.h,
+      width: MediaQuery.of(context).size.width,
+      child: chart,
     );
+  }
+
+  _buildTimePicker() {
+    DateFormat dateFormat;
+    String begin = "";
+    String end = "";
+    if (this._type == StatEnum.ALL) {
+      return Container();
+    } else {
+      switch (this._type) {
+        case StatEnum.CUSTOM:
+          dateFormat = DateFormat("yyyy-MM-dd");
+          begin = dateFormat.format(this._begin);
+          end = dateFormat.format(this._end);
+          break;
+        case StatEnum.YEAR:
+          dateFormat = DateFormat("yyyy");
+          begin = dateFormat.format(this._begin);
+          break;
+        case StatEnum.MONTH:
+          dateFormat = DateFormat("yyyy-MM");
+          begin = dateFormat.format(this._begin);
+          break;
+      }
+      return Container(
+        margin: EdgeInsets.only(top: 15.h, left: 25.w, right: 25.w),
+        width: MediaQuery.of(context).size.width,
+        height: 50.h,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "$begin ${this._type == StatEnum.CUSTOM ? '~ $end' : ''}",
+              style: TextStyle(
+                fontSize: 25.sp,
+                color: AppColor.thirdElementText,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                DateTime now = DateTime.now();
+                var start = DateTime(now.year - 100, now.month, now.day);
+                if (this._type == StatEnum.CUSTOM) {
+                  showPickerDateRange(
+                    context: context,
+                    endDate: now,
+                    selectedStart: this._begin,
+                    selectedEnd: this._end
+                  );
+                } else if (this._type == StatEnum.MONTH) {
+                  showPickerMonth(
+                      context: context,
+                      scaffoldState: this._scaffoldKey.currentState!,
+                      selected: this._begin,
+                      endDate: now,
+                      beginDate: start,
+                      onConfirm: (picker, selected) {
+                        var tmpBegin = DateFormat("yyyy-MM-dd HH:mm:ss")
+                            .parse(picker.adapter.text);
+                        int lastDay =
+                            DateTime(tmpBegin.year, tmpBegin.month + 1, 0).day;
+                        this._begin = DateTime(
+                          tmpBegin.year,
+                          tmpBegin.month,
+                          1,
+                        );
+                        this._end = DateTime(
+                          tmpBegin.year,
+                          tmpBegin.month,
+                          lastDay,
+                          23,
+                          59,
+                          59,
+                        );
+                        this._loadData();
+                      });
+                } else {
+                  showPickerYear(
+                      context: context,
+                      scaffoldState: this._scaffoldKey.currentState!,
+                      selected: this._begin,
+                      endDate: now,
+                      beginDate: start,
+                      onConfirm: (picker, selected) {
+                        var tmpBegin = DateFormat("yyyy-MM-dd HH:mm:ss")
+                            .parse(picker.adapter.text);
+                        this._begin = DateTime(
+                          tmpBegin.year,
+                          01,
+                          01,
+                        );
+                        this._end = DateTime(
+                          tmpBegin.year,
+                          12,
+                          31,
+                          23,
+                          59,
+                          59,
+                        );
+                        this._loadData();
+                      });
+                }
+              },
+              icon: Icon(
+                Icons.arrow_forward_ios,
+                size: 25.sp,
+                color: AppColor.thirdElementText,
+              ),
+            )
+          ],
+        ),
+      );
+    }
   }
 
   ///////////////////////事件处理区域//////////////////////
   _loadData() async {
     /// 统计数据.
+    print("${this._begin} ~ ${this._end}");
 
     if (mounted) {
       setState(() {});

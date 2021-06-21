@@ -93,6 +93,106 @@ showPickerDate({
   ).show(scaffoldState);
 }
 
+showPickerMonth({
+  required BuildContext context,
+  required ScaffoldState scaffoldState,
+  DateTime? beginDate,
+  DateTime? endDate,
+  DateTime? selected,
+  Function(Picker picker, List selected)? onConfirm,
+}) {
+  Picker(
+    adapter: DateTimePickerAdapter(
+      type: PickerDateTimeType.kYM,
+      isNumberMonth: true,
+      yearSuffix: "年",
+      monthSuffix: "月",
+      minValue: beginDate,
+      maxValue: endDate,
+      value: selected ?? DateTime.now(),
+    ),
+    title: Text(""),
+    textAlign: TextAlign.right,
+    selectedTextStyle: TextStyle(
+      color: Colors.red,
+      fontSize: 30.sp,
+    ),
+    itemExtent: 60.h,
+    selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
+      background: Colors.transparent,
+    ),
+    delimiter: [
+      PickerDelimiter(
+          column: 3,
+          child: Container(
+            width: 16.0.w,
+            alignment: Alignment.center,
+            color: Colors.white,
+          ))
+    ],
+    confirmText: "确定",
+    confirmTextStyle: TextStyle(
+      fontSize: 25.sp,
+      color: Colors.red,
+    ),
+    cancelText: "取消",
+    cancelTextStyle: TextStyle(
+      fontSize: 25.sp,
+      color: AppColor.thirdElementText,
+    ),
+    onConfirm: onConfirm,
+  ).show(scaffoldState);
+}
+
+showPickerYear({
+  required BuildContext context,
+  required ScaffoldState scaffoldState,
+  DateTime? beginDate,
+  DateTime? endDate,
+  DateTime? selected,
+  Function(Picker picker, List selected)? onConfirm,
+}) {
+  Picker(
+    adapter: DateTimePickerAdapter(
+      type: PickerDateTimeType.kY,
+      isNumberMonth: true,
+      yearSuffix: "年",
+      minValue: beginDate,
+      maxValue: endDate,
+      value: selected ?? DateTime.now(),
+    ),
+    title: Text(""),
+    textAlign: TextAlign.right,
+    selectedTextStyle: TextStyle(
+      color: Colors.red,
+      fontSize: 30.sp,
+    ),
+    itemExtent: 60.h,
+    selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
+      background: Colors.transparent,
+    ),
+    delimiter: [
+      PickerDelimiter(
+          column: 3,
+          child: Container(
+            width: 16.0.w,
+            alignment: Alignment.center,
+            color: Colors.white,
+          ))
+    ],
+    confirmText: "确定",
+    confirmTextStyle: TextStyle(
+      fontSize: 25.sp,
+      color: Colors.red,
+    ),
+    cancelText: "取消",
+    cancelTextStyle: TextStyle(
+      fontSize: 25.sp,
+      color: AppColor.thirdElementText,
+    ),
+    onConfirm: onConfirm,
+  ).show(scaffoldState);
+}
 
 showPickerDateTime({
   required BuildContext context,
@@ -313,6 +413,209 @@ class ColorPicker {
         crossAxisSpacing: 5.0,
         mainAxisSpacing: 5.0,
         children: colors.map((Color color) => child(color)).toList(),
+      ),
+    );
+  }
+}
+
+showPickerDateRange({
+  required BuildContext context,
+  DateTime? beginDate,
+  DateTime? endDate,
+  DateTime? selectedStart,
+  DateTime? selectedEnd,
+  int rangeLimit = 60,
+  Function(DateTime begin, DateTime end)? onConfirm,
+}) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DateRangePicker(
+          context: context,
+          beginDate: beginDate,
+          endDate: endDate,
+          selectedStart: selectedStart,
+          selectedEnd: selectedEnd,
+          rangeLimit: rangeLimit,
+          onConfirm: onConfirm,
+        );
+      });
+}
+
+/// 时间范围选择器.
+class DateRangePicker extends StatefulWidget {
+  final BuildContext context;
+  final DateTime? beginDate;
+  final DateTime? endDate;
+  final DateTime? selectedStart;
+  final DateTime? selectedEnd;
+  final int rangeLimit;
+  final Function(DateTime begin, DateTime end)? onConfirm;
+
+  DateRangePicker({
+    Key? key,
+    required this.context,
+    this.beginDate,
+    this.endDate,
+    this.selectedStart,
+    this.selectedEnd,
+    this.onConfirm,
+    this.rangeLimit = 60,
+  }) : super(key: key);
+
+  @override
+  _DateRangePickerState createState() => _DateRangePickerState();
+}
+
+class _DateRangePickerState extends State<DateRangePicker> {
+  late Picker pe;
+  late Picker ps;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    DateTime _endTime = widget.endDate ?? DateTime.now();
+    var now = DateTime.now();
+    pe = Picker(
+        hideHeader: true,
+        adapter: DateTimePickerAdapter(
+          type: PickerDateTimeType.kYMD,
+          isNumberMonth: true,
+          yearSuffix: "年",
+          monthSuffix: "月",
+          daySuffix: "日",
+          minValue:
+              widget.beginDate ?? DateTime(now.year - 100, now.month, now.day),
+          maxValue: widget.endDate ?? now,
+          value: widget.selectedEnd ?? now.add(Duration(days: 1)),
+        ),
+        textAlign: TextAlign.right,
+        selectedTextStyle: TextStyle(
+          color: Colors.red,
+          fontSize: 30.sp,
+        ),
+        itemExtent: 60.h,
+        selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
+          background: Colors.transparent,
+        ),
+        delimiter: [
+          PickerDelimiter(
+              column: 3,
+              child: Container(
+                width: 16.0.w,
+                alignment: Alignment.center,
+                color: Colors.white,
+              ))
+        ],
+        onSelect: (
+          Picker picker,
+          _,
+          __,
+        ) {
+          print((picker.adapter as DateTimePickerAdapter).value);
+          // var tmp = (picker.adapter as DateTimePickerAdapter).value!;
+          // _endTime = tmp.subtract(Duration(days: 60));
+          // _setTime();
+        },
+        onConfirm: (Picker picker, List value) {
+          print((picker.adapter as DateTimePickerAdapter).value);
+        });
+
+    ps = Picker(
+        hideHeader: true,
+        adapter: DateTimePickerAdapter(
+          type: PickerDateTimeType.kYMD,
+          isNumberMonth: true,
+          yearSuffix: "年",
+          monthSuffix: "月",
+          daySuffix: "日",
+          minValue: _endTime.subtract(Duration(days: widget.rangeLimit)),
+          maxValue: widget.endDate ?? now,
+          value: widget.selectedStart ?? now.subtract(Duration(days: 30)),
+        ),
+        textAlign: TextAlign.right,
+        selectedTextStyle: TextStyle(
+          color: Colors.red,
+          fontSize: 30.sp,
+        ),
+        itemExtent: 60.h,
+        selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
+          background: Colors.transparent,
+        ),
+        delimiter: [
+          PickerDelimiter(
+              column: 3,
+              child: Container(
+                width: 16.0.w,
+                alignment: Alignment.center,
+                color: Colors.white,
+              ))
+        ],
+        onConfirm: (Picker picker, List value) {
+          print((picker.adapter as DateTimePickerAdapter).value);
+        });
+
+    List<Widget> actions = [
+      TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(
+            "取消",
+            style: TextStyle(
+              fontSize: 25.sp,
+              color: AppColor.thirdElementText,
+            ),
+          )),
+      TextButton(
+        onPressed: () {
+          Navigator.pop(context);
+          ps.onConfirm!(ps, ps.selecteds);
+          pe.onConfirm!(pe, pe.selecteds);
+        },
+        child: Text(
+          "确定",
+          style: TextStyle(
+            fontSize: 25.sp,
+            color: Colors.red,
+          ),
+        ),
+      )
+    ];
+
+    return AlertDialog(
+      title: Text("请选择时间区间\n最多60天"),
+      actions: actions,
+      content: Container(
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              "开始时间:",
+              style: TextStyle(
+                fontSize: 25.sp,
+              ),
+            ),
+            Container(
+              child: ps.makePicker(),
+            ),
+            Text(
+              "结束时间:",
+              style: TextStyle(
+                fontSize: 25.sp,
+              ),
+            ),
+            Container(
+              child: pe.makePicker(),
+            )
+          ],
+        ),
       ),
     );
   }
