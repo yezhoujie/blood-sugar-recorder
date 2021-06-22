@@ -111,11 +111,6 @@ class CycleRecordDatasource {
           end.toIso8601String()
         ]).then(Sqflite.firstIntValue);
 
-
-    List<Map<String, dynamic>> tmp = await Global.database.rawQuery(
-        "select count(*) from (select  date(datetime, 'localtime') as day from $_tableName where userId = ? and datetime >= ? and datetime <= ? group by day)",
-        [userId, begin.toIso8601String(), end.toIso8601String()]);
-
     return days;
   }
 }

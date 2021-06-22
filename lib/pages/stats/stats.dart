@@ -594,16 +594,6 @@ class _StatsPageState extends State<StatsPage> {
                             content: "$num",
                             preferDirection: PreferDirection.bottomCenter);
                       },
-                      // child: NumberSlideAnimation(
-                      //   number:
-                      //       "${empty ? '--' : (null != doubleNum ? NumberFormat('####.##').format(doubleNum) : formatNum(num))}",
-                      //   textStyle: TextStyle(
-                      //     fontSize: numSize ?? 35.sp,
-                      //     color: numColor,
-                      //     fontWeight: FontWeight.bold,
-                      //   ),
-                      // ),
-
                       child: Text(
                         "${empty ? '--' : (null != doubleNum ? NumberFormat('####.##').format(doubleNum) : formatNum(num))}",
                         overflow: TextOverflow.ellipsis,
