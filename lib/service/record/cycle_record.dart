@@ -78,7 +78,6 @@ class CycleRecordService {
         /// 保存周期内记录项.
         await Future.wait(
           itemList.map((e) async {
-            print("save items ${e.runtimeType}");
             e.cycleRecordId = record.id;
             if (e is MedicineRecordItem) {
               MedicineRecordItemDatasource().save(e);
@@ -89,7 +88,7 @@ class CycleRecordService {
             }
           }),
         );
-        print("items saved!");
+        // print("items saved!");
       }
 
       /// 周期默认关闭.

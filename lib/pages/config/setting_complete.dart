@@ -38,7 +38,7 @@ class _SettingCompletePageState extends State<SettingCompletePage> {
                       ),
                     ),
                   ),
-                  flex: 4,
+                  flex: 3,
                 ),
                 Expanded(
                   child: Container(
@@ -130,12 +130,12 @@ class _SettingCompletePageState extends State<SettingCompletePage> {
                       ],
                     ),
                   ),
-                  flex: 6,
+                  flex: 7,
                 ),
               ],
             ),
             Positioned(
-              bottom: ((812.0 - 44 - 24) * 0.6 - (100.sp / 2)).h,
+              bottom: ((812.0 - 44 - 24) * 0.7 - (100.sp / 2)).h,
               left: (375.w / 2) - (100.sp / 2),
               child: Icon(
                 Iconfont.wancheng,

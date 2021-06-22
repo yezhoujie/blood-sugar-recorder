@@ -140,7 +140,6 @@ class _FoodRecordPageState extends State<FoodRecordPage> {
           size: 35.sp,
         ),
         onPressed: () {
-
           if (!widget.returnWithPop) {
             /// 返回到列表页面.
             AutoRouter.of(context).pushAndPopUntil(
@@ -255,7 +254,7 @@ class _FoodRecordPageState extends State<FoodRecordPage> {
         onPressed: () {
           createAlarmTimer(
             this._foodRecordItem.recordTime.add(Duration(hours: 2)),
-            message: "该测血糖啦",
+            message: "【${Global.currentUser!.name}】该测血糖啦",
           );
         },
       ),

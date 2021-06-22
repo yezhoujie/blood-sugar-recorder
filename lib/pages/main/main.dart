@@ -41,7 +41,6 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    print(widget.tabIndex);
     _pageController = new PageController(initialPage: this._tabIndex);
   }
 

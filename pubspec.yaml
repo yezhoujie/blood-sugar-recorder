@@ -99,6 +99,8 @@ dependencies:
   rect_getter: ^1.0.0
   #统计图表
   syncfusion_flutter_charts: ^19.1.69+1
+  #数字滚动动画.
+  animated_digit: ^2.0.2
 
 dev_dependencies:
   flutter_test:

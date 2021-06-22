@@ -510,7 +510,7 @@ class _DateRangePickerState extends State<DateRangePicker> {
               ))
         ],
         onConfirm: (Picker picker, List value) {
-          print((picker.adapter as DateTimePickerAdapter).value);
+          // print((picker.adapter as DateTimePickerAdapter).value);
         });
 
     Picker ps = Picker(
@@ -545,7 +545,7 @@ class _DateRangePickerState extends State<DateRangePicker> {
               ))
         ],
         onConfirm: (Picker picker, List value) {
-          print((picker.adapter as DateTimePickerAdapter).value);
+          // print((picker.adapter as DateTimePickerAdapter).value);
         });
 
     List<Widget> actions = [

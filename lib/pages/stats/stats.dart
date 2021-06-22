@@ -2,6 +2,7 @@ import 'package:blood_sugar_recorder/constant/constant.dart';
 import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:blood_sugar_recorder/error/error_data.dart';
 import 'package:blood_sugar_recorder/global.dart';
+import 'package:blood_sugar_recorder/pages/stats/stats_num_widget.dart';
 import 'package:blood_sugar_recorder/provider/user_switch_state.dart';
 import 'package:blood_sugar_recorder/service/service.dart';
 import 'package:blood_sugar_recorder/utils/utils.dart';
@@ -375,10 +376,20 @@ class _StatsPageState extends State<StatsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         /// 记录天数
-        _getNumItem("记录天数", this._statsData.recordDays, Colors.green, "天"),
+        StatsNumWidget(
+          title: "记录天数",
+          num: this._statsData.recordDays,
+          unit: "天",
+          numColor: Colors.green,
+        ),
 
         /// 中断天数.
-        _getNumItem("中断天数", this._statsData.breakDays, Colors.redAccent, "天"),
+        StatsNumWidget(
+          title: "中断天数",
+          num: this._statsData.breakDays,
+          numColor: Colors.redAccent,
+          unit: "天",
+        ),
       ],
     );
   }
@@ -390,8 +401,11 @@ class _StatsPageState extends State<StatsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         /// 血糖记录天数
-        _getNumItem(
-            "血糖记录次数", this._statsData.bloodSugarRecordNum, Colors.green, "次"),
+        StatsNumWidget(
+            title: "血糖记录次数",
+            num: this._statsData.bloodSugarRecordNum,
+            numColor: Colors.green,
+            unit: "次"),
       ],
     );
   }
@@ -403,11 +417,11 @@ class _StatsPageState extends State<StatsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         /// 空腹监测次数.
-        _getNumItem(
-          "空腹检测数",
-          this._statsData.fpgBloodSugarRecordNum,
-          Colors.green,
-          "次",
+        StatsNumWidget(
+          title: "空腹检测数",
+          num: this._statsData.fpgBloodSugarRecordNum,
+          numColor: Colors.green,
+          unit: "次",
         ),
       ],
     );
@@ -420,17 +434,17 @@ class _StatsPageState extends State<StatsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         /// 空腹高血糖次数.
-        _getNumItem(
-          "空腹高血糖",
-          this._statsData.fpgHighBloodSugarRecordNum,
-          Colors.redAccent,
-          "次",
+        StatsNumWidget(
+          title: "空腹高血糖",
+          num: this._statsData.fpgHighBloodSugarRecordNum,
+          numColor: Colors.redAccent,
+          unit: "次",
         ),
-        _getNumItem(
-          "空腹低血糖",
-          this._statsData.fpgLowBloodSugarRecordNum,
-          Colors.blue,
-          "次",
+        StatsNumWidget(
+          title: "空腹低血糖",
+          num: this._statsData.fpgLowBloodSugarRecordNum,
+          numColor: Colors.blue,
+          unit: "次",
         ),
       ],
     );
@@ -443,21 +457,17 @@ class _StatsPageState extends State<StatsPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _getNumItem(
-          "空腹血糖最高",
-          0,
-          Colors.redAccent,
-          "mmol/L",
-          doubleNum: this._statsData.fpgBloodSugarMax,
-          empty: null == this._statsData.fpgBloodSugarMax,
+        StatsNumWidget(
+          title: "空腹血糖最高",
+          num: this._statsData.fpgBloodSugarMax,
+          numColor: Colors.redAccent,
+          unit: "mmol/L",
         ),
-        _getNumItem(
-          "空腹血糖最低",
-          0,
-          Colors.blue,
-          "mmol/L",
-          doubleNum: this._statsData.fpgBloodSugarMin,
-          empty: null == this._statsData.fpgBloodSugarMin,
+        StatsNumWidget(
+          title: "空腹血糖最低",
+          num: this._statsData.fpgBloodSugarMin,
+          numColor: Colors.blue,
+          unit: "mmol/L",
         ),
       ],
     );
@@ -470,11 +480,11 @@ class _StatsPageState extends State<StatsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         /// 餐后血糖监测次数.
-        _getNumItem(
-          "餐后检测数",
-          this._statsData.hpgBloodSugarRecordNum,
-          Colors.green,
-          "次",
+        StatsNumWidget(
+          title: "餐后检测数",
+          num: this._statsData.hpgBloodSugarRecordNum,
+          numColor: Colors.green,
+          unit: "次",
         ),
       ],
     );
@@ -487,19 +497,19 @@ class _StatsPageState extends State<StatsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         /// 餐后高血糖监测次数.
-        _getNumItem(
-          "餐后高血糖",
-          this._statsData.hpgHighBloodSugarRecordNum,
-          Colors.redAccent,
-          "次",
+        StatsNumWidget(
+          title: "餐后高血糖",
+          num: this._statsData.hpgHighBloodSugarRecordNum,
+          numColor: Colors.redAccent,
+          unit: "次",
         ),
 
         /// 餐后低血糖监测次数.
-        _getNumItem(
-          "餐后低血糖",
-          this._statsData.hpgLowBloodSugarRecordNum,
-          Colors.blue,
-          "次",
+        StatsNumWidget(
+          title: "餐后低血糖",
+          num: this._statsData.hpgLowBloodSugarRecordNum,
+          numColor: Colors.blue,
+          unit: "次",
         ),
       ],
     );
@@ -511,21 +521,17 @@ class _StatsPageState extends State<StatsPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _getNumItem(
-          "餐后血糖最高",
-          0,
-          Colors.redAccent,
-          "mmol/L",
-          doubleNum: this._statsData.hpgBloodSugarMax,
-          empty: null == this._statsData.hpgBloodSugarMax,
+        StatsNumWidget(
+          title: "餐后血糖最高",
+          num: this._statsData.hpgBloodSugarMax,
+          numColor: Colors.redAccent,
+          unit: "mmol/L",
         ),
-        _getNumItem(
-          "餐后血糖最低",
-          0,
-          Colors.blue,
-          "mmol/L",
-          doubleNum: this._statsData.hpgBloodSugarMin,
-          empty: null == this._statsData.hpgBloodSugarMin,
+        StatsNumWidget(
+          title: "餐后血糖最低",
+          num: this._statsData.hpgBloodSugarMin,
+          numColor: Colors.blue,
+          unit: "mmol/L",
         ),
       ],
     );
@@ -537,101 +543,25 @@ class _StatsPageState extends State<StatsPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _getNumItem(
-          "用药记录数",
-          this._statsData.medicineRecordNum,
-          Colors.green,
-          "次",
+        StatsNumWidget(
+          title: "用药记录数",
+          num: this._statsData.medicineRecordNum,
+          numColor: Colors.green,
+          unit: "次",
         ),
-        _getNumItem(
-          "用餐记录数",
-          this._statsData.foodRecordNum,
-          Colors.green,
-          "次",
+        StatsNumWidget(
+          title: "用餐记录数",
+          num: this._statsData.foodRecordNum,
+          numColor: Colors.green,
+          unit: "次",
         ),
       ],
-    );
-  }
-
-  Widget _getNumItem(
-    String title,
-    int num,
-    Color numColor,
-    String unit, {
-    double? titleSize,
-    double? numSize,
-    double? doubleNum,
-    bool empty = false,
-  }) {
-    return Expanded(
-      flex: 5,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: titleSize ?? 23.sp,
-              color: AppColor.thirdElementText,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(
-            height: 5.h,
-          ),
-          SizedBox(
-            height: 50.h,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Builder(
-                  builder: (numContext) {
-                    return InkWell(
-                      onTap: () {
-                        showTooltip(
-                            context: numContext,
-                            content: "$num",
-                            preferDirection: PreferDirection.bottomCenter);
-                      },
-                      child: Text(
-                        "${empty ? '--' : (null != doubleNum ? NumberFormat('####.##').format(doubleNum) : formatNum(num))}",
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: numSize ?? 35.sp,
-                          color: numColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(
-                  width: 5.w,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 6.h),
-                  child: Text(
-                    unit,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      color: AppColor.thirdElementText,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 
   /// 构建饼图.
   Widget _buildPieChart(BuildContext context,
       {required String title, required List<PieChartData> dataList}) {
-    List<int> data = [1000, 1000, 1];
     Widget chart;
     if (dataList.isNotEmpty) {
       chart = SfCircularChart(
@@ -956,7 +886,7 @@ class _StatsPageState extends State<StatsPage> {
             100;
         PieChartData low = PieChartData(
             recordNum: stats.lowBloodSugarRecordNum,
-            title: "高血糖",
+            title: "低血糖",
             percent: lowPercent,
             color: Colors.blue);
 
@@ -995,7 +925,7 @@ class _StatsPageState extends State<StatsPage> {
             100;
         PieChartData low = PieChartData(
             recordNum: stats.fpgLowBloodSugarRecordNum,
-            title: "高血糖",
+            title: "低血糖",
             percent: lowPercent,
             color: Colors.blue);
 
@@ -1033,7 +963,7 @@ class _StatsPageState extends State<StatsPage> {
             100;
         PieChartData low = PieChartData(
             recordNum: stats.hpgLowBloodSugarRecordNum,
-            title: "高血糖",
+            title: "低血糖",
             percent: lowPercent,
             color: Colors.blue);
         double hpgNormalPercent = 100.0 - highPercent - lowPercent;
