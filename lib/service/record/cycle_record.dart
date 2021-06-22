@@ -114,11 +114,10 @@ class CycleRecordService {
       /// 如果周期内一条明细记录都没有，删除该周期数据.
       await this.deleteById(cycle.id!);
     } else {
-      if (cycle.closed || null != cycle.datetime) {
-        itemList.sort((a, b) => a.recordTime.compareTo(b.recordTime));
-        cycle.datetime = itemList.last.recordTime;
-        await this.save(cycle);
-      }
+      /// 无论周期是否关闭，始终更新周期时间.
+      itemList.sort((a, b) => a.recordTime.compareTo(b.recordTime));
+      cycle.datetime = itemList.last.recordTime;
+      await this.save(cycle);
     }
   }
 

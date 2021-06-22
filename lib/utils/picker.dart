@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:blood_sugar_recorder/constant/constant.dart';
+import 'package:blood_sugar_recorder/widgets/notification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart' hide PickerItem;
@@ -468,9 +469,6 @@ class DateRangePicker extends StatefulWidget {
 }
 
 class _DateRangePickerState extends State<DateRangePicker> {
-  late Picker pe;
-  late Picker ps;
-
   @override
   void initState() {
     super.initState();
@@ -480,7 +478,7 @@ class _DateRangePickerState extends State<DateRangePicker> {
   Widget build(BuildContext context) {
     DateTime _endTime = widget.endDate ?? DateTime.now();
     var now = DateTime.now();
-    pe = Picker(
+    Picker pe = Picker(
         hideHeader: true,
         adapter: DateTimePickerAdapter(
           type: PickerDateTimeType.kYMD,
@@ -491,7 +489,7 @@ class _DateRangePickerState extends State<DateRangePicker> {
           minValue:
               widget.beginDate ?? DateTime(now.year - 100, now.month, now.day),
           maxValue: widget.endDate ?? now,
-          value: widget.selectedEnd ?? now.add(Duration(days: 1)),
+          value: widget.selectedEnd ?? now,
         ),
         textAlign: TextAlign.right,
         selectedTextStyle: TextStyle(
@@ -511,21 +509,11 @@ class _DateRangePickerState extends State<DateRangePicker> {
                 color: Colors.white,
               ))
         ],
-        onSelect: (
-          Picker picker,
-          _,
-          __,
-        ) {
-          print((picker.adapter as DateTimePickerAdapter).value);
-          // var tmp = (picker.adapter as DateTimePickerAdapter).value!;
-          // _endTime = tmp.subtract(Duration(days: 60));
-          // _setTime();
-        },
         onConfirm: (Picker picker, List value) {
           print((picker.adapter as DateTimePickerAdapter).value);
         });
 
-    ps = Picker(
+    Picker ps = Picker(
         hideHeader: true,
         adapter: DateTimePickerAdapter(
           type: PickerDateTimeType.kYMD,
@@ -533,7 +521,8 @@ class _DateRangePickerState extends State<DateRangePicker> {
           yearSuffix: "年",
           monthSuffix: "月",
           daySuffix: "日",
-          minValue: _endTime.subtract(Duration(days: widget.rangeLimit)),
+          minValue:
+              widget.beginDate ?? DateTime(now.year - 100, now.month, now.day),
           maxValue: widget.endDate ?? now,
           value: widget.selectedStart ?? now.subtract(Duration(days: 30)),
         ),
@@ -573,9 +562,28 @@ class _DateRangePickerState extends State<DateRangePicker> {
           )),
       TextButton(
         onPressed: () {
+          DateTime start = (ps.adapter as DateTimePickerAdapter).value!;
+          start = DateTime(start.year, start.month, start.day);
+
+          DateTime end = (pe.adapter as DateTimePickerAdapter).value!;
+          end = DateTime(end.year, end.month, end.day);
+
+          if (start.isAfter(end)) {
+            showNotification(
+                type: NotificationType.ERROR, message: "开始时间不能晚于结束时间");
+            return;
+          }
+
+          if (end.difference(start).inDays > widget.rangeLimit) {
+            showNotification(
+                type: NotificationType.ERROR,
+                message: "时间区间不能大于${widget.rangeLimit}天");
+            return;
+          }
+          if (null != widget.onConfirm) {
+            widget.onConfirm!(start, end);
+          }
           Navigator.pop(context);
-          ps.onConfirm!(ps, ps.selecteds);
-          pe.onConfirm!(pe, pe.selecteds);
         },
         child: Text(
           "确定",

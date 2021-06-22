@@ -1,8 +1,11 @@
 import 'package:blood_sugar_recorder/constant/constant.dart';
 import 'package:blood_sugar_recorder/domain/domain.dart';
+import 'package:blood_sugar_recorder/error/error_data.dart';
 import 'package:blood_sugar_recorder/global.dart';
 import 'package:blood_sugar_recorder/provider/user_switch_state.dart';
+import 'package:blood_sugar_recorder/service/service.dart';
 import 'package:blood_sugar_recorder/utils/utils.dart';
+import 'package:blood_sugar_recorder/widgets/notification.dart';
 import 'package:blood_sugar_recorder/widgets/widgets.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +26,8 @@ class StatsPage extends StatefulWidget {
 class _StatsPageState extends State<StatsPage> {
   /// 默认统计类型为总览.
   StatEnum _type = StatEnum.ALL;
+
+  User _currentUser = Global.currentUser!;
 
   Stats _statsData = Stats(
       recordDays: 0,
@@ -79,7 +84,7 @@ class _StatsPageState extends State<StatsPage> {
           ? Container(
               color: Colors.black87,
               child: Text(
-                '${DateFormat("yyyy-MM-dd HH:mm").format(time)} \n ${data}mmol/L',
+                '${DateFormat("yyyy-MM-dd HH:mm").format(time)} \n ${(data as BloodSugarRecordItem).bloodSugar} mmol/L',
                 style: TextStyle(
                   fontSize: 25.sp,
                   color: Colors.white,
@@ -96,7 +101,7 @@ class _StatsPageState extends State<StatsPage> {
   Widget build(BuildContext context) {
     /// 注册监听
     UserSwitchState userSwitchState = Provider.of<UserSwitchState>(context);
-
+    this._dataRefresh();
     return Scaffold(
       key: _scaffoldKey,
       body: Container(
@@ -115,6 +120,7 @@ class _StatsPageState extends State<StatsPage> {
   @override
   void initState() {
     super.initState();
+    this._loadData();
   }
 
   @override
@@ -171,9 +177,8 @@ class _StatsPageState extends State<StatsPage> {
                           break;
                         case StatEnum.CUSTOM:
                           DateTime tmp = DateTime.now();
-                          int lastDay =
-                              DateTime(tmp.year, tmp.month + 1, 0).day;
                           begin = tmp.subtract(Duration(days: 30));
+                          begin = DateTime(begin.year, begin.month, begin.day);
                           end = tmp;
                           break;
                       }
@@ -305,14 +310,12 @@ class _StatsPageState extends State<StatsPage> {
             ),
 
             /// 图表区域.
-            /// todo 所有血糖指标饼图.
             this._buildPieChart(
               context,
               title: "血糖分布",
               dataList: this._bloodPeiChartList,
             ),
 
-            /// todo 空腹血糖指标饼图.
             Divider(
               thickness: 1.5,
             ),
@@ -402,7 +405,7 @@ class _StatsPageState extends State<StatsPage> {
         /// 空腹监测次数.
         _getNumItem(
           "空腹检测数",
-          this._statsData.fpgHighBloodSugarRecordNum,
+          this._statsData.fpgBloodSugarRecordNum,
           Colors.green,
           "次",
         ),
@@ -416,7 +419,7 @@ class _StatsPageState extends State<StatsPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// 空腹监测次数.
+        /// 空腹高血糖次数.
         _getNumItem(
           "空腹高血糖",
           this._statsData.fpgHighBloodSugarRecordNum,
@@ -591,25 +594,25 @@ class _StatsPageState extends State<StatsPage> {
                             content: "$num",
                             preferDirection: PreferDirection.bottomCenter);
                       },
-                      child: NumberSlideAnimation(
-                        number:
-                            "${empty ? '--' : (null != doubleNum ? NumberFormat('####.##').format(doubleNum) : formatNum(num))}",
-                        textStyle: TextStyle(
-                          fontSize: numSize ?? 35.sp,
-                          color: numColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      // Text(
-                      //   "${null != doubleNum ? NumberFormat('####.##').format(doubleNum) : formatNum(num)}",
-                      //   overflow: TextOverflow.ellipsis,
-                      //   style: TextStyle(
+                      // child: NumberSlideAnimation(
+                      //   number:
+                      //       "${empty ? '--' : (null != doubleNum ? NumberFormat('####.##').format(doubleNum) : formatNum(num))}",
+                      //   textStyle: TextStyle(
                       //     fontSize: numSize ?? 35.sp,
                       //     color: numColor,
                       //     fontWeight: FontWeight.bold,
                       //   ),
                       // ),
+
+                      child: Text(
+                        "${empty ? '--' : (null != doubleNum ? NumberFormat('####.##').format(doubleNum) : formatNum(num))}",
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: numSize ?? 35.sp,
+                          color: numColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -642,6 +645,7 @@ class _StatsPageState extends State<StatsPage> {
     Widget chart;
     if (dataList.isNotEmpty) {
       chart = SfCircularChart(
+        key: ValueKey(title),
         title: ChartTitle(
             text: title,
             textStyle: TextStyle(
@@ -662,7 +666,7 @@ class _StatsPageState extends State<StatsPage> {
           PieSeries<PieChartData, String>(
             pointColorMapper: (data, _) => data.color,
             enableSmartLabels: true,
-            dataSource: this._bloodPeiChartList,
+            dataSource: dataList,
             enableTooltip: true,
 
             /// legend label.
@@ -849,11 +853,16 @@ class _StatsPageState extends State<StatsPage> {
                 var start = DateTime(now.year - 100, now.month, now.day);
                 if (this._type == StatEnum.CUSTOM) {
                   showPickerDateRange(
-                    context: context,
-                    endDate: now,
-                    selectedStart: this._begin,
-                    selectedEnd: this._end
-                  );
+                      context: context,
+                      endDate: now,
+                      selectedStart: this._begin,
+                      selectedEnd: this._end,
+                      onConfirm: (start, end) {
+                        this._begin = start;
+                        this._end =
+                            DateTime(end.year, end.month, end.day, 23, 59, 59);
+                        this._loadData();
+                      });
                 } else if (this._type == StatEnum.MONTH) {
                   showPickerMonth(
                       context: context,
@@ -922,11 +931,152 @@ class _StatsPageState extends State<StatsPage> {
 
   ///////////////////////事件处理区域//////////////////////
   _loadData() async {
-    /// 统计数据.
-    print("${this._begin} ~ ${this._end}");
+    CancelFunc cancelFunc = showLoading();
 
-    if (mounted) {
-      setState(() {});
+    /// 统计数据.
+    try {
+      Stats stats = await StatsService().getStatsData(
+        userId: Global.currentUser!.id!,
+        begin: this._begin,
+        end: this._end,
+        statType: this._type,
+      );
+
+      this._hpgBloodPeiChartList = [];
+      this._bloodPeiChartList = [];
+      this._fpgBloodPeiChartList = [];
+
+      if (stats.bloodSugarRecordNum > 0) {
+        /// 构建血糖饼图数据.
+        double highPercent = double.parse(NumberFormat('####.##').format(
+                stats.highBloodSugarRecordNum *
+                    1.0 /
+                    stats.bloodSugarRecordNum)) *
+            100;
+        PieChartData high = PieChartData(
+            recordNum: stats.highBloodSugarRecordNum,
+            title: "高血糖",
+            percent: highPercent,
+            color: Colors.redAccent);
+
+        double lowPercent = double.parse(NumberFormat('####.##').format(
+                stats.lowBloodSugarRecordNum *
+                    1.0 /
+                    stats.bloodSugarRecordNum)) *
+            100;
+        PieChartData low = PieChartData(
+            recordNum: stats.lowBloodSugarRecordNum,
+            title: "高血糖",
+            percent: lowPercent,
+            color: Colors.blue);
+
+        double normalPercent = 100.0 - highPercent - lowPercent;
+        int normalCount = stats.bloodSugarRecordNum -
+            stats.highBloodSugarRecordNum -
+            stats.lowBloodSugarRecordNum;
+
+        PieChartData normal = PieChartData(
+            recordNum: normalCount,
+            title: "正常",
+            percent: normalPercent,
+            color: Colors.green);
+        this._bloodPeiChartList..add(high)..add(low)..add(normal);
+      }
+
+      /// 构建空腹血糖饼图数据.
+
+      if (stats.fpgBloodSugarRecordNum > 0) {
+        /// 构建血糖饼图数据.
+        double highPercent = double.parse(NumberFormat('####.##').format(
+                stats.fpgHighBloodSugarRecordNum *
+                    1.0 /
+                    stats.fpgBloodSugarRecordNum)) *
+            100;
+        PieChartData high = PieChartData(
+            recordNum: stats.fpgHighBloodSugarRecordNum,
+            title: "高血糖",
+            percent: highPercent,
+            color: Colors.redAccent);
+
+        double lowPercent = double.parse(NumberFormat('####.##').format(
+                stats.fpgLowBloodSugarRecordNum *
+                    1.0 /
+                    stats.fpgBloodSugarRecordNum)) *
+            100;
+        PieChartData low = PieChartData(
+            recordNum: stats.fpgLowBloodSugarRecordNum,
+            title: "高血糖",
+            percent: lowPercent,
+            color: Colors.blue);
+
+        double fpgNormalPercent = 100.0 - highPercent - lowPercent;
+        int fpgNormalCount = stats.fpgBloodSugarRecordNum -
+            stats.fpgHighBloodSugarRecordNum -
+            stats.fpgLowBloodSugarRecordNum;
+
+        PieChartData normal = PieChartData(
+            recordNum: fpgNormalCount,
+            title: "正常",
+            percent: fpgNormalPercent,
+            color: Colors.green);
+        this._fpgBloodPeiChartList..add(high)..add(low)..add(normal);
+      }
+
+      /// 构建餐后血糖饼图数据.
+      if (stats.hpgBloodSugarRecordNum > 0) {
+        /// 构建血糖饼图数据.
+        double highPercent = double.parse(NumberFormat('####.##').format(
+                stats.hpgHighBloodSugarRecordNum *
+                    1.0 /
+                    stats.hpgBloodSugarRecordNum)) *
+            100;
+        PieChartData high = PieChartData(
+            recordNum: stats.hpgHighBloodSugarRecordNum,
+            title: "高血糖",
+            percent: highPercent,
+            color: Colors.redAccent);
+
+        double lowPercent = double.parse(NumberFormat('####.##').format(
+                stats.hpgLowBloodSugarRecordNum *
+                    1.0 /
+                    stats.hpgBloodSugarRecordNum)) *
+            100;
+        PieChartData low = PieChartData(
+            recordNum: stats.hpgLowBloodSugarRecordNum,
+            title: "高血糖",
+            percent: lowPercent,
+            color: Colors.blue);
+        double hpgNormalPercent = 100.0 - highPercent - lowPercent;
+        int hpgNormalCount = stats.hpgBloodSugarRecordNum -
+            stats.hpgHighBloodSugarRecordNum -
+            stats.hpgLowBloodSugarRecordNum;
+
+        PieChartData normal = PieChartData(
+            recordNum: hpgNormalCount,
+            title: "正常",
+            percent: hpgNormalPercent,
+            color: Colors.green);
+        this._hpgBloodPeiChartList..add(high)..add(low)..add(normal);
+      }
+
+      this._statsData = stats;
+
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (exception) {
+      showNotification(
+          type: NotificationType.ERROR,
+          message: (exception as ErrorData).message);
+    }
+
+    cancelFunc();
+  }
+
+  void _dataRefresh() {
+    if (this._currentUser.id != Global.currentUser!.id) {
+      this._currentUser = Global.currentUser!;
+      this._loadData();
     }
   }
 }

@@ -60,4 +60,28 @@ class MedicineRecordItemDatasource {
     await Global.database.delete(this._tableName,
         where: "cycleRecordId = ?", whereArgs: [cycleId]);
   }
+
+  /// 获取用户下时间区间内的所有记录.
+  Future<List> findByUserIdAndBetweenDate(
+      int userId, DateTime start, DateTime end) async {
+    List<Map<String, dynamic>> listMap = await Global.database.rawQuery(
+        'select * from $_tableName where userId = ? and recordTime >= ? and recordTime <= ?',
+        [userId, start.toIso8601String(), end.toIso8601String()]);
+    if (listMap.isEmpty) {
+      return [];
+    }
+    return listMap.map((e) => MedicineRecordItem.fromJson(e)).toList();
+  }
+
+  /// 获取用户下时间区间内的所有记录的总数.
+  Future<int?> countByUserIdAndBetweenDate(
+      int userId, DateTime start, DateTime end) async {
+    return await Global.database.rawQuery(
+        "select count(*) from $_tableName where userId = ? and recordTime >= ? and recordTime <= ?",
+        [
+          userId,
+          start.toIso8601String(),
+          end.toIso8601String()
+        ]).then(Sqflite.firstIntValue);
+  }
 }

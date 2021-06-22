@@ -60,4 +60,16 @@ class FoodRecordItemDatasource {
     await Global.database.delete(this._tableName,
         where: "cycleRecordId = ?", whereArgs: [cycleId]);
   }
+
+  /// 获取用户下，时间区间内所有记录总数.
+  Future<int?> countByUserIdAndBetweenDate(
+      int userId, DateTime begin, DateTime end) async {
+    return await Global.database.rawQuery(
+        "select count(*) from $_tableName where userId = ? and recordTime >= ? and recordTime <= ?",
+        [
+          userId,
+          begin.toIso8601String(),
+          end.toIso8601String()
+        ]).then(Sqflite.firstIntValue);
+  }
 }
