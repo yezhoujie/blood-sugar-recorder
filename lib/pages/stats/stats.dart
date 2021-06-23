@@ -67,10 +67,13 @@ class _StatsPageState extends State<StatsPage> {
   );
 
   ZoomPanBehavior _zoomPanBehavior = ZoomPanBehavior(
-      // Enables pinch zooming
-      enablePanning: true,
-      enablePinching: true,
-      enableSelectionZooming: true);
+    // Enables pinch zooming
+    enablePanning: true,
+    enablePinching: true,
+    enableSelectionZooming: true,
+    zoomMode: ZoomMode.x,
+    // maximumZoomLevel: 50,
+  );
 
   var _lineTooltipBehavior = TooltipBehavior(
     enable: true,
@@ -656,7 +659,7 @@ class _StatsPageState extends State<StatsPage> {
         // Initialize category axis
         primaryXAxis: DateTimeAxis(
           labelStyle: TextStyle(fontSize: 15.sp),
-          dateFormat: DateFormat('yy/MM'),
+          dateFormat: DateFormat('MM/dd \n HH:mm'),
         ),
         tooltipBehavior: this._lineTooltipBehavior,
         zoomPanBehavior: this._zoomPanBehavior,
@@ -761,9 +764,9 @@ class _StatsPageState extends State<StatsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "$begin ${this._type == StatEnum.CUSTOM ? '~ $end' : ''}",
+              "$begin${this._type == StatEnum.CUSTOM ? '~$end' : ''}",
               style: TextStyle(
-                fontSize: 25.sp,
+                fontSize: 23.sp,
                 color: AppColor.thirdElementText,
               ),
             ),
@@ -978,7 +981,10 @@ class _StatsPageState extends State<StatsPage> {
             color: Colors.green);
         this._hpgBloodPeiChartList..add(high)..add(low)..add(normal);
       }
-
+      this._statsData.fpgBloodSugarMax = null;
+      this._statsData.fpgBloodSugarMin = null;
+      this._statsData.hpgBloodSugarMax = null;
+      this._statsData.hpgBloodSugarMin = null;
       this._statsData = stats;
 
       if (mounted) {

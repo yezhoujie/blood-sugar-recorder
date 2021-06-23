@@ -119,7 +119,7 @@ class _MedicineRecordPageState extends State<MedicineRecordPage> {
       appBar: _buildAppBar(),
       body: Container(
         margin: EdgeInsets.only(top: 25.h),
-        width: double.infinity,
+        width: MediaQuery.of(context).size.width,
         child: ListView(
           children: ListTile.divideTiles(
             context: context,
@@ -384,11 +384,11 @@ class _MedicineRecordPageState extends State<MedicineRecordPage> {
         fontSize: 25.sp,
       ),
       trailing: SizedBox(
-        width: 212.w,
+        width: 215.w,
         child: Row(
           children: [
             Text(
-              new DateFormat("yyyy-MM-dd HH:mm")
+              new DateFormat("yyyy/MM/dd HH:mm")
                   .format(this._medicineRecordItem.recordTime),
               style: TextStyle(
                 color: AppColor.thirdElementText,
@@ -402,6 +402,7 @@ class _MedicineRecordPageState extends State<MedicineRecordPage> {
               ),
               onPressed: () {
                 showPickerDateTime(
+                    endDate: DateTime.now(),
                     context: context,
                     scaffoldState: _scaffoldKey.currentState!,
                     selected: this._medicineRecordItem.recordTime,

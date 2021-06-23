@@ -68,7 +68,6 @@ class _BloodSugarSettingPageState extends State<BloodSugarSettingPage> {
           children: ListTile.divideTiles(
             context: context,
             tiles: <Widget>[
-
               /// 空腹.
               _buildFgpInput(),
 
@@ -121,7 +120,6 @@ class _BloodSugarSettingPageState extends State<BloodSugarSettingPage> {
             hintText: "",
             textInputFormatters: [
               FilteringTextInputFormatter.allow(
-
                 /// 只允许整数或小数.
                 RegExp(r'^\d+(\.)?[0-9]{0,2}'),
               )
@@ -146,7 +144,6 @@ class _BloodSugarSettingPageState extends State<BloodSugarSettingPage> {
             keyboardType: TextInputType.number,
             textInputFormatters: [
               FilteringTextInputFormatter.allow(
-
                 /// 只允许整数或小数.
                 RegExp(r'^\d+(\.)?[0-9]{0,2}'),
               )
@@ -198,7 +195,6 @@ class _BloodSugarSettingPageState extends State<BloodSugarSettingPage> {
             hintText: "",
             textInputFormatters: [
               FilteringTextInputFormatter.allow(
-
                 /// 只允许整数或小数.
                 RegExp(r'^\d+(\.)?[0-9]{0,2}'),
               )
@@ -224,7 +220,6 @@ class _BloodSugarSettingPageState extends State<BloodSugarSettingPage> {
             hintText: "数字或小数点",
             textInputFormatters: [
               FilteringTextInputFormatter.allow(
-
                 /// 只允许整数或小数.
                 RegExp(r'^\d+(\.)?[0-9]{0,2}'),
               )
@@ -281,8 +276,12 @@ class _BloodSugarSettingPageState extends State<BloodSugarSettingPage> {
           size: 35.sp,
         ),
         onPressed: () {
-          AutoRouter.of(context)
-              .pushAndPopUntil(MainRoute(tabIndex: 3), predicate: (_) => false);
+          if (widget.init) {
+            AutoRouter.of(context).pop();
+          } else {
+            AutoRouter.of(context).pushAndPopUntil(MainRoute(tabIndex: 3),
+                predicate: (_) => false);
+          }
         },
       ),
       actions: <Widget>[
@@ -293,7 +292,7 @@ class _BloodSugarSettingPageState extends State<BloodSugarSettingPage> {
               showTooltip(
                 target: details.globalPosition,
                 content:
-                '''一般的血糖指标为：\n空腹：3.92～6.16mmol/L\n餐后：5.1~7.0mmol/L\n指标设置请遵医嘱''',
+                    '''一般的血糖指标为：\n空腹：3.92～6.16mmol/L\n餐后：5.1~7.0mmol/L\n指标设置请遵医嘱''',
               );
             },
             child: Icon(
@@ -323,7 +322,7 @@ class _BloodSugarSettingPageState extends State<BloodSugarSettingPage> {
   void _loadInitDate() async {
     try {
       _currentConfig =
-      await BloodSugarConfigService().getByUserId(Global.currentUser!.id!);
+          await BloodSugarConfigService().getByUserId(Global.currentUser!.id!);
     } catch (errorData) {
       showNotification(
           type: NotificationType.ERROR,
@@ -434,8 +433,8 @@ class _BloodSugarSettingPageState extends State<BloodSugarSettingPage> {
 
     if (widget.init) {
       /// 跳转到配置完成页面
-      AutoRouter.of(context).pushAndPopUntil(
-          SettingCompleteRoute(), predicate: (route) => false);
+      AutoRouter.of(context)
+          .pushAndPopUntil(SettingCompleteRoute(), predicate: (route) => false);
     } else {
       AutoRouter.of(context)
           .pushAndPopUntil(MainRoute(tabIndex: 3), predicate: (_) => false);

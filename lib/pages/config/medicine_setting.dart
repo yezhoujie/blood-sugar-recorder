@@ -399,8 +399,16 @@ class _MedicineSettingPageState extends State<MedicineSettingPage> {
   /// 装载初始化数据.
   void _loadInitDate() async {
     if (null == widget.id) {
-      /// 新增
-      _currentConfig = UserMedicineConfig.byDefault(Global.currentUser!.id!);
+      List<UserMedicineConfig> list = [];
+      if (widget.init) {
+        /// 通过用户id获取用户下的药物设置.
+        list = await MedicineService().findByUserId(Global.currentUser!.id!);
+      }
+
+      /// 设置当前配置项.
+      _currentConfig = list.isEmpty
+          ? UserMedicineConfig.byDefault(Global.currentUser!.id!)
+          : list.first;
     } else {
       /// 从数据库获取配置项.
       try {

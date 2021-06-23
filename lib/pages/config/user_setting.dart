@@ -22,12 +22,14 @@ class UserSettingPage extends StatefulWidget {
   final bool init;
   final int? userId;
   final bool? create;
+  final bool? pop;
 
   UserSettingPage({
     Key? key,
     required this.init,
     this.userId,
     this.create = false,
+    this.pop = true,
   }) : super(key: key);
 
   @override
@@ -131,8 +133,12 @@ class _UserSettingPageState extends State<UserSettingPage> {
           size: 35.sp,
         ),
         onPressed: () {
-          AutoRouter.of(context)
-              .pushAndPopUntil(MainRoute(tabIndex: 3), predicate: (_) => false);
+          if (widget.pop ?? true) {
+            AutoRouter.of(context).pop();
+          } else {
+            AutoRouter.of(context).pushAndPopUntil(MainRoute(tabIndex: 3),
+                predicate: (_) => false);
+          }
         },
       ),
     );
@@ -145,7 +151,7 @@ class _UserSettingPageState extends State<UserSettingPage> {
         alignment: Alignment.bottomCenter,
         child: seFlatButton(
           onPressed: () {
-            /// 跳转到创建用户页面.
+            /// 保存用户信息.
             _handleSaveUserProfile();
           },
           title: "完成",
@@ -368,7 +374,7 @@ class _UserSettingPageState extends State<UserSettingPage> {
       );
       return;
     } else {
-      if(name.length > 5){
+      if (name.length > 5) {
         setState(() {
           this._nameInputValid = false;
         });
@@ -377,12 +383,11 @@ class _UserSettingPageState extends State<UserSettingPage> {
           message: "姓名不能大于5个字符",
         );
         return;
-      }else{
+      } else {
         setState(() {
           this._nameInputValid = true;
         });
       }
-
     }
 
     _currentUser!.name = name;
@@ -410,7 +415,8 @@ class _UserSettingPageState extends State<UserSettingPage> {
         init: true,
       ));
     } else {
-      AutoRouter.of(context).popUntilRoot();AutoRouter.of(context)
+      AutoRouter.of(context).popUntilRoot();
+      AutoRouter.of(context)
           .pushAndPopUntil(MainRoute(tabIndex: 3), predicate: (_) => false);
     }
   }

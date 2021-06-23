@@ -373,10 +373,9 @@ class _RecordPageState extends State<RecordPage> {
         await CycleRecordService().getCurrentByUserId(this._currentUser.id!);
 
     this._standard = await ConfigService().getStandard(this._currentUser.id!);
+    this._initDone = true;
     if (mounted) {
-      setState(() {
-        this._initDone = true;
-      });
+      setState(() {});
     }
     cancel();
   }

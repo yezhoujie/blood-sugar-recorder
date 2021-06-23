@@ -1,6 +1,7 @@
 import 'package:auto_route/annotations.dart';
 import 'package:blood_sugar_recorder/domain/domain.dart';
 import 'package:blood_sugar_recorder/main.dart';
+import 'package:blood_sugar_recorder/pages/config/about.dart';
 import 'package:blood_sugar_recorder/pages/config/blood_sugar_setting.dart';
 import 'package:blood_sugar_recorder/pages/config/medicine_list.dart';
 import 'package:blood_sugar_recorder/pages/config/medicine_setting.dart';
@@ -97,7 +98,8 @@ import 'package:flutter/material.dart';
     //       /// 设置入口页面
     //       AutoRoute(page: SettingPage),
     //     ])),
-    AutoRoute(page: MyHomePage),
+    /// 应用介绍页面.
+    CustomRoute(page: AboutPage, transitionsBuilder: slideTransition),
   ],
 )
 class $AppRoute {}
@@ -116,7 +118,7 @@ Widget slideTransition(BuildContext context, Animation<double> animation,
     Animation<double> secondAnimation, Widget child) {
   return SlideTransition(
     position: Tween<Offset>(
-      begin: const Offset(0.0, -1.0),
+      begin: const Offset(1.0, 0.0),
       end: Offset.zero,
     ).animate(animation),
     child: child,

@@ -156,7 +156,7 @@ class _BloodSugarRecordPageState extends State<BloodSugarRecordPage> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Text(
-              new DateFormat("yyyy-MM-dd HH:mm")
+              new DateFormat("yyyy/MM/dd HH:mm")
                   .format(this._bloodSugarRecordItem.recordTime),
               style: TextStyle(
                 color: AppColor.thirdElementText,

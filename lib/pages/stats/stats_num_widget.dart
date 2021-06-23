@@ -119,18 +119,30 @@ class _StatsNumWidgetState extends State<StatsNumWidget> {
 
   Widget _getNumItem() {
     List<Widget> children = [];
-    children.add(
-      AnimatedDigitWidget(
-        controller: _controller,
-        textStyle: TextStyle(
+    if (widget.num == null) {
+      children.add(Text(
+        "--",
+        style: TextStyle(
           fontSize: widget.numSize ?? 30.sp,
           color: widget.numColor,
           fontWeight: FontWeight.bold,
         ),
-        fractionDigits: (this._showNum is int) ? 0 : 2,
-        enableDigitSplit: false,
-      ),
-    );
+      ));
+    } else {
+      children.add(
+        AnimatedDigitWidget(
+          controller: _controller,
+          textStyle: TextStyle(
+            fontSize: widget.numSize ?? 30.sp,
+            color: widget.numColor,
+            fontWeight: FontWeight.bold,
+          ),
+          fractionDigits: (this._showNum is int) ? 0 : 2,
+          enableDigitSplit: false,
+        ),
+      );
+    }
+
     if (this._showNumUnit != null) {
       children.add(Text(
         this._showNumUnit!,

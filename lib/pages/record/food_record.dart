@@ -178,7 +178,7 @@ class _FoodRecordPageState extends State<FoodRecordPage> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Text(
-              new DateFormat("yyyy-MM-dd HH:mm")
+              new DateFormat("yyyy/MM/dd HH:mm")
                   .format(this._foodRecordItem.recordTime),
               style: TextStyle(
                 color: AppColor.thirdElementText,

@@ -121,6 +121,17 @@ class _SettingPageState extends State<SettingPage> {
         children: [
           ListTile(
             title: Text(
+              '应用信息',
+              style: this.settingItemTextStyle,
+            ),
+            trailing: _getTextTrailing(
+              text: "",
+              onPress: () => context.pushRoute(AboutRoute()),
+            ),
+          ),
+          Divider(),
+          ListTile(
+            title: Text(
               '版本号',
               style: this.settingItemTextStyle,
             ),
@@ -173,6 +184,7 @@ class _SettingPageState extends State<SettingPage> {
               onPress: () => context.pushRoute(
                 UserSettingRoute(
                   init: false,
+                  pop: false,
                 ),
               ),
             ),
@@ -208,5 +220,5 @@ class _SettingPageState extends State<SettingPage> {
     );
   }
 
-  ///////////////////事件处理区域///////////////////////
+///////////////////事件处理区域///////////////////////
 }

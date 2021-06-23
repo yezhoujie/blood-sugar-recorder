@@ -101,6 +101,8 @@ dependencies:
   syncfusion_flutter_charts: ^19.1.69+1
   #数字滚动动画.
   animated_digit: ^2.0.2
+  #二维码识别.
+  recognition_qrcode: ^0.0.7
 
 dev_dependencies:
   flutter_test:

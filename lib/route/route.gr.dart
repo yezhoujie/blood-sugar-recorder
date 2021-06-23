@@ -6,7 +6,7 @@
 
 import 'package:auto_route/auto_route.dart' as _i1;
 import 'package:blood_sugar_recorder/domain/domain.dart' as _i19;
-import 'package:blood_sugar_recorder/main.dart' as _i17;
+import 'package:blood_sugar_recorder/pages/config/about.dart' as _i17;
 import 'package:blood_sugar_recorder/pages/config/blood_sugar_setting.dart'
     as _i10;
 import 'package:blood_sugar_recorder/pages/config/medicine_list.dart' as _i8;
@@ -60,7 +60,8 @@ class AppRoute extends _i1.RootStackRouter {
               key: args.key,
               init: args.init,
               userId: args.userId,
-              create: args.create);
+              create: args.create,
+              pop: args.pop);
         },
         transitionsBuilder: _i6.slideTransition,
         opaque: true,
@@ -174,12 +175,14 @@ class AppRoute extends _i1.RootStackRouter {
         transitionsBuilder: _i6.slideTransition,
         opaque: true,
         barrierDismissible: false),
-    MyHomeRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    AboutRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
-        builder: (data) {
-          final args = data.argsAs<MyHomeRouteArgs>();
-          return _i17.MyHomePage(key: args.key, title: args.title);
-        })
+        builder: (_) {
+          return const _i17.AboutPage();
+        },
+        transitionsBuilder: _i6.slideTransition,
+        opaque: true,
+        barrierDismissible: false)
   };
 
   @override
@@ -202,7 +205,7 @@ class AppRoute extends _i1.RootStackRouter {
         _i1.RouteConfig(BloodSugarRecordRoute.name,
             path: '/blood-sugar-record-page'),
         _i1.RouteConfig(HistoryAddRoute.name, path: '/history-add-page'),
-        _i1.RouteConfig(MyHomeRoute.name, path: '/my-home-page')
+        _i1.RouteConfig(AboutRoute.name, path: '/about-page')
       ];
 }
 
@@ -226,18 +229,22 @@ class UserListRoute extends _i1.PageRouteInfo {
 
 class UserSettingRoute extends _i1.PageRouteInfo<UserSettingRouteArgs> {
   UserSettingRoute(
-      {_i2.Key? key, required bool init, int? userId, bool? create})
+      {_i2.Key? key, required bool init, int? userId, bool? create, bool? pop})
       : super(name,
             path: '/user-setting-page',
             args: UserSettingRouteArgs(
-                key: key, init: init, userId: userId, create: create));
+                key: key,
+                init: init,
+                userId: userId,
+                create: create,
+                pop: pop));
 
   static const String name = 'UserSettingRoute';
 }
 
 class UserSettingRouteArgs {
   const UserSettingRouteArgs(
-      {this.key, required this.init, this.userId, this.create});
+      {this.key, required this.init, this.userId, this.create, this.pop});
 
   final _i2.Key? key;
 
@@ -246,6 +253,8 @@ class UserSettingRouteArgs {
   final int? userId;
 
   final bool? create;
+
+  final bool? pop;
 }
 
 class MedicineListRoute extends _i1.PageRouteInfo<MedicineListRouteArgs> {
@@ -472,19 +481,8 @@ class HistoryAddRoute extends _i1.PageRouteInfo {
   static const String name = 'HistoryAddRoute';
 }
 
-class MyHomeRoute extends _i1.PageRouteInfo<MyHomeRouteArgs> {
-  MyHomeRoute({_i2.Key? key, required String title})
-      : super(name,
-            path: '/my-home-page',
-            args: MyHomeRouteArgs(key: key, title: title));
+class AboutRoute extends _i1.PageRouteInfo {
+  const AboutRoute() : super(name, path: '/about-page');
 
-  static const String name = 'MyHomeRoute';
-}
-
-class MyHomeRouteArgs {
-  const MyHomeRouteArgs({this.key, required this.title});
-
-  final _i2.Key? key;
-
-  final String title;
+  static const String name = 'AboutRoute';
 }
