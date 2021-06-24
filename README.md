@@ -20,6 +20,7 @@
 
 - 下载[release](https://github.com/yezhoujie/blood-sugar-recorder/releases)中的APK安装.
 - [应用市场](https://www.91kkz.cn/index/app/fenfa.html?fileurl=16244600964287439)下载安装.
+- [酷安应用市场](https://www.coolapk.com/apk/285718)
 
 ## IOS
 由于没有IOS开发者账号,没有在appleStore上架，目前IOS只能clone下本仓库后，运行flutter进行安装。具体操作请参考下面flutter的相关文档。
