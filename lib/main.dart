@@ -39,10 +39,13 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: '血糖记录器',
           builder: (context, child) {
-            //child = myBuilder(context,child);  //do something
             ///初始化 botToast 提示栏.
             child = botToastBuilder(context, child);
-            return child;
+            /// 设置字体大小不跟随系统的字体大小.
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+              child: child,
+            );
           },
           routeInformationParser: _appRoute.defaultRouteParser(),
           routerDelegate: _appRoute.delegate(
