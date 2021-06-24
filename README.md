@@ -15,6 +15,15 @@
 <img src="https://github.com/yezhoujie/blood-sugar-recorder/blob/main/screenshot/1321624459977_.pic.jpg?raw=true" alt="历史周期列表" width="500"/>
 <img src="https://github.com/yezhoujie/blood-sugar-recorder/blob/main/screenshot/1331624460001_.pic.jpg?raw=true" alt="统计" width="500"/>
 
+# 安装
+## 安卓
+
+- 下载[release](https://github.com/yezhoujie/blood-sugar-recorder/releases)中的APK安装.
+- [应用市场](https://www.91kkz.cn/index/app/fenfa.html?fileurl=16244600964287439)下载安装.
+
+## IOS
+由于没有IOS开发者账号,没有在appleStore上架，目前IOS只能clone下本仓库后，运行flutter进行安装。具体操作请参考下面flutter的相关文档。
+
 # about Flutter(关于Flutter)
 A few resources to get you started if this is your first Flutter project:
 
