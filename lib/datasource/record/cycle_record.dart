@@ -104,7 +104,7 @@ class CycleRecordDatasource {
     int? days;
 
     days = await Global.database.rawQuery(
-        "select count(*) from (select  date(datetime, 'localtime') as day from $_tableName where userId = ? and datetime >= ? and datetime <= ? group by day)",
+        "select count(*) from (select  date(datetime, 'utc') as day from $_tableName where userId = ? and datetime >= ? and datetime <= ? group by day)",
         [
           userId,
           begin.toIso8601String(),
