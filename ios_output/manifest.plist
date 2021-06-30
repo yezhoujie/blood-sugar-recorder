@@ -11,19 +11,19 @@
 					<key>kind</key>
 					<string>software-package</string>
 					<key>url</key>
-					<string></string>
+					<string>https://raw.githubusercontent.com/yezhoujie/blood-sugar-recorder/ios_build/ios_output/%E8%A1%80%E7%B3%96%E8%AE%B0%E5%BD%95%E5%99%A8.ipa</string>
 				</dict>
 				<dict>
 					<key>kind</key>
 					<string>display-image</string>
 					<key>url</key>
-					<string> 图标地址（小图，可用一个） </string>
+					<string>https://raw.githubusercontent.com/yezhoujie/blood-sugar-recorder/ios_build/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-60%403x.png</string>
 				</dict>
 				<dict>
 					<key>kind</key>
 					<string>full-size-image</string>
 					<key>url</key>
-					<string> 图标地址（大图，可用一个） </string>
+					<string>https://raw.githubusercontent.com/yezhoujie/blood-sugar-recorder/ios_build/ios/Runner/Assets.xcassets/AppIcon.appiconset/iTunesArtwork-1024.png</string>
 				</dict>
 			</array>
 			<key>metadata</key>
