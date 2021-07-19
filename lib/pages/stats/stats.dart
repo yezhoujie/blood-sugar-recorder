@@ -872,10 +872,10 @@ class _StatsPageState extends State<StatsPage> {
       if (stats.bloodSugarRecordNum > 0) {
         /// 构建血糖饼图数据.
         double highPercent = double.parse(NumberFormat('####.##').format(
-                stats.highBloodSugarRecordNum *
-                    1.0 /
-                    stats.bloodSugarRecordNum)) *
-            100;
+            stats.highBloodSugarRecordNum *
+                1.0 /
+                stats.bloodSugarRecordNum *
+                100));
         PieChartData high = PieChartData(
             recordNum: stats.highBloodSugarRecordNum,
             title: "高血糖",
@@ -883,17 +883,19 @@ class _StatsPageState extends State<StatsPage> {
             color: Colors.redAccent);
 
         double lowPercent = double.parse(NumberFormat('####.##').format(
-                stats.lowBloodSugarRecordNum *
-                    1.0 /
-                    stats.bloodSugarRecordNum)) *
-            100;
+            stats.lowBloodSugarRecordNum *
+                1.0 /
+                stats.bloodSugarRecordNum *
+                100));
         PieChartData low = PieChartData(
             recordNum: stats.lowBloodSugarRecordNum,
             title: "低血糖",
             percent: lowPercent,
             color: Colors.blue);
 
-        double normalPercent = 100.0 - highPercent - lowPercent;
+        double normalPercent = double.parse(
+            NumberFormat('####.##').format(100.0 - highPercent - lowPercent));
+        normalPercent = normalPercent < 0 ? 0 : normalPercent;
         int normalCount = stats.bloodSugarRecordNum -
             stats.highBloodSugarRecordNum -
             stats.lowBloodSugarRecordNum;
@@ -907,14 +909,13 @@ class _StatsPageState extends State<StatsPage> {
       }
 
       /// 构建空腹血糖饼图数据.
-
       if (stats.fpgBloodSugarRecordNum > 0) {
         /// 构建血糖饼图数据.
         double highPercent = double.parse(NumberFormat('####.##').format(
-                stats.fpgHighBloodSugarRecordNum *
-                    1.0 /
-                    stats.fpgBloodSugarRecordNum)) *
-            100;
+            stats.fpgHighBloodSugarRecordNum *
+                1.0 /
+                stats.fpgBloodSugarRecordNum *
+                100));
         PieChartData high = PieChartData(
             recordNum: stats.fpgHighBloodSugarRecordNum,
             title: "高血糖",
@@ -922,17 +923,18 @@ class _StatsPageState extends State<StatsPage> {
             color: Colors.redAccent);
 
         double lowPercent = double.parse(NumberFormat('####.##').format(
-                stats.fpgLowBloodSugarRecordNum *
-                    1.0 /
-                    stats.fpgBloodSugarRecordNum)) *
-            100;
+            stats.fpgLowBloodSugarRecordNum *
+                1.0 /
+                stats.fpgBloodSugarRecordNum *
+                100));
         PieChartData low = PieChartData(
             recordNum: stats.fpgLowBloodSugarRecordNum,
             title: "低血糖",
             percent: lowPercent,
             color: Colors.blue);
 
-        double fpgNormalPercent = 100.0 - highPercent - lowPercent;
+        double fpgNormalPercent = double.parse(
+            NumberFormat('####.##').format(100.0 - highPercent - lowPercent));
         int fpgNormalCount = stats.fpgBloodSugarRecordNum -
             stats.fpgHighBloodSugarRecordNum -
             stats.fpgLowBloodSugarRecordNum;
@@ -949,10 +951,10 @@ class _StatsPageState extends State<StatsPage> {
       if (stats.hpgBloodSugarRecordNum > 0) {
         /// 构建血糖饼图数据.
         double highPercent = double.parse(NumberFormat('####.##').format(
-                stats.hpgHighBloodSugarRecordNum *
-                    1.0 /
-                    stats.hpgBloodSugarRecordNum)) *
-            100;
+            stats.hpgHighBloodSugarRecordNum *
+                1.0 /
+                stats.hpgBloodSugarRecordNum *
+                100));
         PieChartData high = PieChartData(
             recordNum: stats.hpgHighBloodSugarRecordNum,
             title: "高血糖",
@@ -960,16 +962,17 @@ class _StatsPageState extends State<StatsPage> {
             color: Colors.redAccent);
 
         double lowPercent = double.parse(NumberFormat('####.##').format(
-                stats.hpgLowBloodSugarRecordNum *
-                    1.0 /
-                    stats.hpgBloodSugarRecordNum)) *
-            100;
+            stats.hpgLowBloodSugarRecordNum *
+                1.0 /
+                stats.hpgBloodSugarRecordNum *
+                100));
         PieChartData low = PieChartData(
             recordNum: stats.hpgLowBloodSugarRecordNum,
             title: "低血糖",
             percent: lowPercent,
             color: Colors.blue);
-        double hpgNormalPercent = 100.0 - highPercent - lowPercent;
+        double hpgNormalPercent = double.parse(
+            NumberFormat('####.##').format(100.0 - highPercent - lowPercent));
         int hpgNormalCount = stats.hpgBloodSugarRecordNum -
             stats.hpgHighBloodSugarRecordNum -
             stats.hpgLowBloodSugarRecordNum;
